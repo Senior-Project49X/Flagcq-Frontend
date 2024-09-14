@@ -12,7 +12,7 @@ import Network from "./question/Network";
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(
-    null
+    "All Difficulty"
   );
 
   const handleCategoryClick = (category: string) => {
@@ -26,93 +26,38 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-
       <div className="flex">
-        {/* Category Box */}
         <Category
           selectedCategory={selectedCategory}
           onCategoryClick={handleCategoryClick}
         />
-        {/* Difficulty Box */}
+
         <Difficult
           selectedDifficulty={selectedDifficulty}
           onDifficultyClick={handleDifficultyClick}
         />
+
         {/* Question Box */}
         <div className="flex-1 p-6 rounded-lg">
-          {/* Display questions based on category and difficulty */}
           {selectedCategory === "All Categories" && (
             <>
-              {selectedDifficulty === "Easy" && (
-                <p>Easy questions for all categories</p>
-              )}
-              {selectedDifficulty === "Medium" && (
-                <p>Medium questions for all categories</p>
-              )}
-              {selectedDifficulty === "Hard" && (
-                <p>Hard questions for all categories</p>
-              )}
-              {selectedDifficulty === "All Difficulty" && (
-                <>
-                  <GeneralSkills />
-                  <Cryptography />
-                  <Network />
-                  <Forensics />
-                </>
-              )}
+              <GeneralSkills selectedDifficulty={selectedDifficulty} />
+              <Cryptography selectedDifficulty={selectedDifficulty} />
+              <Forensics selectedDifficulty={selectedDifficulty} />
+              <Network selectedDifficulty={selectedDifficulty} />
             </>
           )}
-
-          {selectedCategory === "General Skills" && (
-            <>
-              {selectedDifficulty === "Easy" && (
-                <p>Easy General Skills questions</p>
-              )}
-              {selectedDifficulty === "Medium" && (
-                <p>Medium General Skills questions</p>
-              )}
-              {selectedDifficulty === "Hard" && (
-                <p>Hard General Skills questions</p>
-              )}
-              {selectedDifficulty === "All Difficulty" && <GeneralSkills />}
-            </>
-          )}
-
           {selectedCategory === "Cryptography" && (
-            <>
-              {selectedDifficulty === "Easy" && (
-                <p>Easy Cryptography questions</p>
-              )}
-              {selectedDifficulty === "Medium" && (
-                <p>Medium Cryptography questions</p>
-              )}
-              {selectedDifficulty === "Hard" && (
-                <p>Hard Cryptography questions</p>
-              )}
-              {selectedDifficulty === "All Difficulty" && <Cryptography />}
-            </>
+            <Cryptography selectedDifficulty={selectedDifficulty} />
           )}
-
-          {selectedCategory === "Network" && (
-            <>
-              {selectedDifficulty === "Easy" && <p>Easy Network questions</p>}
-              {selectedDifficulty === "Medium" && (
-                <p>Medium Network questions</p>
-              )}
-              {selectedDifficulty === "Hard" && <p>Hard Network questions</p>}
-              {selectedDifficulty === "All Difficulty" && <Network />}
-            </>
+          {selectedCategory === "General Skills" && (
+            <GeneralSkills selectedDifficulty={selectedDifficulty} />
           )}
-
           {selectedCategory === "Forensics" && (
-            <>
-              {selectedDifficulty === "Easy" && <p>Easy Forensics questions</p>}
-              {selectedDifficulty === "Medium" && (
-                <p>Medium Forensics questions</p>
-              )}
-              {selectedDifficulty === "Hard" && <p>Hard Forensics questions</p>}
-              {selectedDifficulty === "All Difficulty" && <Forensics />}
-            </>
+            <Forensics selectedDifficulty={selectedDifficulty} />
+          )}
+          {selectedCategory === "Network" && (
+            <Network selectedDifficulty={selectedDifficulty} />
           )}
         </div>
       </div>
