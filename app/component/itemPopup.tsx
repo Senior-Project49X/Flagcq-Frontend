@@ -1,11 +1,12 @@
 import React from 'react'
 
 type state ={
-    usestate: any
+    Topic : String
+    usestate: Function
+
 }
 
-export default function ItemPopup(offPopup: state) {
-    const [showModal, setShowModal] = React.useState(false);
+export default function ItemPopup(param: state) {
   return (
     <>
           <div
@@ -17,11 +18,11 @@ export default function ItemPopup(offPopup: state) {
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
-                    Modal Title
+                    {param.Topic}
                   </h3>
                   <button
                     className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                    onClick={() => offPopup.usestate(false) }
+                    onClick={() => param.usestate(false) }
                   >
                     <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
                       ×
@@ -40,17 +41,21 @@ export default function ItemPopup(offPopup: state) {
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                    <form className="max-w-md mx-auto">
+                    <input type="search" id="default-search" className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Mockups, Logos..." required />
+
+                    </form>
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => offPopup.usestate(false)}
+                    onClick={() => param.usestate(false)}
                   >
                     Close
                   </button>
                   <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => offPopup.usestate(false)}
+                    onClick={() => param.usestate(false)}
                   >
                     Save Changes
                   </button>
@@ -58,7 +63,7 @@ export default function ItemPopup(offPopup: state) {
               </div>
             </div>
           </div>
-          <div className="opacity-25 fixed inset-0 z-40 bg-black" ></div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black" />
         </>
   )
 }

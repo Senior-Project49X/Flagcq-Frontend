@@ -12,7 +12,7 @@ export default function CardItem(param: detail ) {
 
   return (
     <div>
-      {showModal? <ItemPopup usestate={setShowModal} />:null}
+      {showModal? <ItemPopup usestate={setShowModal} Topic={param.Topic} />:null}
       <div className="bg-white rounded-lg p-6 text-center">
           <h2 className="text-xl font-bold">{param.Topic}</h2>
           {param.Level == "Easy"? <p className="text-green-500">Easy</p> : param.Level == "Medium"? <p className="text-yellow-500">Medium</p> :<p className="text-red-500">Hard</p>}
