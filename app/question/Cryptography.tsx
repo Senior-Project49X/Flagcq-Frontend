@@ -10,7 +10,7 @@ export default function Cryptography({
   const questions = [
     {
       id: 1,
-      name: "linux tot 555 kuyqqqqqq",
+      name: "linux tot 555 qefewfffeeeeeeeeeeeee",
       difficulty: "Easy",
       type: "Cryptography",
     },
@@ -29,6 +29,7 @@ export default function Cryptography({
     <div className="mt-12 grid grid-cols-3 gap-6 px-16">
       {filteredQuestions.map((question) => (
         <CardItem
+          key={question.id}
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}

@@ -18,12 +18,12 @@ export default function Navbar() {
 
         {/* Right side: Navigation buttons */}
         <div className="flex space-x-8 text-green-400 text-lg font-semibold">
-          <a href="#" className="hover:text-white">
+          {/* <a href="#" className="hover:text-white">
             Sign up
           </a>
           <a href="#" className="hover:text-white">
             Log in
-          </a>
+          </a> */}
           <a href="#" className="hover:text-white">
             About us
           </a>

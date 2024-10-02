@@ -23,6 +23,7 @@ export default function Forensics({ selectedDifficulty }: ForensicsProps) {
     <div className="mt-12 grid grid-cols-3 gap-6 px-16">
       {filteredQuestions.map((question) => (
         <CardItem
+          key={question.id}
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}
