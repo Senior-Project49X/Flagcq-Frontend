@@ -1,14 +1,21 @@
-import CardItem from "../component/cardItem";
+import CardItem from "../../component/cardItem";
 
-interface NetworkProps {
+interface CryptographyProps {
   selectedDifficulty: string | null;
 }
 
-export default function Network({ selectedDifficulty }: NetworkProps) {
+export default function Cryptography({
+  selectedDifficulty,
+}: CryptographyProps) {
   const questions = [
-    { id: 1, name: "linux", difficulty: "Easy", type: "Network" },
-    { id: 2, name: "bread", difficulty: "Hard", type: "Network" },
-    { id: 3, name: "meat", difficulty: "Easy", type: "Network" },
+    {
+      id: 1,
+      name: "linux tot 555 qefewfffeeeeeeeeeeeee",
+      difficulty: "Easy",
+      type: "Cryptography",
+    },
+    { id: 2, name: "bread", difficulty: "Hard", type: "Cryptography" },
+    { id: 3, name: "meat", difficulty: "Easy", type: "Cryptography" },
   ];
 
   const filteredQuestions =

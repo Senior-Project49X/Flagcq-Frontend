@@ -1,4 +1,4 @@
-import CardItem from "../component/cardItem";
+import CardItem from "../../component/cardItem";
 
 interface ForensicsProps {
   selectedDifficulty: string | null;

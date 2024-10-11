@@ -1,14 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Navbar from "./navbar";
-import Category from "./category";
-import Difficult from "./difficult";
-import GeneralSkills from "./question/GeneralSkills";
-import Cryptography from "./question/Cryptography";
-import Forensics from "./question/Forensics";
-import Network from "./question/Network";
-import Login from "./pages/Login";
+import { useState, useEffect } from "react";
+import { redirect } from "next/navigation";
+import Homepage from "./homepage/homepage";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -25,50 +19,5 @@ export default function Home() {
     setSelectedDifficulty(difficulty);
   };
 
-  return (
-    <div>
-      {isLogin ? (
-        <>
-          <Navbar />
-          <div className="flex">
-            <Category
-              selectedCategory={selectedCategory}
-              onCategoryClick={handleCategoryClick}
-            />
-
-            <Difficult
-              selectedDifficulty={selectedDifficulty}
-              onDifficultyClick={handleDifficultyClick}
-            />
-
-            {/* Question Box */}
-            <div className="flex-1 p-6 rounded-lg">
-              {selectedCategory === "All Categories" && (
-                <>
-                  <GeneralSkills selectedDifficulty={selectedDifficulty} />
-                  <Cryptography selectedDifficulty={selectedDifficulty} />
-                  <Forensics selectedDifficulty={selectedDifficulty} />
-                  <Network selectedDifficulty={selectedDifficulty} />
-                </>
-              )}
-              {selectedCategory === "Cryptography" && (
-                <Cryptography selectedDifficulty={selectedDifficulty} />
-              )}
-              {selectedCategory === "General Skills" && (
-                <GeneralSkills selectedDifficulty={selectedDifficulty} />
-              )}
-              {selectedCategory === "Forensics" && (
-                <Forensics selectedDifficulty={selectedDifficulty} />
-              )}
-              {selectedCategory === "Network" && (
-                <Network selectedDifficulty={selectedDifficulty} />
-              )}
-            </div>
-          </div>
-        </>
-      ) : (
-        <Login NowLogin={setIsLogin} />
-      )}
-    </div>
-  );
+  return <div>{isLogin ? <Homepage /> : redirect("/login")}</div>;
 }

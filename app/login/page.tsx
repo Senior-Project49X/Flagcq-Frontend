@@ -6,7 +6,7 @@ type setLogin = {
   NowLogin: Function;
 };
 
-export default function Login(param: setLogin) {
+export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen ">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
@@ -23,7 +23,7 @@ export default function Login(param: setLogin) {
           />
         </div>
 
-        <LoginButton NowLogin={param.NowLogin}/>
+        <LoginButton />
 
         <p className="text-gray-500 text-sm">Login via cmu OAuth</p>
       </div>
