@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import ProfileToggle from "./component/profileToggle";
+
 export default function Navbar() {
   return (
     <nav className="bg-[#090147] py-4 px-8 relative">
@@ -31,10 +33,7 @@ export default function Navbar() {
           <Link href="#" className="hover:text-white h-fit mt-3">
             team
           </Link>
-          <Link
-            href="/profile"
-            className="w-12 h-12 rounded-full object-cover bg-white"
-          ></Link>
+          <ProfileToggle />
         </div>
       </div>
     </nav>
