@@ -2,7 +2,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { redirect, useSearchParams } from "next/navigation";
-// import { useRouter } from "next/router";
+
 export default function cmuOAuthCallback() {
   // const router = useRouter();
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -10,7 +10,6 @@ export default function cmuOAuthCallback() {
   const search = searchParams.get("code");
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    console.log(search);
     const loginDetails = {
       token: search, // Example token, can be generated as needed
       timestamp: new Date().toISOString(), // Store timestamp of creation
