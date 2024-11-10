@@ -15,7 +15,7 @@ export default function Difficult({
       {/* Main container: Category on the left */}
       <div className="flex space-x-8 w-full max-w-7xl">
         {/* Category Box */}
-        <div className="border-4 border-red-500 rounded-lg p-6 w-64  relative h-full">
+        <div className=" rounded-lg p-6 w-64  relative h-full">
           {/* Difficulty Header */}
           <div className="flex items-center space-x-4 mb-4 mx-4">
             <Image
