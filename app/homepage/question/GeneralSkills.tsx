@@ -8,9 +8,27 @@ export default function GeneralSkills({
   selectedDifficulty,
 }: GeneralSkillsProps) {
   const questions = [
-    { id: 1, name: "linux", difficulty: "Easy", type: "General Skills" },
-    { id: 2, name: "bread", difficulty: "Hard", type: "General Skills" },
-    { id: 3, name: "meat", difficulty: "Easy", type: "General Skills" },
+    {
+      id: 1,
+      name: "linux",
+      difficulty: "Easy",
+      type: "General Skills",
+      isSolve: false,
+    },
+    {
+      id: 2,
+      name: "bread",
+      difficulty: "Easy",
+      type: "General Skills",
+      isSolve: false,
+    },
+    {
+      id: 3,
+      name: "meat",
+      difficulty: "Hard",
+      type: "General Skills",
+      isSolve: false,
+    },
   ];
 
   const filteredQuestions =
@@ -28,6 +46,7 @@ export default function GeneralSkills({
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}
+          isSolve={question.isSolve}
         />
       ))}
     </div>

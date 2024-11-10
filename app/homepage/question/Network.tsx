@@ -6,9 +6,27 @@ interface NetworkProps {
 
 export default function Network({ selectedDifficulty }: NetworkProps) {
   const questions = [
-    { id: 1, name: "linux", difficulty: "Easy", type: "Network" },
-    { id: 2, name: "bread", difficulty: "Hard", type: "Network" },
-    { id: 3, name: "meat", difficulty: "Easy", type: "Network" },
+    {
+      id: 1,
+      name: "linux",
+      difficulty: "Easy",
+      type: "Network",
+      isSolve: false,
+    },
+    {
+      id: 2,
+      name: "bread",
+      difficulty: "Easy",
+      type: "Network",
+      isSolve: false,
+    },
+    {
+      id: 3,
+      name: "meat",
+      difficulty: "Hard",
+      type: "Network",
+      isSolve: false,
+    },
   ];
 
   const filteredQuestions =
@@ -26,6 +44,7 @@ export default function Network({ selectedDifficulty }: NetworkProps) {
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}
+          isSolve={question.isSolve}
         />
       ))}
     </div>

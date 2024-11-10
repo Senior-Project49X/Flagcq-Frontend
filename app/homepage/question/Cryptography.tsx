@@ -10,12 +10,25 @@ export default function Cryptography({
   const questions = [
     {
       id: 1,
-      name: "linux tot 555 qefewfffeeeeeeeeeeeee",
+      name: "linux",
       difficulty: "Easy",
       type: "Cryptography",
+      isSolve: true,
     },
-    { id: 2, name: "bread", difficulty: "Hard", type: "Cryptography" },
-    { id: 3, name: "meat", difficulty: "Easy", type: "Cryptography" },
+    {
+      id: 3,
+      name: "meat",
+      difficulty: "Easy",
+      type: "Cryptography",
+      isSolve: false,
+    },
+    {
+      id: 2,
+      name: "bread",
+      difficulty: "Hard",
+      type: "Cryptography",
+      isSolve: true,
+    },
   ];
 
   const filteredQuestions =
@@ -33,6 +46,7 @@ export default function Cryptography({
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}
+          isSolve={question.isSolve}
         />
       ))}
     </div>

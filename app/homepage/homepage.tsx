@@ -10,7 +10,9 @@ import Forensics from "./question/Forensics";
 import Network from "./question/Network";
 
 export default function Homepage() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    "All Categories"
+  );
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(
     "All Difficulty"
   );

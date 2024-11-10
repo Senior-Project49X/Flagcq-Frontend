@@ -3,6 +3,7 @@ import React from "react";
 type state = {
   Topic: String;
   ClosePopup: Function;
+  setIsSolved: Function;
 };
 
 export default function ItemPopup(param: state) {
@@ -61,9 +62,12 @@ export default function ItemPopup(param: state) {
               <button
                 className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
-                onClick={() => param.ClosePopup(false)}
+                onClick={() => {
+                  param.setIsSolved(true);
+                  param.ClosePopup(false);
+                }}
               >
-                Save Changes
+                Submit
               </button>
             </div>
           </div>

@@ -2,10 +2,6 @@ import React from "react";
 import Image from "next/image";
 import LoginButton from "../component/loginButton";
 
-type setLogin = {
-  NowLogin: Function;
-};
-
 export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen ">

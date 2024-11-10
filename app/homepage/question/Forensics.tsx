@@ -6,10 +6,35 @@ interface ForensicsProps {
 
 export default function Forensics({ selectedDifficulty }: ForensicsProps) {
   const questions = [
-    { id: 1, name: "linux", difficulty: "Easy", type: "Forensics" },
-    { id: 2, name: "bread", difficulty: "Hard", type: "Forensics" },
-    { id: 3, name: "meat", difficulty: "Easy", type: "Forensics" },
-    { id: 4, name: "balls", difficulty: "Medium", type: "Forensics" },
+    {
+      id: 1,
+      name: "linux",
+      difficulty: "Easy",
+      type: "Forensics",
+      isSolve: false,
+    },
+
+    {
+      id: 3,
+      name: "meat",
+      difficulty: "Easy",
+      type: "Forensics",
+      isSolve: false,
+    },
+    {
+      id: 4,
+      name: "balls",
+      difficulty: "Medium",
+      type: "Forensics",
+      isSolve: false,
+    },
+    {
+      id: 2,
+      name: "bread",
+      difficulty: "Hard",
+      type: "Forensics",
+      isSolve: false,
+    },
   ];
 
   const filteredQuestions =
@@ -27,6 +52,7 @@ export default function Forensics({ selectedDifficulty }: ForensicsProps) {
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}
+          isSolve={question.isSolve}
         />
       ))}
     </div>
