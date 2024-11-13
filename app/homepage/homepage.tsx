@@ -1,15 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "../navbar";
+import Navbar from "../component/navbar";
 import Category from "../category";
 import Difficult from "../difficult";
 import GeneralSkills from "./question/GeneralSkills";
 import Cryptography from "./question/Cryptography";
 import Forensics from "./question/Forensics";
 import Network from "./question/Network";
+import Pagination from "../component/Pagination";
+import { useSearchParams } from "next/navigation";
 
 export default function Homepage() {
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "All Categories"
   );
@@ -63,6 +67,7 @@ export default function Homepage() {
             {selectedCategory === "Network" && (
               <Network selectedDifficulty={selectedDifficulty} />
             )}
+            <Pagination pagePath={"/?page="} pageNumber={page} />
           </div>
         </div>
       </>

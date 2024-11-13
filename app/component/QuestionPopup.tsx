@@ -6,7 +6,7 @@ type state = {
   setIsSolved: Function;
 };
 
-export default function ItemPopup(param: state) {
+export default function QuestionPopup(param: state) {
   return (
     <>
       <div
@@ -41,6 +41,7 @@ export default function ItemPopup(param: state) {
                 anything. I was taught I could do everything.
               </p>
             </div>
+            <button>Download</button>
             {/*footer*/}
             <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
               <span className="max-w-md mx-auto">

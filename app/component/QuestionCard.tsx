@@ -1,5 +1,5 @@
 import React from "react";
-import ItemPopup from "./itemPopup";
+import QuestionPopup from "./QuestionPopup";
 import Image from "next/image";
 type detail = {
   Topic: string;
@@ -8,7 +8,7 @@ type detail = {
   isSolve: boolean;
 };
 
-export default function CardItem(param: detail) {
+export default function QuestionCard(param: detail) {
   const [showModal, setShowModal] = React.useState(false);
   const [isSolve, setIsSolve] = React.useState(false);
   React.useEffect(() => {
@@ -17,7 +17,7 @@ export default function CardItem(param: detail) {
   return (
     <div className="relative">
       {showModal ? (
-        <ItemPopup
+        <QuestionPopup
           ClosePopup={setShowModal}
           Topic={param.Topic}
           setIsSolved={setIsSolve}

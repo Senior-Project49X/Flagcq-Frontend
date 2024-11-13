@@ -1,4 +1,4 @@
-import CardItem from "../../component/cardItem";
+import QuestionCard from "../../component/QuestionCard";
 
 interface GeneralSkillsProps {
   selectedDifficulty: string | null;
@@ -41,7 +41,7 @@ export default function GeneralSkills({
   return (
     <div className="mt-12 grid grid-cols-3 gap-6 px-16">
       {filteredQuestions.map((question) => (
-        <CardItem
+        <QuestionCard
           key={question.id}
           Topic={question.name}
           Level={question.difficulty}
