@@ -8,7 +8,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="bg-[#6358DC] py-4 px-8 relative">
+    <nav className="bg-[#090147] py-4 px-8 relative">
       <div className="flex justify-between items-center">
         {/* Left side: Logo */}
         <Link href="/">

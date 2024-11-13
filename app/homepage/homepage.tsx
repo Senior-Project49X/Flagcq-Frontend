@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import Navbar from "../component/navbar";
 import Category from "../category";
 import Difficult from "../difficult";
-import GeneralSkills from "./question/GeneralSkills";
-import Cryptography from "./question/Cryptography";
-import Forensics from "./question/Forensics";
-import Network from "./question/Network";
+
+import Cryptography from "../component/Question";
+
 import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
+import Question from "../component/Question";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -47,26 +47,13 @@ export default function Homepage() {
 
           {/* Question Box */}
           <div className="flex-1 p-6 rounded-lg">
-            {selectedCategory === "All Categories" && (
-              <>
-                <GeneralSkills selectedDifficulty={selectedDifficulty} />
-                <Cryptography selectedDifficulty={selectedDifficulty} />
-                <Forensics selectedDifficulty={selectedDifficulty} />
-                <Network selectedDifficulty={selectedDifficulty} />
-              </>
-            )}
-            {selectedCategory === "Cryptography" && (
-              <Cryptography selectedDifficulty={selectedDifficulty} />
-            )}
-            {selectedCategory === "General Skills" && (
-              <GeneralSkills selectedDifficulty={selectedDifficulty} />
-            )}
-            {selectedCategory === "Forensics" && (
-              <Forensics selectedDifficulty={selectedDifficulty} />
-            )}
-            {selectedCategory === "Network" && (
-              <Network selectedDifficulty={selectedDifficulty} />
-            )}
+            <>
+              <Question
+                selectedDifficulty={selectedDifficulty}
+                selectedCategory={selectedCategory}
+              />
+            </>
+
             <Pagination pagePath={"/?page="} pageNumber={page} />
           </div>
         </div>
