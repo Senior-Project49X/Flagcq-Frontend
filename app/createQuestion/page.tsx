@@ -72,7 +72,7 @@ export default function CreateQuestion() {
         }}
       />
       <br />
-      <label>Answer</label>
+      <label>{`Answer: CTFCQ{ `}</label>
       <input
         type="text"
         value={Answer}
@@ -80,6 +80,7 @@ export default function CreateQuestion() {
           setAnswer(e.target.value);
         }}
       />
+      <span>{` }`}</span>
       <br />
       <label>Point</label>
       <input
