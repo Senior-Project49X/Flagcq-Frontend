@@ -4,9 +4,6 @@ import { useState, useEffect } from "react";
 import Navbar from "../component/navbar";
 import Category from "../category";
 import Difficult from "../difficult";
-
-import Cryptography from "../component/Question";
-
 import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import Question from "../component/Question";

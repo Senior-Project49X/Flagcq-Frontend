@@ -61,15 +61,16 @@ export default function Question({
     },
   ];
 
-  const filtered =
-    selectedCategory === "All Categories" &&
-    selectedDifficulty === "All Difficulty"
-      ? questions
-      : questions.filter(
-          (question) =>
-            question.type === selectedCategory &&
-            question.difficulty === selectedDifficulty
-        );
+  const filtered = questions.filter((question) => {
+    const categoryMatches =
+      selectedCategory === "All Categories" ||
+      question.type === selectedCategory;
+    const difficultyMatches =
+      selectedDifficulty === "All Difficulty" ||
+      question.difficulty === selectedDifficulty;
+
+    return categoryMatches && difficultyMatches;
+  });
 
   return (
     <div className="mt-12 grid grid-cols-3 gap-6 px-16">
