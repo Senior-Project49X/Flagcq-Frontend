@@ -4,14 +4,14 @@ const ip = process.env.NEXT_PUBLIC_IP_URL;
 
 
 export const CreateQuestionAPI=(
-    Categories_id:number,
+    Categories_id:string,
     Title:string,
     Description:string,
-    Answer:string[],
-    Point:number,
-    DifficultyId:number,
-    File_path:string,
-    Type:number
+    Answer:string,
+    Point:number|string,
+    DifficultyId:string,
+    FilePath:string[],
+    Type:string
     )=>{
     axios.post(`${ip}/api/question`,{
         categories_id:Categories_id,
@@ -20,11 +20,11 @@ export const CreateQuestionAPI=(
         Answer:Answer,
         point:Point,
         difficultys_id:DifficultyId,
-        file_path:File_path,
+        file_path:FilePath,
         type:Type,
     } ).then((resp) => {
         console.log(resp)
         return resp
     }
-    )
+    ).catch((e)=>{return(e)})
 };
