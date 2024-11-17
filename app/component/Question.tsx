@@ -74,9 +74,9 @@ export default function Question({
 
   return (
     <div className="mt-12 grid grid-cols-3 gap-6 px-16">
-      {[...filtered].map((question) => (
+      {[...filtered].map((question, i) => (
         <QuestionCard
-          key={question.id}
+          key={i}
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}

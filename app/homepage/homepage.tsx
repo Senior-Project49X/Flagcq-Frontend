@@ -7,16 +7,15 @@ import Difficult from "../difficult";
 import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import Question from "../component/Question";
+import { GetQuestions } from "../lib/API/QuestionAPI";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
   const page = searchParams.get("page");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    "All Categories"
-  );
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(
-    "All Difficulty"
-  );
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>("All Categories");
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<string>("All Difficulty");
   const [isLogin, setIsLogin] = useState(false);
 
   const handleCategoryClick = (category: string) => {
@@ -26,7 +25,9 @@ export default function Homepage() {
   const handleDifficultyClick = (difficulty: string) => {
     setSelectedDifficulty(difficulty);
   };
-
+  useEffect(() => {
+    GetQuestions(selectedCategory, selectedDifficulty, page);
+  }, [selectedCategory, selectedDifficulty, page]);
   return (
     <div>
       <>
