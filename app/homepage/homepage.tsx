@@ -8,6 +8,7 @@ import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
+import ScoreBar from "../component/Scorebar";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -32,6 +33,7 @@ export default function Homepage() {
     <div>
       <>
         <Navbar />
+        <ScoreBar />
         <div className="flex">
           <Category
             selectedCategory={selectedCategory}

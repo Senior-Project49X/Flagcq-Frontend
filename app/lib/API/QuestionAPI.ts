@@ -4,25 +4,11 @@ const ip = process.env.NEXT_PUBLIC_IP_URL;
 
 
 export const CreateQuestionAPI=(
-    Categories_id:string,
-    Title:string,
-    Description:string,
-    Answer:string,
-    Point:number|string,
-    DifficultyId:string,
-    FilePath:string[],
-    Type:string
+    FormData:FormData
     )=>{
     axios.post(`${ip}/api/question`,{
-        categories_id:Categories_id,
-        title:Title,
-        Description:Description,
-        Answer:Answer,
-        point:Point,
-        difficultys_id:DifficultyId,
-        file_path:FilePath,
-        type:Type,
-    } ).then((resp) => {
+        FormData
+    },{withCredentials:true} ).then((resp) => {
         console.log(resp)
         return resp
     }
@@ -34,9 +20,10 @@ export const GetQuestions=async(
     selectedDifficulty:string,
     page:string|null)=>{
     const NewPage = page===null? 1:page
-    console.log(`${ip}/api/questions/practice?category=${selectedCategory}&Difficulty=${selectedDifficulty}&page=${NewPage}`)
 
-    axios.get(`${ip}/api/questions/practice?category=${selectedCategory}&Difficulty=${selectedDifficulty}&page=${NewPage}`)
+    console.log(`${ip}/api/questions/practice${selectedCategory==="All Categories" ? null:`?category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? null:`&Difficulty=${selectedDifficulty}`} &page=${NewPage}`)
+
+    axios.get(`${ip}/api/questions/practice${selectedCategory==="All Categories" ? null:`?category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? null:`&Difficulty=${selectedDifficulty}`} &page=${NewPage}`)
     .then().catch((e)=>{console.log(e)})
 }
 

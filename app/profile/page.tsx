@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Navbar from "../component/navbar";
-import { getUserInfo } from "../lib/API/profileAPI";
+import { getUserInfo } from "../lib/API/ProfileAPI";
 import { tokenDecode } from "../lib/jwtDecode";
 import { JwtPayload } from "jwt-decode";
 import { DecodedToken } from "../lib/types/DecodedToken";
