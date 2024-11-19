@@ -26,18 +26,8 @@ export default function CreateQuestion() {
   const [Loading, setLoading] = useState<boolean>(false);
   const onCreateQuestion = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log();
     const formData = new FormData(event.currentTarget);
-    const newData: typeOfNewData = {
-      CategoriesId: "",
-      Title: "",
-      Description: "",
-      Answer: "",
-      Point: 0,
-      DifficultyId: "",
-      FilePath: null,
-      Mode: "",
-    };
+
     console.log(formData);
 
     CreateQuestionAPI(formData);
