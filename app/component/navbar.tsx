@@ -52,9 +52,9 @@ export default function Navbar() {
             Tournament
           </Link>
           <Link
-            href="#"
+            href="/leaderboard"
             className={
-              pathname == "#"
+              pathname == "/leaderboard"
                 ? "text-white h-fit mt-3 underline"
                 : "hover:text-white h-fit mt-3"
             }
