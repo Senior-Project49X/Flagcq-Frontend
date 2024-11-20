@@ -21,9 +21,9 @@ export const GetQuestions=async(
     page:string|null)=>{
     const NewPage = page===null? 1:page
 
-    console.log(`${ip}/api/questions/practice${selectedCategory==="All Categories" ? null:`?category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? null:`&Difficulty=${selectedDifficulty}`} &page=${NewPage}`)
+    console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}`}&page=${NewPage}`)
 
-    axios.get(`${ip}/api/questions/practice${selectedCategory==="All Categories" ? null:`?category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? null:`&Difficulty=${selectedDifficulty}`} &page=${NewPage}`)
+    axios.get(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}`}&page=${NewPage}`)
     .then().catch((e)=>{console.log(e)})
 }
 
