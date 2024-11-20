@@ -40,10 +40,10 @@ export default function CreateQuestion() {
       <Navbar />
       <form onSubmit={onCreateQuestion}>
         <label>Topic</label>
-        <input type="text" name="Title" />
+        <input type="text" name="title" />
         <br />
         <label>Category</label>
-        <select name="CategoriesId">
+        <select name="categories_id">
           <option value={""}>---please select category---</option>
           <option value={"General Skill"}>General Skill</option>
           <option value={"Cryptography"}>Cryptography</option>
@@ -52,7 +52,7 @@ export default function CreateQuestion() {
         </select>
         <br />
         <label>Difficulty</label>
-        <select name="DifficultyId">
+        <select name="difficultys_id">
           <option value={""}>---please select Difficulty---</option>
           <option value={"Easy"}>Easy</option>
           <option value={"Medium"}>Medium</option>
@@ -60,7 +60,7 @@ export default function CreateQuestion() {
         </select>
         <br />
         <label>Mode</label>
-        <select name="Mode">
+        <select name="type">
           <option value={""}>---please select Mode---</option>
           <option value={"Practice"}>Practice</option>
           <option value={"Tournament"}>Tournament</option>
@@ -75,7 +75,7 @@ export default function CreateQuestion() {
         <br />
         <label>Point</label>
         <input
-          name="Point"
+          name="point"
           type="number"
           min="0"
           max="10000000"
