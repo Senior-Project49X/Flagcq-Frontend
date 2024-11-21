@@ -1,5 +1,8 @@
 import React from "react";
 
-export default function ScoreBar() {
-  return <div className="right-03">100</div>;
+interface score {
+  point: string;
+}
+export default function ScoreBar({ point }: score) {
+  return <div className="right-03">{point}</div>;
 }

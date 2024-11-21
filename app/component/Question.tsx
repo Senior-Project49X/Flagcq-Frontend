@@ -3,64 +3,20 @@ import QuestionCard from "./QuestionCard";
 interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
+  questions: {
+    id: number;
+    name: string;
+    difficulty: string;
+    type: string;
+    isSolve: boolean;
+  }[];
 }
 
 export default function Question({
   selectedDifficulty,
   selectedCategory,
+  questions,
 }: CryptographyProps) {
-  const questions = [
-    {
-      id: 1,
-      name: "linux1",
-      difficulty: "Easy",
-      type: "Cryptography",
-      isSolve: true,
-    },
-    {
-      id: 2,
-      name: "meat2",
-      difficulty: "Easy",
-      type: "Cryptography",
-      isSolve: false,
-    },
-    {
-      id: 3,
-      name: "bread3",
-      difficulty: "Hard",
-      type: "Cryptography",
-      isSolve: true,
-    },
-    {
-      id: 4,
-      name: "bread4",
-      difficulty: "Hard",
-      type: "Network",
-      isSolve: true,
-    },
-    {
-      id: 5,
-      name: "bread5",
-      difficulty: "Easy",
-      type: "Forensics",
-      isSolve: true,
-    },
-    {
-      id: 6,
-      name: "bread6",
-      difficulty: "Easy",
-      type: "GeneralSkills",
-      isSolve: true,
-    },
-    {
-      id: 7,
-      name: "bread7",
-      difficulty: "Hard",
-      type: "Forensics",
-      isSolve: true,
-    },
-  ];
-
   const filtered = questions.filter((question) => {
     const categoryMatches =
       selectedCategory === "All Categories" ||

@@ -26,10 +26,10 @@ export const GetQuestions = async (
 ) => {
   const NewPage = page === null ? 1 : page;
 
-    console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}`}&page=${NewPage}`)
+    console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
 
-    axios.get(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}`}&page=${NewPage}`)
-    .then().catch((e)=>{console.log(e)})
+    axios.get(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
+    .then((resp)=>{console.log()}).catch((e)=>{console.log(e)})
 }
 
 export const GetQuestionsByID = async (id: string) => {

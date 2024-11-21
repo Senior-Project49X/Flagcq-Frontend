@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+import React, { useEffect, useRef } from "react";
+import { GetQuestionsByID } from "../lib/API/QuestionAPI";
 
 type state = {
   Topic: String;
@@ -7,6 +9,12 @@ type state = {
 };
 
 export default function QuestionPopup(param: state) {
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    console.log(param);
+    GetQuestionsByID(param.Topic);
+    isFirstRender.current = false;
+  }, []);
   return (
     <>
       <div

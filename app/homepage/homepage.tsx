@@ -8,7 +8,8 @@ import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
-import ScoreBar from "../component/Scorebar";
+import ScoreBar from "../component/ScoreBar";
+import { GetUserData } from "../lib/API/GetUserAPI";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -18,6 +19,59 @@ export default function Homepage() {
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<string>("All Difficulty");
   const [isLogin, setIsLogin] = useState(false);
+  const [point, setPoint] = useState<string>("0");
+
+  const questions = [
+    {
+      id: 1,
+      name: "linux1",
+      difficulty: "Easy",
+      type: "Cryptography",
+      isSolve: true,
+    },
+    {
+      id: 2,
+      name: "meat2",
+      difficulty: "Easy",
+      type: "Cryptography",
+      isSolve: false,
+    },
+    {
+      id: 3,
+      name: "bread3",
+      difficulty: "Hard",
+      type: "Cryptography",
+      isSolve: true,
+    },
+    {
+      id: 4,
+      name: "bread4",
+      difficulty: "Hard",
+      type: "Network",
+      isSolve: true,
+    },
+    {
+      id: 5,
+      name: "bread5",
+      difficulty: "Easy",
+      type: "Forensics",
+      isSolve: true,
+    },
+    {
+      id: 6,
+      name: "bread6",
+      difficulty: "Easy",
+      type: "GeneralSkills",
+      isSolve: true,
+    },
+    {
+      id: 7,
+      name: "bread7",
+      difficulty: "Hard",
+      type: "Forensics",
+      isSolve: true,
+    },
+  ];
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
@@ -29,11 +83,19 @@ export default function Homepage() {
   useEffect(() => {
     GetQuestions(selectedCategory, selectedDifficulty, page);
   }, [selectedCategory, selectedDifficulty, page]);
+  useEffect(() => {
+    async function fetchUserData() {
+      const userData = await GetUserData(); // Now correctly awaits the returned value
+      setPoint(userData);
+      console.log("a", point);
+    }
+    fetchUserData();
+  }, [point]);
   return (
     <div>
       <>
         <Navbar />
-        <ScoreBar />
+        <ScoreBar point={point} />
         <div className="flex">
           <Category
             selectedCategory={selectedCategory}
@@ -51,6 +113,7 @@ export default function Homepage() {
               <Question
                 selectedDifficulty={selectedDifficulty}
                 selectedCategory={selectedCategory}
+                questions={questions}
               />
             </>
 
