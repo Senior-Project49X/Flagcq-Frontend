@@ -7,4 +7,5 @@ export interface DecodedToken {
     student_id: number;
     iat: number
     exp: number
+    points: string
   }

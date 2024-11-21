@@ -9,7 +9,7 @@ import { useSearchParams } from "next/navigation";
 import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
 import ScoreBar from "../component/ScoreBar";
-import { GetUserData } from "../lib/API/GetUserAPI";
+import { GetUserPoints } from "../lib/API/GetUserAPI";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -85,7 +85,7 @@ export default function Homepage() {
   }, [selectedCategory, selectedDifficulty, page]);
   useEffect(() => {
     async function fetchUserData() {
-      const userData = await GetUserData(); // Now correctly awaits the returned value
+      const userData = await GetUserPoints(); // Now correctly awaits the returned value
       setPoint(userData);
       console.log("a", point);
     }
