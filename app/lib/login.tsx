@@ -9,8 +9,7 @@ interface WrapperProps {
 
 export const loginChecker = (setLoading: Function) => {
   // if (!isHasCookie("cmu-oauth-token")) { // login bypass
-  if (false) {
-    redirect("/login");
-  }
+  //   redirect("/login");
+  // }
   setLoading(false);
 };

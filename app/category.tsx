@@ -41,9 +41,9 @@ export default function Category({
               All Categories
             </button>
             <button
-              onClick={() => onCategoryClick("General Skills")}
+              onClick={() => onCategoryClick("GeneralSkills")}
               className={`${
-                selectedCategory === "General Skills"
+                selectedCategory === "GeneralSkills"
                   ? "bg-red-500"
                   : "bg-[#0c0332]"
               } text-white py-2 px-4 rounded-lg hover:bg-red-500`}

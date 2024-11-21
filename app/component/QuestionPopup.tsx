@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+import React, { useEffect, useRef } from "react";
+import { GetQuestionsByID } from "../lib/API/QuestionAPI";
 
 type state = {
   Topic: String;
@@ -6,7 +8,13 @@ type state = {
   setIsSolved: Function;
 };
 
-export default function ItemPopup(param: state) {
+export default function QuestionPopup(param: state) {
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    console.log(param);
+    GetQuestionsByID(param.Topic);
+    isFirstRender.current = false;
+  }, []);
   return (
     <>
       <div
@@ -41,6 +49,7 @@ export default function ItemPopup(param: state) {
                 anything. I was taught I could do everything.
               </p>
             </div>
+            <button>Download</button>
             {/*footer*/}
             <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
               <span className="max-w-md mx-auto">

@@ -1,16 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Navbar from "../navbar";
-import { getUserInfo } from "../lib/profileAPI";
+import Navbar from "../component/navbar";
+import { getUserInfo } from "../lib/API/ProfileAPI";
 import { tokenDecode } from "../lib/jwtDecode";
 import { JwtPayload } from "jwt-decode";
 import { DecodedToken } from "../lib/types/DecodedToken";
+import { GetUserData } from "../lib/API/GetUserAPI";
 export default function profile() {
   const [data, setData] = useState<undefined | DecodedToken>(undefined);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    setData(tokenDecode());
-    console.log(tokenDecode());
+    // setData(GetUserData());
+
+    GetUserData().then((data) => {
+      console.log(data);
+      setData(data);
+    });
   }, []);
   return (
     <div>
@@ -29,6 +34,9 @@ export default function profile() {
               </div>
               <div className="text-lg">
                 <span className="font-bold">Faculty:</span> {data?.faculty}
+              </div>
+              <div className="text-lg">
+                <span className="font-bold">Point:</span> {data?.points}
               </div>
             </div>
           </div>
