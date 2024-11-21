@@ -2,6 +2,7 @@ import React from "react";
 import QuestionPopup from "./QuestionPopup";
 import Image from "next/image";
 type detail = {
+  id: string;
   Topic: string;
   Level: string;
   Category: string;

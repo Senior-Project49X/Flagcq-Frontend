@@ -25,15 +25,21 @@ export const GetQuestions = async (
   page: string | null
 ) => {
   const NewPage = page === null ? 1 : page;
+try{
+    const resp = await axios.get(`${ip}/api/questions/practice?
+        ${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}
+        ${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}
+        page=${NewPage}`)
+    return resp.data
+}catch(e){
+    console.error("Error fetching questions:", e);
+}
+    // console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
 
-    console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
-
-    axios.get(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
-    .then((resp)=>{console.log()}).catch((e)=>{console.log(e)})
 }
 
 export const GetQuestionsByID = async (id: string) => {
-  axios
+  await axios
     .get(`${ip}/api/question/${id}`)
     .then()
     .catch((e) => {

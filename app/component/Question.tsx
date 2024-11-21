@@ -4,7 +4,7 @@ interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
   questions: {
-    id: number;
+    id: string;
     name: string;
     difficulty: string;
     type: string;
@@ -33,6 +33,7 @@ export default function Question({
       {[...filtered].map((question, i) => (
         <QuestionCard
           key={i}
+          id={question.id}
           Topic={question.name}
           Level={question.difficulty}
           Category={question.type}
