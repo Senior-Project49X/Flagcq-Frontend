@@ -19,6 +19,7 @@ export default function QuestionCard(param: detail) {
     <div className="relative">
       {showModal ? (
         <QuestionPopup
+          id={param.id}
           ClosePopup={setShowModal}
           Topic={param.Topic}
           setIsSolved={setIsSolve}

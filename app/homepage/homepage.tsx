@@ -12,6 +12,8 @@ import ScoreBar from "../component/ScoreBar";
 import { GetUserPoints } from "../lib/API/GetUserAPI";
 
 interface question {
+  title: string;
+  categories_name: string;
   id: string;
   name: string;
   difficulty: string;

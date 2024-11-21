@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { GetQuestionsByID } from "../lib/API/QuestionAPI";
+import { CheckQuestionsByID, GetQuestionsByID } from "../lib/API/QuestionAPI";
 
 type state = {
-  Topic: String;
+  id: string;
+  Topic: string;
   ClosePopup: Function;
   setIsSolved: Function;
 };
@@ -12,9 +13,10 @@ export default function QuestionPopup(param: state) {
   const isFirstRender = useRef(true);
   useEffect(() => {
     console.log(param);
-    GetQuestionsByID(param.Topic);
+    GetQuestionsByID(param.id);
     isFirstRender.current = false;
   }, []);
+
   return (
     <>
       <div
@@ -73,6 +75,8 @@ export default function QuestionPopup(param: state) {
                 type="button"
                 onClick={() => {
                   param.setIsSolved(true);
+                  console.log(param.id);
+                  CheckQuestionsByID(param.id, "CTFCQ{test}");
                   param.ClosePopup(false);
                 }}
               >

@@ -58,8 +58,8 @@ export const DeleteQuestionsByID = async (id: string) => {
 
 export const CheckQuestionsByID = async (id: string, Answer: string) => {
   axios
-    .post(`${ip}/api/question/check-answer`, { Answer: Answer })
-    .then()
+    .post(`${ip}/api/question/check-answer`, { id:id,Answer: Answer },{withCredentials: true,})
+    .then((resp)=>{console.log(resp)})
     .catch((e) => {
       console.log(e);
     });

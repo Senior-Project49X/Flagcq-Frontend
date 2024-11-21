@@ -4,6 +4,8 @@ interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
   questions: {
+    title: string;
+    categories_name: string;
     id: string;
     name: string;
     difficulty: string;
@@ -34,9 +36,9 @@ export default function Question({
         <QuestionCard
           key={i}
           id={question.id}
-          Topic={question.name}
-          Level={question.difficulty}
-          Category={question.type}
+          Topic={question.title}
+          Level={question.difficultys_id}
+          Category={question.categories_name}
           isSolve={question.isSolve}
         />
       ))}
