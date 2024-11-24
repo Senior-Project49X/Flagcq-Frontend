@@ -70,10 +70,39 @@ export const CheckQuestionsByID = async (id: string, Answer: string) => {
 };
 
 export const DownloadQuestionsByID = async (id: string) => {
-  await axios
-    .get(`${ip}/api/question/download/${id}`)
-    .then((resp)=>{console.log(resp)})
-    .catch((e) => {
-      console.log(e);
+  try {
+    const response = await axios.get(`${ip}/api/question/download/${id}`, {
+      responseType: 'blob', // Important for file download
     });
+
+    // Access the Content-Disposition header
+    const contentDisposition = response.headers['content-disposition'];
+
+    // Parse the filename from the header
+    const filename = contentDisposition
+      ? contentDisposition
+          .split('filename=')[1]
+          ?.split(';')[0]
+          ?.replace(/"/g, '') // Extract the filename and handle quotes
+      : `download-${id}`; // Fallback filename
+
+    // Create a Blob and a download URL
+    const blob = new Blob([response.data]);
+    const downloadUrl = window.URL.createObjectURL(blob);
+
+    // Create a temporary anchor element for the download
+    const anchor = document.createElement('a');
+    anchor.href = downloadUrl;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click(); // Trigger the download
+    anchor.remove(); // Clean up the DOM
+
+    // Revoke the object URL to free up memory
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    alert('Failed to download the file. Please try again.');
+  }
 };
+
