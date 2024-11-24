@@ -39,16 +39,20 @@ try{
 }
 
 export const GetQuestionsByID = async (id: string) => {
-  await axios
-    .get(`${ip}/api/question/${id}`)
-    .then()
-    .catch((e) => {
-      console.log(e);
-    });
+try{
+  const resp =await axios.get(`${ip}/api/question/${id}`)
+  console.log(resp.data)
+  return resp.data
+}catch(e){
+  console.error("Error fetching questions:", e);
+
+}
+
+
 };
 
 export const DeleteQuestionsByID = async (id: string) => {
-  axios
+  await axios
     .get(`${ip}/api/question/${id}`)
     .then()
     .catch((e) => {
@@ -66,9 +70,9 @@ export const CheckQuestionsByID = async (id: string, Answer: string) => {
 };
 
 export const DownloadQuestionsByID = async (id: string) => {
-  axios
+  await axios
     .get(`${ip}/api/question/download/${id}`)
-    .then()
+    .then((resp)=>{console.log(resp)})
     .catch((e) => {
       console.log(e);
     });
