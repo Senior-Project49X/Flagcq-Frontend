@@ -26,8 +26,8 @@ export const GetQuestions = async (
 ) => {
   const NewPage = page === null ? 1 : page;
 try{
-    const resp = await axios.get(`${ip}/api/questions/practice?
-        ${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}
+    const resp = await axios.get(`${ip}/api/questions?type=Practice
+        ${selectedCategory==="All Categories" ? "":`&category=${selectedCategory}`}
         ${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}
         page=${NewPage}`,{ withCredentials: true })
     return resp.data
