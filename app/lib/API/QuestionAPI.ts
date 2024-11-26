@@ -29,7 +29,7 @@ try{
     const resp = await axios.get(`${ip}/api/questions/practice?
         ${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}
         ${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}
-        page=${NewPage}`)
+        page=${NewPage}`,{ withCredentials: true })
     return resp.data
 }catch(e){
     console.error("Error fetching questions:", e);
@@ -40,7 +40,7 @@ try{
 
 export const GetQuestionsByID = async (id: string) => {
 try{
-  const resp =await axios.get(`${ip}/api/question/${id}`)
+  const resp =await axios.get(`${ip}/api/question/${id}`,{ withCredentials: true })
   console.log(resp.data)
   return resp.data
 }catch(e){
@@ -53,7 +53,7 @@ try{
 
 export const DeleteQuestionsByID = async (id: string) => {
   await axios
-    .get(`${ip}/api/question/${id}`)
+    .get(`${ip}/api/question/${id}`,{ withCredentials: true })
     .then()
     .catch((e) => {
       console.log(e);
