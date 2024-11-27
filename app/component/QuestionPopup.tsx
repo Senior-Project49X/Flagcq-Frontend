@@ -1,12 +1,65 @@
-import React from "react";
+"use client";
+import React, { FormEvent, useEffect, useState } from "react";
+import {
+  CheckQuestionsByID,
+  DownloadQuestionsByID,
+  GetQuestionsByID,
+} from "../lib/API/QuestionAPI";
 
 type state = {
-  Topic: String;
+  id: string;
+  Topic: string;
   ClosePopup: Function;
   setIsSolved: Function;
 };
 
+interface question {
+  title: string;
+  categories_name: string;
+  categories_id: string;
+  difficultys_id: string;
+  description: string;
+  type: string;
+  isSolve: boolean;
+  id: string;
+  point: string;
+}
+
 export default function QuestionPopup(param: state) {
+  const [showQuestion, setShowQuestion] = useState<question | null>(null);
+  const [Answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(true);
+  const fetchQuestion = async () => {
+    const getQuestion = await GetQuestionsByID(param.id);
+    setShowQuestion(getQuestion);
+
+    setLoading(false);
+  };
+  const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    param.setIsSolved(true);
+    console.log(param.id);
+    param.ClosePopup(false);
+    const formData = new FormData(event.currentTarget);
+    const answer = formData.get("Answer"); // Extract the value from FormData
+
+    if (typeof answer === "string") {
+      console.log("check", answer); // Safely log the string value
+      CheckQuestionsByID(param.id, answer); // Pass the string to the API call
+    } else {
+      console.error("Answer is not a string"); // Handle unexpected cases
+    }
+    // CheckQuestionsByID(param.id, formData.get("Answer")?.toString);
+  };
+
+  useEffect(() => {
+    fetchQuestion();
+    console.log("check", showQuestion);
+  }, []);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div
@@ -21,7 +74,7 @@ export default function QuestionPopup(param: state) {
           <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
             {/*header*/}
             <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-              <h3 className="text-3xl font-semibold">{param.Topic}</h3>
+              <h3 className="text-3xl font-semibold">{showQuestion?.title}</h3>
               <button
                 className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
                 onClick={() => param.ClosePopup(false)}
@@ -34,43 +87,44 @@ export default function QuestionPopup(param: state) {
             {/*body*/}
             <div className="relative p-6 flex-auto">
               <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
-                I always felt like I could do anything. That’s the main thing
-                people are controlled by! Thoughts- their perception of
-                themselves! They're slowed down by their perception of
-                themselves. If you're taught you can’t do anything, you won’t do
-                anything. I was taught I could do everything.
+                {showQuestion?.description}
               </p>
             </div>
-            <button>Download</button>
+            <button
+              onClick={() => {
+                DownloadQuestionsByID(param.id);
+              }}
+            >
+              Download
+            </button>
             {/*footer*/}
-            <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-              <span className="max-w-md mx-auto">
-                <input
-                  type="search"
-                  id="default-search"
-                  className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="CTFCQ{...}"
-                  required
-                />
-              </span>
-              <button
-                className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={() => param.ClosePopup(false)}
-              >
-                Close
-              </button>
-              <button
-                className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={() => {
-                  param.setIsSolved(true);
-                  param.ClosePopup(false);
-                }}
-              >
-                Submit
-              </button>
-            </div>
+            <form onSubmit={onCheckAnswer}>
+              <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                <span className="max-w-md mx-auto">
+                  <input
+                    name="Answer"
+                    type="search"
+                    id="default-search"
+                    className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="CTFCQ{...}"
+                    required
+                  />
+                </span>
+                <button
+                  className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                  type="button"
+                  onClick={() => param.ClosePopup(false)}
+                >
+                  Close
+                </button>
+                <button
+                  className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                  type="submit"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

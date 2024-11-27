@@ -2,6 +2,7 @@ import React from "react";
 import QuestionPopup from "./QuestionPopup";
 import Image from "next/image";
 type detail = {
+  id: string;
   Topic: string;
   Level: string;
   Category: string;
@@ -18,6 +19,7 @@ export default function QuestionCard(param: detail) {
     <div className="relative">
       {showModal ? (
         <QuestionPopup
+          id={param.id}
           ClosePopup={setShowModal}
           Topic={param.Topic}
           setIsSolved={setIsSolve}
