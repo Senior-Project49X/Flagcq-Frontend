@@ -1,8 +1,13 @@
 import axios from "axios";
 
 const ip = process.env.NEXT_PUBLIC_IP_URL;
+interface setState {
+  setIsSuccess: (value: boolean) => void;
+  setIsFailed: (value: boolean) => void;
+  setMessage: (message: string) => void;
+}
 
-export const CreateQuestionAPI = async (CreateData: FormData) => {
+export const CreateQuestionAPI = async (CreateData: FormData, setState: setState ): Promise<any>  => {
   axios
     .post(`${ip}/api/question`, CreateData, {
       withCredentials: true,
@@ -12,9 +17,20 @@ export const CreateQuestionAPI = async (CreateData: FormData) => {
     })
     .then((resp) => {
       console.log(resp);
-      return resp;
+      setState.setIsSuccess(true);
+      if (resp.status === 200) {
+        return resp.data;
+      }else{
+        return resp.data
+      }
+      // console.log(resp);
+      // return resp;
     })
     .catch((e) => {
+      setState.setIsFailed(true);
+      console.log("e",e.response.data.message);
+      setState.setMessage(e.response.data.message);
+
       return e;
     });
 };

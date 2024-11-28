@@ -5,39 +5,21 @@ import {
   DownloadQuestionsByID,
   GetQuestionsByID,
 } from "../lib/API/QuestionAPI";
+import { question } from "../lib/types/QuestionType";
 
 type state = {
   id: string;
   Topic: string;
   ClosePopup: Function;
-  setIsSolved: Function;
 };
-
-interface question {
-  title: string;
-  categories_name: string;
-  categories_id: string;
-  difficultys_id: string;
-  description: string;
-  type: string;
-  isSolve: boolean;
-  id: string;
-  point: string;
-}
 
 export default function QuestionPopup(param: state) {
   const [showQuestion, setShowQuestion] = useState<question | null>(null);
   const [Answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(true);
-  const fetchQuestion = async () => {
-    const getQuestion = await GetQuestionsByID(param.id);
-    setShowQuestion(getQuestion);
 
-    setLoading(false);
-  };
   const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    param.setIsSolved(true);
     console.log(param.id);
     param.ClosePopup(false);
     const formData = new FormData(event.currentTarget);
@@ -53,6 +35,12 @@ export default function QuestionPopup(param: state) {
   };
 
   useEffect(() => {
+    const fetchQuestion = async () => {
+      const getQuestion = await GetQuestionsByID(param.id);
+      setShowQuestion(getQuestion);
+
+      setLoading(false);
+    };
     fetchQuestion();
     console.log("check", showQuestion);
   }, []);
@@ -90,12 +78,13 @@ export default function QuestionPopup(param: state) {
                 {showQuestion?.description}
               </p>
             </div>
+
             <button
               onClick={() => {
                 DownloadQuestionsByID(param.id);
               }}
             >
-              Download
+              {showQuestion?.file_path}
             </button>
             {/*footer*/}
             <form onSubmit={onCheckAnswer}>

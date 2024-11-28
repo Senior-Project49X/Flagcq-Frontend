@@ -1,17 +1,9 @@
 import QuestionCard from "./QuestionCard";
-
+import { questions } from "../lib/types/QuestionType";
 interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
-  questions: {
-    title: string;
-    categories_name: string;
-    id: string;
-    name: string;
-    difficulty: string;
-    type: string;
-    isSolve: boolean;
-  }[];
+  questions: questions[];
 }
 
 export default function Question({
@@ -25,7 +17,7 @@ export default function Question({
       question.type === selectedCategory;
     const difficultyMatches =
       selectedDifficulty === "All Difficulty" ||
-      question.difficulty === selectedDifficulty;
+      question.difficultys_id === selectedDifficulty;
 
     return categoryMatches && difficultyMatches;
   });
@@ -39,7 +31,8 @@ export default function Question({
           Topic={question.title}
           Level={question.difficultys_id}
           Category={question.categories_name}
-          isSolve={question.isSolve}
+          Solved={question.solved}
+          point={question.point}
         />
       ))}
     </div>
