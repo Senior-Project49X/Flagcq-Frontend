@@ -11,20 +11,20 @@ export default function Question({
   selectedCategory,
   questions,
 }: CryptographyProps) {
-  const filtered = questions.filter((question) => {
-    const categoryMatches =
-      selectedCategory === "All Categories" ||
-      question.type === selectedCategory;
-    const difficultyMatches =
-      selectedDifficulty === "All Difficulty" ||
-      question.difficultys_id === selectedDifficulty;
+  // const filtered = questions.filter((question) => {
+  //   const categoryMatches =
+  //     selectedCategory === "All Categories" ||
+  //     question.type === selectedCategory;
+  //   const difficultyMatches =
+  //     selectedDifficulty === "All Difficulty" ||
+  //     question.difficultys_id === selectedDifficulty;
 
-    return categoryMatches && difficultyMatches;
-  });
+  //   return categoryMatches && difficultyMatches;
+  // });
 
   return (
     <div className="mt-12 grid grid-cols-3 gap-6 px-16">
-      {[...filtered].map((question, i) => (
+      {questions.map((question, i) => (
         <QuestionCard
           key={i}
           id={question.id}
