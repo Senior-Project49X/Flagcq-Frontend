@@ -46,11 +46,16 @@ export default function CreateQuestion() {
           Message={message}
         />
       )}
-      <div className="bg-[#fc7b03]">
-        <Navbar />
+
+      <Navbar />
+      <div className="bg-[#ffffff] m-8 p-8 rounded-lg text-2xl ">
         <form onSubmit={onCreateQuestion}>
-          <label>Topic</label>
-          <input type="text" name="title" />
+          <label className="mr-2">Topic</label>
+          <input
+            type="text"
+            name="title"
+            className="text-red-400 border-2 border-stone-950 rounded-md p-1  "
+          />
           <br />
           <label>Category</label>
           <select name="categories_id">

@@ -2,6 +2,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import {
   CheckQuestionsByID,
+  DeleteQuestionsByID,
   DownloadQuestionsByID,
   GetQuestionsByID,
 } from "../lib/API/QuestionAPI";
@@ -64,12 +65,12 @@ export default function QuestionPopup(param: state) {
             <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
               <h3 className="text-3xl font-semibold">{showQuestion?.title}</h3>
               <button
-                className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                onClick={() => param.ClosePopup(false)}
+                className="right-0"
+                onClick={() => {
+                  DeleteQuestionsByID(param.id);
+                }}
               >
-                <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                  ×
-                </span>
+                Delete
               </button>
             </div>
             {/*body*/}
