@@ -2,42 +2,25 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import {
   CheckQuestionsByID,
+  DeleteQuestionsByID,
   DownloadQuestionsByID,
   GetQuestionsByID,
 } from "../lib/API/QuestionAPI";
+import { question } from "../lib/types/QuestionType";
 
 type state = {
   id: string;
   Topic: string;
   ClosePopup: Function;
-  setIsSolved: Function;
 };
-
-interface question {
-  title: string;
-  categories_name: string;
-  categories_id: string;
-  difficultys_id: string;
-  description: string;
-  type: string;
-  isSolve: boolean;
-  id: string;
-  point: string;
-}
 
 export default function QuestionPopup(param: state) {
   const [showQuestion, setShowQuestion] = useState<question | null>(null);
   const [Answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(true);
-  const fetchQuestion = async () => {
-    const getQuestion = await GetQuestionsByID(param.id);
-    setShowQuestion(getQuestion);
 
-    setLoading(false);
-  };
   const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    param.setIsSolved(true);
     console.log(param.id);
     param.ClosePopup(false);
     const formData = new FormData(event.currentTarget);
@@ -53,6 +36,12 @@ export default function QuestionPopup(param: state) {
   };
 
   useEffect(() => {
+    const fetchQuestion = async () => {
+      const getQuestion = await GetQuestionsByID(param.id);
+      setShowQuestion(getQuestion);
+
+      setLoading(false);
+    };
     fetchQuestion();
     console.log("check", showQuestion);
   }, []);
@@ -76,12 +65,12 @@ export default function QuestionPopup(param: state) {
             <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
               <h3 className="text-3xl font-semibold">{showQuestion?.title}</h3>
               <button
-                className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                onClick={() => param.ClosePopup(false)}
+                className="right-0"
+                onClick={() => {
+                  DeleteQuestionsByID(param.id);
+                }}
               >
-                <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                  ×
-                </span>
+                Delete
               </button>
             </div>
             {/*body*/}
@@ -90,12 +79,13 @@ export default function QuestionPopup(param: state) {
                 {showQuestion?.description}
               </p>
             </div>
+
             <button
               onClick={() => {
                 DownloadQuestionsByID(param.id);
               }}
             >
-              Download
+              {showQuestion?.file_path}
             </button>
             {/*footer*/}
             <form onSubmit={onCheckAnswer}>

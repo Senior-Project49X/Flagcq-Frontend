@@ -9,7 +9,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true); // Add loading state
   useEffect(() => {
     loginChecker(setLoading);
-  }, []);
+  }, [loading]);
 
   if (loading) {
     return <div>Loading...</div>;
