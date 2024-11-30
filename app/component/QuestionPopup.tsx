@@ -4,6 +4,7 @@ import {
   CheckQuestionsByID,
   DeleteQuestionsByID,
   DownloadQuestionsByID,
+  GetQuestions,
   GetQuestionsByID,
 } from "../lib/API/QuestionAPI";
 import { question } from "../lib/types/QuestionType";
@@ -15,9 +16,30 @@ type state = {
 };
 
 export default function QuestionPopup(param: state) {
+  const [showPopup, setShowPopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState<question | null>(null);
   const [Answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [Name, setName] = useState("");
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setIsError(false);
+    setName(""); // Reset input
+  };
+
+  // Handle delete confirmation
+  const handleConfirmDelete = () => {
+    if (Name === showQuestion?.title) {
+      DeleteQuestionsByID(param.id);
+      handleClosePopup();
+      param.ClosePopup(false);
+      location.reload();
+    } else {
+      setIsError(true);
+    }
+  };
 
   const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -64,15 +86,58 @@ export default function QuestionPopup(param: state) {
             {/*header*/}
             <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
               <h3 className="text-3xl font-semibold">{showQuestion?.title}</h3>
-              <button
+              {/* <button
                 className="right-0"
                 onClick={() => {
                   DeleteQuestionsByID(param.id);
                 }}
               >
+                Deletes
+              </button> */}
+              <button
+                className="text-red-500 font-bold"
+                onClick={() => setShowPopup(true)}
+              >
                 Delete
               </button>
+              {showPopup && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
+                    <button
+                      onClick={handleClosePopup}
+                      className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
+                    >
+                      X
+                    </button>
+                    <h2 className="text-red-500 font-bold text-2xl mb-4">
+                      Are you sure you want to delete this question?
+                    </h2>
+                    <p className="mb-4">
+                      Please type the question's name to confirm.
+                    </p>
+                    <input
+                      type="text"
+                      placeholder="Team name"
+                      value={Name}
+                      onChange={(e) => setName(e.target.value)}
+                      className={`w-full p-2 border rounded-lg mb-4 ${
+                        isError ? "border-red-500" : "border-gray-300"
+                      }`}
+                    />
+                    {isError && (
+                      <p className="text-red-500 text-sm mb-6">Wrong name</p>
+                    )}
+                    <button
+                      onClick={handleConfirmDelete}
+                      className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl w-1/2 hover:bg-red-600"
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
+
             {/*body*/}
             <div className="relative p-6 flex-auto">
               <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
