@@ -58,7 +58,10 @@ export default function CreateQuestion() {
           />
           <br />
           <label>Category</label>
-          <select name="categories_id">
+          <select
+            name="categories_id"
+            className="border-2 border-stone-950 rounded-md p-1"
+          >
             <option value={""}>---please select category---</option>
             <option value={"General Skill"}>General Skill</option>
             <option value={"Cryptography"}>Cryptography</option>
@@ -67,7 +70,10 @@ export default function CreateQuestion() {
           </select>
           <br />
           <label>Difficulty</label>
-          <select name="difficultys_id">
+          <select
+            name="difficultys_id"
+            className="border-2 border-stone-950 rounded-md p-1"
+          >
             <option value={""}>---please select Difficulty---</option>
             <option value={"Easy"}>Easy</option>
             <option value={"Medium"}>Medium</option>
@@ -75,17 +81,27 @@ export default function CreateQuestion() {
           </select>
           <br />
           <label>Mode</label>
-          <select name="type">
+          <select
+            name="type"
+            className="border-2 border-stone-950 rounded-md p-1"
+          >
             <option value={""}>---please select Mode---</option>
             <option value={"Practice"}>Practice</option>
             <option value={"Tournament"}>Tournament</option>
           </select>
           <br />
           <label>Description</label>
-          <textarea name="Description" />
+          <textarea
+            name="Description"
+            className="border-2 border-stone-950 rounded-md p-1"
+          />
           <br />
           <label>{`Answer: CTFCQ{ `}</label>
-          <input name="Answer" type="text" />
+          <input
+            name="Answer"
+            type="text"
+            className="border-2 border-stone-950 rounded-md p-1"
+          />
           <span>{` }`}</span>
           <br />
           <label>Point</label>
@@ -94,6 +110,7 @@ export default function CreateQuestion() {
             type="number"
             min="0"
             max="10000000"
+            className="border-2 border-stone-950 rounded-md p-1"
             onKeyDown={(e) => {
               if (
                 e.key === "e" ||
@@ -108,7 +125,10 @@ export default function CreateQuestion() {
           <label>File</label>
           <input name="file" type="file" />
           <br />
-          <button type="submit" className="m-5 p-5 bg-[#ffffff] rounded-lg">
+          <button
+            type="submit"
+            className="m-5 p-5 bg-[#ffffff] rounded-lg border-2 border-stone-950 p-1"
+          >
             Confirm
           </button>
         </form>
