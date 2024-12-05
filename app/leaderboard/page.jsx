@@ -1,25 +1,52 @@
 "use client";
 import Navbar from "../component/navbar";
+import { GetLbData } from "../lib/API/GetLbAPI";
+import { GetUserData } from "../lib/API/GetUserAPI";
+import { useState, useEffect } from "react";
 
 export default function Leaderboard() {
-  // Consolidated leaderboard data
-  const leaderboard = [
-    { rank: "1st", username: "username1", score: 4500 },
-    { rank: "2nd", username: "username8", score: 4000 },
-    { rank: "3rd", username: "username10", score: 3200 },
-    { rank: "4th", username: "username2", score: 3000 },
-    { rank: "5th", username: "username4", score: 2000 },
-    { rank: "6th", username: "username7", score: 1900 },
-  ];
+  const [data, setData] = useState(null); // User's rank data
+  const [leaderboardData, setLeaderboardData] = useState([]); // Leaderboard data
 
-  const Myleaderboard = { rank: "10th", username: "My username", score: 1000 };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await GetUserData();
+        setData(response || null);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
 
-  // Function to determine the color based on rank
-  const getRankColor = (rank) => {
-    if (rank === "1st") return "text-yellow-600";
-    if (rank === "2nd") return "text-gray-500";
-    if (rank === "3rd") return "text-orange-500";
-    return "";
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await GetLbData();
+        setLeaderboardData(response || []);
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      }
+    };
+
+    fetchUserData();
+    fetchLeaderboardData();
+  }, []);
+
+  const getRankColor1 = (rank) => {
+    if (rank === 1) return "text-yellow-600";
+    if (rank === 2) return "text-gray-500";
+    if (rank === 3) return "text-orange-500";
+    return "text-white"; // Default color for other ranks
+  };
+
+  const getOrdinalSuffix = (rank) => {
+    const lastDigit = parseInt(rank) % 10;
+    const lastTwoDigits = parseInt(rank) % 100;
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 13) return "th";
+    if (lastDigit === 1) return "st";
+    if (lastDigit === 2) return "nd";
+    if (lastDigit === 3) return "rd";
+    return "th";
   };
 
   return (
@@ -31,38 +58,54 @@ export default function Leaderboard() {
         <h1 className="text-2xl font-bold mb-8 text-center">Leaderboard</h1>
         <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
           <div className="flex justify-between mb-4">
-            <span className="font-bold">username</span>
-            <span className="font-bold">score</span>
+            <span className="font-bold">Rank</span>
+            <span className="font-bold">Username</span>
+            <span className="font-bold">Score</span>
           </div>
           <hr className="border-t-2 mb-4" />
-          {leaderboard.map((entry, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center text-lg mb-2"
-            >
-              <span className={`${getRankColor(entry.rank)} font-semibold`}>
-                {entry.rank}
-              </span>
-              <span className={`${getRankColor(entry.rank)}`}>
-                {entry.username}
-              </span>
-              <span className={`${getRankColor(entry.rank)}`}>
-                {entry.score}
-              </span>
-            </div>
-          ))}
+
+          {leaderboardData.length > 0 ? (
+            leaderboardData.map((entry, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center text-lg mb-2"
+              >
+                <span className={`${getRankColor1(entry.rank)} font-semibold`}>
+                  {entry.rank}
+                  {getOrdinalSuffix(entry.rank)}
+                </span>
+                <span>
+                  {entry.User.first_name || "Unknown"}{" "}
+                  {entry.User.last_name || ""}
+                </span>
+                <span>{entry.points}</span>
+              </div>
+            ))
+          ) : (
+            <p className="text-center">Loading leaderboard...</p>
+          )}
         </div>
       </div>
 
       {/* My Leaderboard */}
-      <h2 className="text-xl font-bold  text-center">My Rank</h2>
+      <h2 className="text-xl font-bold text-center mt-8">My Rank</h2>
       <div className="max-w-3xl mx-auto p-8">
         <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
-          <div className="flex justify-between items-center text-lg mb-2">
-            <span className="font-semibold">{Myleaderboard.rank}</span>
-            <span>{Myleaderboard.username}</span>
-            <span>{Myleaderboard.score}</span>
-          </div>
+          {data ? (
+            <div className="flex justify-between items-center text-lg mb-2">
+              <span className={`font-semibold ${getRankColor1(data.rank)}`}>
+                {data.rank
+                  ? `${data.rank}${getOrdinalSuffix(data.rank)}`
+                  : "N/A"}
+              </span>
+              <span>
+                {data.first_name || "Unknown"} {data.last_name || ""}
+              </span>
+              <span>{data.points || 0}</span>
+            </div>
+          ) : (
+            <p className="text-center">Loading your rank...</p>
+          )}
         </div>
       </div>
     </div>
