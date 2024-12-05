@@ -15,7 +15,7 @@ export default function TourLeaderboard() {
   const Myleaderboard = { rank: "10th", username: "My team", score: 1000 };
 
   // Function to determine the color based on rank
-  const getRankColor = (rank) => {
+  const getRankColor = (rank: string) => {
     if (rank === "1st") return "text-yellow-600";
     if (rank === "2nd") return "text-gray-500";
     if (rank === "3rd") return "text-orange-500";

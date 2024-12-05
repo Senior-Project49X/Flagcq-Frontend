@@ -23,7 +23,9 @@ export default function TournamentCard({
   const [CloseModal, setCloseModal] = useState(true);
   return (
     <div className="py-6 px-5 bg-white rounded-lg ">
-      {!CloseModal && <EnrollModal ClosePopup={setCloseModal} Topic={topic} />}
+      {!CloseModal && (
+        <EnrollModal ClosePopup={setCloseModal} Topic={topic} Detail={detail} />
+      )}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold mb-1">{topic}</h2>

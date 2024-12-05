@@ -1,37 +1,28 @@
 import React, { FormEvent } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 type ModalDetail = {
   ClosePopup: Function;
   Topic: string;
+  Detail: string;
 };
 
-export default function EnrollModal({ ClosePopup, Topic }: ModalDetail) {
+export default function EnrollModal({
+  ClosePopup,
+  Topic,
+  Detail,
+}: ModalDetail) {
   async function onCreateTeam(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     console.log(formData.get("TeamName"));
-
-    // const response = await fetch("/api/submit", {
-    //   method: "POST",
-    //   body: formData,
-    // });
-
-    // // Handle response if necessary
-    // const data = await response.json();
-    // // ...
   }
+
   async function onJoinTeam(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     console.log(formData.get("TeamCode"));
-
-    // const response = await fetch("/api/submit", {
-    //   method: "POST",
-    //   body: formData,
-    // });
-
-    // // Handle response if necessary
-    // const data = await response.json();
-    // // ...
   }
 
   return (
@@ -41,51 +32,71 @@ export default function EnrollModal({ ClosePopup, Topic }: ModalDetail) {
         onMouseDown={() => ClosePopup(true)}
       >
         <div
-          className="relative w-auto my-6 mx-auto max-w-3xl"
+          className="relative w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-              <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-                <h3 className="text-3xl font-semibold">{Topic}</h3>
-                <button
-                  className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                  onClick={() => ClosePopup(true)}
-                >
-                  <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                    ×
-                  </span>
-                </button>
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b">
+            <h3 className="text-lg font-semibold">{Topic}</h3>
+            <button
+              className="text-black text-2xl"
+              onClick={() => ClosePopup(true)}
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="px-6 py-6">
+            <h4 className="text-center text-lg font-semibold mb-6">Detail</h4>
+            <div className="text-center mb-6">{Detail}</div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col items-center border-r pr-4">
+                <h5 className="text-sm font-bold mb-2">Create new team</h5>
+                <form onSubmit={onCreateTeam} className="w-full">
+                  <input
+                    type="text"
+                    name="TeamName"
+                    placeholder="ชื่อทีม"
+                    className="w-full px-3 py-2 border rounded mb-4"
+                    maxLength={50}
+                  />
+                  <Link href="/tournament/Tourteam">
+                    <button
+                      type="submit"
+                      className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                    >
+                      Create
+                    </button>
+                  </Link>
+                </form>
               </div>
-              {/* content */}
-              <div className="relative p-6 flex-auto">
-                <div>
-                  <p>Create new team</p>
-                  <form onSubmit={onCreateTeam}>
-                    <input
-                      type="text"
-                      name="TeamName"
-                      placeholder="ชื่อทีม"
-                      maxLength={50}
-                    />
-                    <button type="submit">Submit</button>
-                  </form>
-                  <p>Already has team</p>
-                  <form onSubmit={onJoinTeam}>
-                    <input
-                      type="text"
-                      name="TeamCode"
-                      placeholder="รหัสเชิญ..."
-                    />
-                    <button type="submit">Submit</button>
-                  </form>
-                  {/* <input type="text"></input> */}
-                </div>
+
+              {/* Join Team */}
+              <div className="flex flex-col items-center">
+                <h5 className="text-sm font-bold mb-2">Already has team</h5>
+                <form onSubmit={onJoinTeam} className="w-full">
+                  <input
+                    type="text"
+                    name="TeamCode"
+                    placeholder="รหัสเชิญ"
+                    className="w-full px-3 py-2 border rounded mb-4"
+                  />
+                  <Link href="/tournament/Tourteam">
+                    <button
+                      type="submit"
+                      className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                    >
+                      Join
+                    </button>
+                  </Link>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Background Overlay */}
       <div className="opacity-40 fixed inset-0 z-40 bg-black"></div>
     </>
   );
