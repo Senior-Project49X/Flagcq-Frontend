@@ -42,7 +42,7 @@ export const GetQuestions = async (
 ) => {
   const NewPage = page === null ? 1 : page;
 try{
-    const resp = await axios.get(`${ip}/api/questions?type=Practice${selectedCategory==="All Categories" ? "":`&category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}`}&page=${NewPage}`,{ withCredentials: true })
+    const resp = await axios.get(`${ip}/api/questions/practice?mode=Practice${selectedCategory==="All Categories" ? "":`&category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}`}&page=${NewPage}`,{ withCredentials: true })
     return resp.data
 }catch(e){
     console.error("Error fetching questions:", e);
