@@ -19,7 +19,6 @@ export default function Homepage() {
     useState<string>("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<string>("All Difficulty");
-  const [isLogin, setIsLogin] = useState(false);
   const [point, setPoint] = useState<string>("0");
   const [questions, setQuestions] = useState<questions[]>([]);
 
@@ -55,34 +54,30 @@ export default function Homepage() {
 
   return (
     <div>
-      <>
-        <Navbar />
-        <ScoreBar point={point} />
-        <div className="flex">
-          <Category
-            selectedCategory={selectedCategory}
-            onCategoryClick={handleCategoryClick}
-          />
+      <Navbar />
+      <ScoreBar point={point} />
+      <div className="flex">
+        <Category
+          selectedCategory={selectedCategory}
+          onCategoryClick={handleCategoryClick}
+        />
 
-          <Difficult
+        <Difficult
+          selectedDifficulty={selectedDifficulty}
+          onDifficultyClick={handleDifficultyClick}
+        />
+
+        {/* Question Box */}
+        <div className="flex-1 p-6 rounded-lg">
+          <Question
             selectedDifficulty={selectedDifficulty}
-            onDifficultyClick={handleDifficultyClick}
+            selectedCategory={selectedCategory}
+            questions={questions}
           />
 
-          {/* Question Box */}
-          <div className="flex-1 p-6 rounded-lg">
-            <>
-              <Question
-                selectedDifficulty={selectedDifficulty}
-                selectedCategory={selectedCategory}
-                questions={questions}
-              />
-            </>
-
-            <Pagination pagePath={"/?page="} pageNumber={page} />
-          </div>
+          <Pagination pagePath={"/?page="} pageNumber={page} />
         </div>
-      </>
+      </div>
     </div>
   );
 }
