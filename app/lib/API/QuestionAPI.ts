@@ -1,18 +1,18 @@
 import axios from "axios";
 
 const ip = process.env.NEXT_PUBLIC_IP_URL;
-interface setState {
+interface SetState {
   setIsSuccess: (value: boolean) => void;
   setIsFailed: (value: boolean) => void;
   setMessage: (message: string) => void;
 }
 
-export const CreateQuestionAPI = async (CreateData: FormData, setState: setState ): Promise<any>  => {
+export const CreateQuestionAPI = async (CreateData: FormData, setState: SetState ): Promise<any>  => {
   axios
     .post(`${ip}/api/question`, CreateData, {
       withCredentials: true,
       headers: {
-        "Content-Type": "multipart/form-data", // ให้ axios ทราบว่าใช้ FormData
+        "Content-Type": "multipart/form-data",
       },
     })
     .then((resp) => {
@@ -23,8 +23,7 @@ export const CreateQuestionAPI = async (CreateData: FormData, setState: setState
       }else{
         return resp.data
       }
-      // console.log(resp);
-      // return resp;
+    
     })
     .catch((e) => {
       setState.setIsFailed(true);
@@ -40,7 +39,7 @@ export const GetQuestions = async (
   selectedDifficulty: string,
   page: string | null
 ) => {
-  const NewPage = page === null ? 1 : page;
+  const NewPage = page ?? 1;
 try{
     const resp = await axios.get(`${ip}/api/questions/practice?mode=Practice${selectedCategory==="All Categories" ? "":`&category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}`}&page=${NewPage}`,{ withCredentials: true })
     return resp.data

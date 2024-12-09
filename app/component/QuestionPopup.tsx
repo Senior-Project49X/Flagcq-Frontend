@@ -4,7 +4,6 @@ import {
   CheckQuestionsByID,
   DeleteQuestionsByID,
   DownloadQuestionsByID,
-  GetQuestions,
   GetQuestionsByID,
 } from "../lib/API/QuestionAPI";
 import { question } from "../lib/types/QuestionType";
@@ -15,13 +14,12 @@ type state = {
   ClosePopup: Function;
 };
 
-export default function QuestionPopup(param: state) {
+export default function QuestionPopup(param: Readonly<state>) {
   const [showPopup, setShowPopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState<question | null>(null);
-  const [Answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [Name, setName] = useState("");
+  const [name, setName] = useState("");
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -31,7 +29,7 @@ export default function QuestionPopup(param: state) {
 
   // Handle delete confirmation
   const handleConfirmDelete = () => {
-    if (Name === showQuestion?.title) {
+    if (name === showQuestion?.title) {
       DeleteQuestionsByID(param.id);
       handleClosePopup();
       param.ClosePopup(false);
@@ -54,7 +52,6 @@ export default function QuestionPopup(param: state) {
     } else {
       console.error("Answer is not a string"); // Handle unexpected cases
     }
-    // CheckQuestionsByID(param.id, formData.get("Answer")?.toString);
   };
 
   useEffect(() => {
@@ -66,18 +63,18 @@ export default function QuestionPopup(param: state) {
     };
     fetchQuestion();
     console.log("check", showQuestion);
-  }, []);
+  }, [param.id, showQuestion]);
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      <div
+      <button
         className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
         onMouseDown={() => param.ClosePopup(false)}
       >
-        <div
+        <button
           className="relative w-auto my-6 mx-auto max-w-3xl"
           onMouseDown={(e) => e.stopPropagation()}
         >
@@ -86,14 +83,7 @@ export default function QuestionPopup(param: state) {
             {/*header*/}
             <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
               <h3 className="text-3xl font-semibold">{showQuestion?.title}</h3>
-              {/* <button
-                className="right-0"
-                onClick={() => {
-                  DeleteQuestionsByID(param.id);
-                }}
-              >
-                Deletes
-              </button> */}
+
               <button
                 className="text-red-500 font-bold"
                 onClick={() => setShowPopup(true)}
@@ -113,12 +103,12 @@ export default function QuestionPopup(param: state) {
                       Are you sure you want to delete this question?
                     </h2>
                     <p className="mb-4">
-                      Please type the question's name to confirm.
+                      Please type the question&#39s name to confirm.
                     </p>
                     <input
                       type="text"
                       placeholder="Team name"
-                      value={Name}
+                      value={name}
                       onChange={(e) => setName(e.target.value)}
                       className={`w-full p-2 border rounded-lg mb-4 ${
                         isError ? "border-red-500" : "border-gray-300"
@@ -181,8 +171,8 @@ export default function QuestionPopup(param: state) {
               </div>
             </form>
           </div>
-        </div>
-      </div>
+        </button>
+      </button>
       <div className="opacity-40 fixed inset-0 z-40 bg-black"></div>
     </>
   );

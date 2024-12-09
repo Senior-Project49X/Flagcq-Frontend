@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { cookies } from 'next/headers'
-import { getCookie, isHasCookie } from './app/lib/cookies'
  
 // 1. Specify protected and public routes
 const protectedRoutes = ['/','/tournament','/leaderboard','/createQuestion','/profile']

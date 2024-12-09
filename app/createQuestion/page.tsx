@@ -1,10 +1,9 @@
 "use client";
-import React, { FormEvent, use, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "../component/navbar";
 import { CreateQuestionAPI } from "../lib/API/QuestionAPI";
 import LoadingPopup from "../component/LoadingPopup";
-import { log } from "console";
 
 interface CreateNewQuestion {
   CategoriesId: string | null;
@@ -26,7 +25,7 @@ export default function CreateQuestion() {
     UnPublic: true,
   });
 
-  const [Loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -35,7 +34,6 @@ export default function CreateQuestion() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     formData.append("Practice", modeSelection.Practice.toString());
-    // formData.append("Tournament", []);
     console.log(typeof formData.get("Practice"));
 
     formData.append(`Tournament`, `[${selectedTournament.toString()}]`);
@@ -70,11 +68,11 @@ export default function CreateQuestion() {
     setMessage("");
     setIsFailed(false);
     setIsSuccess(false);
-  }, [Loading]);
+  }, [loading]);
 
   return (
     <>
-      {Loading && (
+      {loading && (
         <LoadingPopup
           setLoading={setLoading}
           isFailed={isFailed}
@@ -86,41 +84,47 @@ export default function CreateQuestion() {
       <Navbar />
       <div className="bg-[#ffffff] m-8 p-8 rounded-lg text-2xl ">
         <form onSubmit={onCreateQuestion}>
-          <label className="mr-2">Topic</label>
-          <input
-            type="text"
-            name="title"
-            className="text-red-400 border-2 border-stone-950 rounded-md p-1  "
-          />
+          <label className="mr-2">
+            Topic{" "}
+            <input
+              type="text"
+              name="title"
+              className="text-red-400 border-2 border-stone-950 rounded-md p-1  "
+            />
+          </label>
           <br />
-          <label>Category</label>
-          <select
-            name="categories_id"
-            className="border-2 border-stone-950 rounded-md p-1"
-          >
-            <option value={""}>---please select category---</option>
-            <option value={1}>General Skill</option>
-            <option value={"Cryptography"}>Cryptography</option>
-            <option value={"Network"}>Network</option>
-            <option value={"Forensics"}>Forensics</option>
-          </select>
+          <label>
+            Category{" "}
+            <select
+              name="categories_id"
+              className="border-2 border-stone-950 rounded-md p-1"
+            >
+              <option value={""}>---please select category---</option>
+              <option value={1}>General Skill</option>
+              <option value={"Cryptography"}>Cryptography</option>
+              <option value={"Network"}>Network</option>
+              <option value={"Forensics"}>Forensics</option>
+            </select>
+          </label>
           <br />
-          <label>Difficulty</label>
-          <select
-            name="difficultys_id"
-            className="border-2 border-stone-950 rounded-md p-1"
-          >
-            <option value={""}>---please select Difficulty---</option>
-            <option value={"Easy"}>Easy</option>
-            <option value={"Medium"}>Medium</option>
-            <option value={"Hard"}>Hard</option>
-          </select>
+          <label>
+            Difficulty{" "}
+            <select
+              name="difficultys_id"
+              className="border-2 border-stone-950 rounded-md p-1"
+            >
+              <option value={""}>---please select Difficulty---</option>
+              <option value={"Easy"}>Easy</option>
+              <option value={"Medium"}>Medium</option>
+              <option value={"Hard"}>Hard</option>
+            </select>
+          </label>
           <br />
           <div>
             <p>Mode</p>
-            {Object.keys(modeSelection).map((buttonKey, i) => (
+            {Object.keys(modeSelection).map((buttonKey) => (
               <button
-                key={i}
+                key={buttonKey}
                 type="button"
                 className={`px-4 py-2 font-bold rounded transition ${
                   modeSelection[buttonKey]
@@ -152,11 +156,13 @@ export default function CreateQuestion() {
               None
             </button> */}
           </div>
-          <label>Description</label>
-          <textarea
-            name="Description"
-            className="border-2 border-stone-950 rounded-md p-1"
-          />
+          <label>
+            Description{" "}
+            <textarea
+              name="Description"
+              className="border-2 border-stone-950 rounded-md p-1"
+            />
+          </label>
           <br />
           <label>{`Answer: CTFCQ{ `}</label>
           <input
@@ -166,26 +172,30 @@ export default function CreateQuestion() {
           />
           <span>{` }`}</span>
           <br />
-          <label>Point</label>
-          <input
-            name="point"
-            type="number"
-            min="0"
-            max="10000000"
-            className="border-2 border-stone-950 rounded-md p-1"
-            onKeyDown={(e) => {
-              if (
-                e.key === "e" ||
-                e.key === "E" ||
-                e.key === "+" ||
-                e.key === "-"
-              )
-                e.preventDefault();
-            }}
-          />
+          <label>
+            Point{}
+            <input
+              name="point"
+              type="number"
+              min="0"
+              max="10000000"
+              className="border-2 border-stone-950 rounded-md p-1"
+              onKeyDown={(e) => {
+                if (
+                  e.key === "e" ||
+                  e.key === "E" ||
+                  e.key === "+" ||
+                  e.key === "-"
+                )
+                  e.preventDefault();
+              }}
+            />
+          </label>
           <br />
-          <label>File</label>
-          <input name="file" type="file" />
+          <label>
+            File{}
+            <input name="file" type="file" />
+          </label>
           <br />
           <button
             type="submit"
