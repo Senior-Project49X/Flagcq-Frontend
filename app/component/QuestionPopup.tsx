@@ -129,7 +129,7 @@ export default function QuestionPopup(param: Readonly<state>) {
             </div>
 
             {/*body*/}
-            <div className="relative p-6 flex-auto">
+            <div className=" p-6 flex-auto">
               <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
                 {showQuestion?.description}
               </p>

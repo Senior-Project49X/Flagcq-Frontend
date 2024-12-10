@@ -8,21 +8,21 @@ export default function page() {
   const tournaments = [
     {
       Topic: "linux",
-      Detail: "",
+      Detail: "linux for beginning",
       Quantity: 15,
       EventStart: "DD/MM/YYYY",
       EnrollEnd: "DD/MM/YYYY",
     },
     {
       Topic: "cmu 1",
-      Detail: "",
+      Detail: "cmu testing for cpe 1",
       Quantity: 35,
       EventStart: "DD/MM/YYYY",
       EnrollEnd: "DD/MM/YYYY",
     },
     {
       Topic: "cmu 2",
-      Detail: "",
+      Detail: "cmu testing for cpe 2",
       Quantity: 20,
       EventStart: "DD/MM/YYYY",
       EnrollEnd: "DD/MM/YYYY",

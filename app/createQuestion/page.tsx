@@ -43,7 +43,7 @@ export default function CreateQuestion() {
     setLoading(true);
   };
   const handleToggle = (buttonKey: string): void => {
-    if (buttonKey === "None") {
+    if (buttonKey === "UnPublic") {
       setModeSelection((prevStates) => ({
         Practice: false,
         Tournament: false,
@@ -93,19 +93,17 @@ export default function CreateQuestion() {
             />
           </label>
           <br />
-          <label>
-            Category{" "}
-            <select
-              name="categories_id"
-              className="border-2 border-stone-950 rounded-md p-1"
-            >
-              <option value={""}>---please select category---</option>
-              <option value={1}>General Skill</option>
-              <option value={"Cryptography"}>Cryptography</option>
-              <option value={"Network"}>Network</option>
-              <option value={"Forensics"}>Forensics</option>
-            </select>
-          </label>
+          <label>Category</label>
+          <select
+            name="categories_id"
+            className="border-2 border-stone-950 rounded-md p-1"
+          >
+            <option value={""}>---please select category---</option>
+            <option value={1}>General Skill</option>
+            <option value={"Cryptography"}>Cryptography</option>
+            <option value={"Network"}>Network</option>
+            <option value={"Forensics"}>Forensics</option>
+          </select>
           <br />
           <label>
             Difficulty{" "}
