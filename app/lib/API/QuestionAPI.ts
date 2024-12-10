@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const ip = process.env.NEXT_PUBLIC_IP_URL;
-interface setState {
+interface SetState {
   setIsSuccess: (value: boolean) => void;
   setIsFailed: (value: boolean) => void;
   setMessage: (message: string) => void;
@@ -15,7 +15,7 @@ export const CreateQuestionAPI = async (
     .post(`${ip}/api/question`, CreateData, {
       withCredentials: true,
       headers: {
-        "Content-Type": "multipart/form-data", // ให้ axios ทราบว่าใช้ FormData
+        "Content-Type": "multipart/form-data",
       },
     })
     .then((resp) => {
@@ -26,8 +26,6 @@ export const CreateQuestionAPI = async (
       } else {
         return resp.data;
       }
-      // console.log(resp);
-      // return resp;
     })
     .catch((e) => {
       setState.setIsFailed(true);
@@ -46,7 +44,7 @@ export const GetQuestions = async (
   const NewPage = page === null ? 1 : page;
   try {
     const resp = await axios.get(
-      `${ip}/api/questions/practice?${
+      `${ip}/api/questions/practice?mode=Practice${
         selectedCategory === "All Categories"
           ? ""
           : `&category=${selectedCategory}`
