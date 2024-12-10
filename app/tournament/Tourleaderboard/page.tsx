@@ -1,32 +1,35 @@
 "use client";
+
 import Navbar from "../../component/navbar";
+import { GetLbTourData } from "../../lib/API/GetLbTourAPI";
+import { useState, useEffect } from "react";
 
-export default function TourLeaderboard() {
-  // Consolidated leaderboard data
-  const Tourleaderboard = [
-    { rank: "1st", username: "team1", score: 4500 },
-    { rank: "2nd", username: "team8", score: 4000 },
-    { rank: "3rd", username: "team10", score: 3200 },
-    { rank: "4th", username: "team2", score: 3000 },
-    { rank: "5th", username: "team4", score: 2000 },
-    { rank: "6th", username: "team7", score: 1900 },
-  ];
+export default function TeamLeaderboard() {
+  const [leaderboardData, setLeaderboardData] = useState<
+    { team_name: string; total_points: number; rank: string }[]
+  >([]); // Leaderboard data
 
-  const Myleaderboard = { rank: "10th", username: "My team", score: 1000 };
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await GetLbTourData("1");
+        console.log("Leaderboard data:", response); // Debugging the response
+        const parsedData = Array.isArray(response) ? response : [];
+        setLeaderboardData(parsedData);
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      }
+    };
 
-  // Function to determine the color based on rank
-  const getRankColor = (rank: string) => {
-    if (rank === "1st") return "text-yellow-600";
-    if (rank === "2nd") return "text-gray-500";
-    if (rank === "3rd") return "text-orange-500";
-    return "";
-  };
+    fetchLeaderboardData();
+  }, []); // Dependency array ensures this runs once on mount
+
+  const Team = { team: "team1", rank: "1st", score: 4500 };
 
   return (
     <div className="min-h-screen bg-[#090147] text-white">
       <Navbar />
 
-      {/* Main Leaderboard */}
       <div className="max-w-3xl mx-auto p-8">
         <h1 className="text-2xl font-bold mb-8 text-center">
           Tournament Leaderboard
@@ -34,39 +37,42 @@ export default function TourLeaderboard() {
         <h1 className="text-2xl font-bold mb-8 text-center">
           Linux for CPE 2025
         </h1>
+
+        {/* Leaderboard */}
         <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
           <div className="flex justify-between mb-4">
             <span className="font-bold">Team</span>
-            <span className="font-bold">score</span>
+            <span className="font-bold">Score</span>
           </div>
           <hr className="border-t-2 mb-4" />
-          {Tourleaderboard.map((entry, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center text-lg mb-2"
-            >
-              <span className={`${getRankColor(entry.rank)} font-semibold`}>
-                {entry.rank}
-              </span>
-              <span className={`${getRankColor(entry.rank)}`}>
-                {entry.username}
-              </span>
-              <span className={`${getRankColor(entry.rank)}`}>
-                {entry.score}
-              </span>
+          {Array.isArray(leaderboardData) && leaderboardData.length > 0 ? (
+            leaderboardData.map((entry, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center text-lg mb-2"
+              >
+                <span>{entry.rank}</span>
+                <span>{entry.team_name}</span>
+                <span>{entry.total_points}</span>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500">
+              No leaderboard data available.
             </div>
-          ))}
+          )}
         </div>
-      </div>
-
-      {/* My Leaderboard */}
-      <h2 className="text-xl font-bold  text-center">My Team</h2>
-      <div className="max-w-3xl mx-auto p-8">
-        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
-          <div className="flex justify-between items-center text-lg mb-2">
-            <span className="font-semibold">{Myleaderboard.rank}</span>
-            <span>{Myleaderboard.username}</span>
-            <span>{Myleaderboard.score}</span>
+        <br />
+        {/* Team Summary */}
+        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md mb-8">
+          <div className="mb-4">
+            <div className="font-semibold text-xl">Team: {Team.team}</div>
+          </div>
+          <div className="mb-2">
+            <div className="font-medium">{Team.rank} place</div>
+          </div>
+          <div className="mb-2">
+            <div>{Team.score} points</div>
           </div>
         </div>
       </div>
