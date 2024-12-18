@@ -2,7 +2,11 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "../component/navbar";
-import { CreateQuestionAPI } from "../lib/API/QuestionAPI";
+import {
+  CreateCategories,
+  CreateQuestionAPI,
+  GetCategories,
+} from "../lib/API/QuestionAPI";
 import LoadingPopup from "../component/LoadingPopup";
 
 interface CreateNewQuestion {
@@ -18,6 +22,11 @@ interface CreateNewQuestion {
 interface ButtonStates {
   [key: string]: boolean; // Define a dynamic object where keys are strings and values are boolean
 }
+interface Category {
+  [x: string]: any;
+  id: string;
+  name: string;
+}
 export default function CreateQuestion() {
   const [modeSelection, setModeSelection] = useState<ButtonStates>({
     Practice: false,
@@ -30,9 +39,20 @@ export default function CreateQuestion() {
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [selectedTournament, setSelectedTournament] = useState<string[]>([]);
-  const onCreateQuestion = (event: FormEvent<HTMLFormElement>) => {
+  const [categories, setCategories] = useState<Category[]>(
+    [] as unknown as Category[]
+  );
+  const [newCategory, setNewCategory] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [newCategoryName, setNewCategoryName] = useState<string>("");
+
+  const onCreateQuestion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    if (selectedCategory === "") return;
+    if (selectedCategory === "New Category")
+      await CreateCategories(newCategoryName);
+
     formData.append("Practice", modeSelection.Practice.toString());
     console.log(typeof formData.get("Practice"));
 
@@ -69,7 +89,13 @@ export default function CreateQuestion() {
     setIsFailed(false);
     setIsSuccess(false);
   }, [loading]);
-
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setCategories(await GetCategories());
+    };
+    fetchCategories();
+    console.log(categories);
+  }, []);
   return (
     <>
       {loading && (
@@ -93,17 +119,35 @@ export default function CreateQuestion() {
             />
           </label>
           <br />
-          <label>Category</label>
-          <select
-            name="categories_id"
-            className="border-2 border-stone-950 rounded-md p-1"
-          >
-            <option value={""}>---please select category---</option>
-            <option value={1}>General Skill</option>
-            <option value={"Cryptography"}>Cryptography</option>
-            <option value={"Network"}>Network</option>
-            <option value={"Forensics"}>Forensics</option>
-          </select>
+          <label>
+            Category{" "}
+            <select
+              name="categories_id"
+              className="border-2 border-stone-950 rounded-md p-1"
+              value={selectedCategory}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                if (e.target.value === "New Category") setNewCategory(true);
+                else setNewCategory(false);
+              }}
+            >
+              <option value={""}>---please select category---</option>
+              {categories.map((category: Category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+              <option value={"New Category"}>[New Category]</option>
+            </select>
+            {newCategory && (
+              <input
+                type="text"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
+              />
+            )}
+          </label>
           <br />
           <label>
             Difficulty{" "}
@@ -131,28 +175,9 @@ export default function CreateQuestion() {
                 }`}
                 onClick={() => handleToggle(buttonKey)}
               >
-                {buttonKey}: {modeSelection[buttonKey] ? "ON" : "OFF"}
+                {buttonKey}
               </button>
             ))}
-            {/* <button
-              type="button"
-              className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            >
-              Practice
-            </button>
-            <button
-              type="button"
-              className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            >
-              Tournament
-            </button>
-
-            <button
-              type="button"
-              className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            >
-              None
-            </button> */}
           </div>
           <label>
             Description{" "}

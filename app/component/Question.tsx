@@ -10,7 +10,7 @@ export default function Question({
   selectedDifficulty,
   selectedCategory,
   questions,
-}: CryptographyProps) {
+}: Readonly<CryptographyProps>) {
   // const filtered = questions.filter((question) => {
   //   const categoryMatches =
   //     selectedCategory === "All Categories" ||
@@ -24,9 +24,9 @@ export default function Question({
 
   return (
     <div className="mt-12 grid grid-cols-3 gap-6 px-16">
-      {questions.map((question, i) => (
+      {questions.map((question) => (
         <QuestionCard
-          key={i}
+          key={question.id}
           id={question.id}
           Topic={question.title}
           Level={question.difficultys_id}

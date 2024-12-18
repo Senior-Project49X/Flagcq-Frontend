@@ -62,8 +62,7 @@ export default function QuestionPopup(param: Readonly<state>) {
       setLoading(false);
     };
     fetchQuestion();
-    console.log("check", showQuestion);
-  }, [param.id, showQuestion]);
+  }, [param.id]);
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -71,11 +70,11 @@ export default function QuestionPopup(param: Readonly<state>) {
   return (
     <>
       <button
-        className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+        className=" justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
         onMouseDown={() => param.ClosePopup(false)}
       >
         <button
-          className="relative w-auto my-6 mx-auto max-w-3xl"
+          className="select-text cursor-auto relative w-auto my-6 mx-auto max-w-3xl"
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/*content*/}
@@ -83,13 +82,20 @@ export default function QuestionPopup(param: Readonly<state>) {
             {/*header*/}
             <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
               <h3 className="text-3xl font-semibold">{showQuestion?.title}</h3>
-
-              <button
-                className="text-red-500 font-bold"
-                onClick={() => setShowPopup(true)}
-              >
-                Delete
-              </button>
+              <div>
+                <button
+                  className="text-yellow-500 font-bold mx-5"
+                  onClick={() => setShowPopup(true)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="text-red-500 font-bold"
+                  onClick={() => setShowPopup(true)}
+                >
+                  Delete
+                </button>
+              </div>
               {showPopup && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                   <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
@@ -173,7 +179,10 @@ export default function QuestionPopup(param: Readonly<state>) {
           </div>
         </button>
       </button>
-      <div className="opacity-40 fixed inset-0 z-40 bg-black"></div>
+      <button
+        className="opacity-40 fixed inset-0 z-40 bg-black cursor-auto"
+        onMouseDown={() => param.ClosePopup(false)}
+      ></button>
     </>
   );
 }
