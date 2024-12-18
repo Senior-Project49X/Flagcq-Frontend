@@ -35,7 +35,7 @@ export default function Navbar() {
             href="/"
             className={
               pathname == "/"
-                ? "text-green-400 h-fit mt-3 underline"
+                ? "text-green-400 h-fit mt-3"
                 : "hover:text-white h-fit mt-3"
             }
           >
@@ -45,7 +45,7 @@ export default function Navbar() {
             href="/tournament?page=1"
             className={
               pathname == "/tournament"
-                ? "text-green-400 h-fit mt-3 underline"
+                ? "text-green-400 h-fit mt-3"
                 : "hover:text-white h-fit mt-3"
             }
           >
@@ -55,7 +55,7 @@ export default function Navbar() {
             href="/leaderboard"
             className={
               pathname == "/leaderboard"
-                ? "text-green-400 h-fit mt-3 underline"
+                ? "text-green-400 h-fit mt-3 "
                 : "hover:text-white h-fit mt-3"
             }
           >
@@ -65,7 +65,7 @@ export default function Navbar() {
             href="/createQuestion"
             className={
               pathname == "/createQuestion"
-                ? "text-green-400 h-fit mt-3 underline"
+                ? "text-green-400 h-fit mt-3 "
                 : "hover:text-white h-fit mt-3"
             }
           >

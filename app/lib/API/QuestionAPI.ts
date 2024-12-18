@@ -9,7 +9,7 @@ interface SetState {
 
 export const CreateQuestionAPI = async (
   CreateData: FormData,
-  setState: setState
+  setState: SetState
 ): Promise<any> => {
   axios
     .post(`${ip}/api/question`, CreateData, {
@@ -23,9 +23,7 @@ export const CreateQuestionAPI = async (
       setState.setIsSuccess(true);
       if (resp.status === 200) {
         return resp.data;
-      } else {
-        return resp.data;
-      }
+      } 
     })
     .catch((e) => {
       setState.setIsFailed(true);
@@ -41,7 +39,7 @@ export const GetQuestions = async (
   selectedDifficulty: string,
   page: string | null
 ) => {
-  const NewPage = page === null ? 1 : page;
+  const NewPage = page ?? 1;
   try {
     const resp = await axios.get(
       `${ip}/api/questions/practice?mode=Practice${
@@ -136,3 +134,25 @@ export const DownloadQuestionsByID = async (id: string) => {
     alert("Failed to download the file. Please try again.");
   }
 };
+
+export const GetCategories = async () => {
+  try {
+    const response = await axios.get(`${ip}/api/categories`);
+    return response.data;
+    
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    alert("Failed to download the file. Please try again.");
+  }
+}
+export const CreateCategories = async (name: string) => {
+  try {
+    const response = await axios.post(`${ip}/api/categories`, {name}, {withCredentials: true});
+    console.log(response);
+    return response;
+    
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    alert("Failed to download the file. Please try again.");
+  }
+}
