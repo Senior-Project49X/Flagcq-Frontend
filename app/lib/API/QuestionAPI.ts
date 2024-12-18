@@ -9,7 +9,7 @@ interface SetState {
 
 export const CreateQuestionAPI = async (
   CreateData: FormData,
-  setState: setState
+  setState: SetState
 ): Promise<any> => {
   axios
     .post(`${ip}/api/question`, CreateData, {
