@@ -1,7 +1,8 @@
 import axios from "axios";
-import { setCookie, removeCookie } from "../cookies";
+import { setCookie, removeCookie, getCookie } from "../cookies";
+const ip = process.env.NEXT_PUBLIC_IP_URL;
 export const LoginUser=(code:string)=>{
-    const ip = process.env.NEXT_PUBLIC_IP_URL;
+    
     axios
       .post(`${ip}/api/oauth-login`, { authorizationCode: code })
       .then((resp) => {
@@ -25,3 +26,5 @@ export const LoginUser=(code:string)=>{
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }
+
+  
