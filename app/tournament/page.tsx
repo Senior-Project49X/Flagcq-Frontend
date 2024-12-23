@@ -1,53 +1,114 @@
 "use client";
 import { useEffect, useState } from "react";
 import Navbar from "../component/navbar";
+import { GetTourList } from "../lib/API/GetTourListAPI";
 import TournamentCard from "../component/TournamentCard";
 import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
-export default function page() {
-  const tournaments = [
-    {
-      Topic: "linux",
-      Detail: "linux for beginning",
-      Quantity: 15,
-      EventStart: "DD/MM/YYYY",
-      EnrollEnd: "DD/MM/YYYY",
-    },
-    {
-      Topic: "cmu 1",
-      Detail: "cmu testing for cpe 1",
-      Quantity: 35,
-      EventStart: "DD/MM/YYYY",
-      EnrollEnd: "DD/MM/YYYY",
-    },
-    {
-      Topic: "cmu 2",
-      Detail: "cmu testing for cpe 2",
-      Quantity: 20,
-      EventStart: "DD/MM/YYYY",
-      EnrollEnd: "DD/MM/YYYY",
-    },
-  ];
-  const [closeModal, setCloseModal] = useState(true);
 
+export default function Page() {
+  const [tourData, setTourData] = useState<
+    {
+      name: string;
+      enroll_startDate: string;
+      enroll_endDate: string;
+      description: string;
+      event_startDate: string;
+      event_endDate: string;
+    }[]
+  >([]); // Ensure this matches the API response structure
+  const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const page = searchParams.get("page");
+
+  const calculateEnrollRemainingTime = (enrollEndDate: string) => {
+    const now = new Date();
+    const endDate = new Date(enrollEndDate); // Convert string to Date
+    const remaining = endDate.getTime() - now.getTime();
+
+    if (remaining <= 0) {
+      return { time: "Enroll Ended", status: "closed" };
+    }
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    return { time: `${hours}h ${minutes}m ${seconds}s`, status: "open" };
+  };
+
+  const calculateEventRemainingTime = (eventEndDate: string) => {
+    const now = new Date();
+    const endDate2 = new Date(eventEndDate);
+    const remaining = endDate2.getTime() - now.getTime();
+
+    if (remaining <= 0) {
+      return { time2: "Event Ended", status2: "closed" }; // Always return string for time2
+    }
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    return { time2: `${hours}h ${minutes}m ${seconds}s`, status2: "open" };
+  };
+
+  useEffect(() => {
+    const fetchTourListData = async () => {
+      try {
+        const response = await GetTourList();
+        console.log("Tour list data:", response); // Debugging the response
+
+        if (Array.isArray(response)) {
+          setTourData(response); // Ensure we set an array
+        } else {
+          console.error("Unexpected API response format:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching tour list data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTourListData();
+  }, []);
 
   return (
     <div>
       <Navbar />
       <div className="space-y-4 max-w-3xl mx-auto">
-        {tournaments.map((tournament, i) => (
-          <TournamentCard
-            key={i}
-            topic={tournament.Topic}
-            detail={tournament.Detail}
-            quantity={tournament.Quantity}
-            eventStart={tournament.EventStart}
-            enrollEnd={tournament.EnrollEnd}
-            status={"open"}
-          />
-        ))}
+        {isLoading ? (
+          <div className="text-center text-gray-600">Loading...</div>
+        ) : tourData.length > 0 ? (
+          <>
+            {tourData.map((tournament, i) => {
+              const { time, status } = calculateEnrollRemainingTime(
+                tournament.enroll_endDate
+              );
+
+              const { time2, status2 } = calculateEventRemainingTime(
+                tournament.event_endDate
+              );
+
+              return (
+                <TournamentCard
+                  key={i}
+                  topic={tournament.name}
+                  detail={tournament.description}
+                  quantity={0}
+                  eventStart={tournament.event_startDate}
+                  enrollEnd={tournament.event_endDate}
+                  status={status}
+                  enrolltime={time}
+                  eventtime={time2}
+                />
+              );
+            })}
+          </>
+        ) : (
+          <div className="text-center text-gray-600">No tournaments found.</div>
+        )}
       </div>
       <Pagination pagePath={"/tournament?page="} pageNumber={page} />
     </div>

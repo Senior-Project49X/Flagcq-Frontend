@@ -10,6 +10,8 @@ type TournamentDetail = {
   eventStart: string;
   enrollEnd: string;
   status: string;
+  enrolltime: string;
+  eventtime: string;
 };
 
 export default function TournamentCard({
@@ -19,6 +21,8 @@ export default function TournamentCard({
   eventStart,
   enrollEnd,
   status,
+  enrolltime,
+  eventtime,
 }: TournamentDetail) {
   const [CloseModal, setCloseModal] = useState(true);
   return (
@@ -32,6 +36,8 @@ export default function TournamentCard({
           <div className="text-gray-600 text-sm">
             <div>Event Start: {eventStart}</div>
             <div>Enroll End: {enrollEnd}</div>
+            <div className=" text-red-500">Enroll End: {enrolltime}</div>
+            <div className=" text-red-500">Event End: {eventtime}</div>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -42,13 +48,16 @@ export default function TournamentCard({
             className={
               status === "open"
                 ? "bg-customGreen hover:bg-green-500 px-10 py-2 rounded-lg ease-out duration-300 focus:pointer-events-auto"
-                : "bg-customGrey  px-10 py-2 rounded-lg cursor-default "
+                : "bg-customGrey px-10 py-2 rounded-lg cursor-not-allowed"
             }
             onClick={() => {
-              setCloseModal(false);
+              if (status === "open") {
+                setCloseModal(false);
+              }
             }}
+            disabled={status !== "open"}
           >
-            {status === "open" ? "Enroll" : "Close"}
+            {status === "open" ? "Enroll" : "Closed"}
           </button>
         </div>
       </div>
