@@ -21,7 +21,8 @@ export default function Homepage() {
     useState<string>("All Difficulty");
   const [point, setPoint] = useState<string>("0");
   const [questions, setQuestions] = useState<questions[]>([]);
-
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
   };
@@ -38,6 +39,8 @@ export default function Homepage() {
         page
       );
       console.log("b", userQuestion.data);
+      setTotalPages(userQuestion.totalPages);
+      setHasNextPage(userQuestion.hasNextPage);
       setQuestions(userQuestion.data);
     };
 
@@ -75,7 +78,12 @@ export default function Homepage() {
             questions={questions}
           />
 
-          <Pagination pagePath={"/?page="} pageNumber={page} />
+          <Pagination
+            pagePath={"/?page="}
+            pageNumber={page}
+            totalPages={totalPages}
+            hasNextPage={hasNextPage}
+          />
         </div>
       </div>
     </div>

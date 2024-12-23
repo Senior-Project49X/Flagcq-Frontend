@@ -45,23 +45,29 @@ export default function CreateQuestion() {
   const [newCategory, setNewCategory] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
+  const [hints, setHints] = useState<{ detail: string; penalty: number }[]>([
+    { detail: "", penalty: 0 },
+  ]);
 
+  //* API new question
   const onCreateQuestion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+
+    // Check if a category is selected
     if (selectedCategory === "") return;
-    if (selectedCategory === "New Category")
-      await CreateCategories(newCategoryName);
+
+    // Append the hints JSON to the form
+    formData.append("Hints", JSON.stringify(hints));
 
     formData.append("Practice", modeSelection.Practice.toString());
-    console.log(typeof formData.get("Practice"));
-
-    formData.append(`Tournament`, `[${selectedTournament.toString()}]`);
+    formData.append("Tournament", `[${selectedTournament.toString()}]`);
 
     CreateQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess });
 
     setLoading(true);
   };
+
   const handleToggle = (buttonKey: string): void => {
     if (buttonKey === "UnPublic") {
       setModeSelection((prevStates) => ({
@@ -82,6 +88,23 @@ export default function CreateQuestion() {
         UnPublic: false,
       }));
     }
+  };
+
+  const handleHintChange = (index: number, field: string, value: any) => {
+    const newHints = [...hints];
+    newHints[index] = {
+      ...newHints[index],
+      [field]: field === "penalty" ? parseInt(value, 10) || 0 : value,
+    };
+    setHints(newHints);
+  };
+
+  const addHint = () => {
+    setHints([...hints, { detail: "", penalty: 0 }]);
+  };
+
+  const removeHint = (index: number) => {
+    setHints(hints.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
@@ -115,7 +138,7 @@ export default function CreateQuestion() {
             <input
               type="text"
               name="title"
-              className="text-red-400 border-2 border-stone-950 rounded-md p-1  "
+              className="text-red-400 border-2 border-stone-950 rounded-md p-1"
             />
           </label>
           <br />
@@ -185,6 +208,53 @@ export default function CreateQuestion() {
               name="Description"
               className="border-2 border-stone-950 rounded-md p-1"
             />
+          </label>
+          <br />
+          <label>
+            Hint <br /> Detail:{" "}
+            <button type="button" onClick={addHint}>
+              Add Hint
+            </button>
+            {hints.map((hint, index) => (
+              <div key={index} className="mb-4">
+                <label>
+                  Detail:
+                  <textarea
+                    className="border-2 border-stone-950 rounded-md p-1"
+                    value={hint.detail}
+                    onChange={(e) =>
+                      handleHintChange(index, "detail", e.target.value)
+                    }
+                  />
+                </label>
+                <br />
+                <label>
+                  Penalty:
+                  <input
+                    type="number"
+                    min="0"
+                    max="10000000"
+                    className="border-2 border-stone-950 rounded-md p-1"
+                    value={hint.penalty}
+                    onChange={(e) =>
+                      handleHintChange(index, "penalty", e.target.value)
+                    }
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === "e" ||
+                        e.key === "E" ||
+                        e.key === "+" ||
+                        e.key === "-"
+                      )
+                        e.preventDefault();
+                    }}
+                  />
+                </label>
+                <button type="button" onClick={() => removeHint(index)}>
+                  Remove
+                </button>
+              </div>
+            ))}
           </label>
           <br />
           <label>{`Answer: CTFCQ{ `}</label>
