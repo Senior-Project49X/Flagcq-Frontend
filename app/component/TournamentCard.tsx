@@ -12,6 +12,7 @@ type TournamentDetail = {
   status: string;
   enrolltime: string;
   eventtime: string;
+  event_endDate: string;
 };
 
 export default function TournamentCard({
@@ -23,6 +24,7 @@ export default function TournamentCard({
   status,
   enrolltime,
   eventtime,
+  event_endDate,
 }: TournamentDetail) {
   const [CloseModal, setCloseModal] = useState(true);
   return (
@@ -34,10 +36,15 @@ export default function TournamentCard({
         <div>
           <h2 className="text-2xl font-bold mb-1">{topic}</h2>
           <div className="text-gray-600 text-sm">
-            <div>Event Start: {eventStart}</div>
-            <div>Enroll End: {enrollEnd}</div>
-            <div className=" text-red-500">Enroll End: {enrolltime}</div>
-            <div className=" text-red-500">Event End: {eventtime}</div>
+            <div>
+              Event Start: {eventStart}{" "}
+              <span className=" text-red-500">({eventtime})</span>
+            </div>
+            <div>Event End : {event_endDate}</div>
+            <div>
+              Enroll End: {enrollEnd}{" "}
+              <span className=" text-red-500">({enrolltime})</span>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-4">
