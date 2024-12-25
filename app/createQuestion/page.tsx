@@ -1,12 +1,15 @@
 "use client";
-import React, { FormEvent, use, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "../component/navbar";
-import { CreateQuestionAPI } from "../lib/API/QuestionAPI";
+import {
+  CreateCategories,
+  CreateQuestionAPI,
+  GetCategories,
+} from "../lib/API/QuestionAPI";
 import LoadingPopup from "../component/LoadingPopup";
-import { log } from "console";
 
-interface typeOfNewData {
+interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
   Description: string;
@@ -14,31 +17,111 @@ interface typeOfNewData {
   Point: number;
   DifficultyId: string;
   FilePath: File | null;
-  Mode: string;
+  Mode: string[];
 }
-
+interface ButtonStates {
+  [key: string]: boolean; // Define a dynamic object where keys are strings and values are boolean
+}
+interface Category {
+  [x: string]: any;
+  id: string;
+  name: string;
+}
 export default function CreateQuestion() {
-  const [Loading, setLoading] = useState<boolean>(false);
+  const [modeSelection, setModeSelection] = useState<ButtonStates>({
+    Practice: false,
+    Tournament: false,
+    UnPublic: true,
+  });
+
+  const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const onCreateQuestion = (event: FormEvent<HTMLFormElement>) => {
+  const [selectedTournament, setSelectedTournament] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>(
+    [] as unknown as Category[]
+  );
+  const [newCategory, setNewCategory] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [newCategoryName, setNewCategoryName] = useState<string>("");
+  const [hints, setHints] = useState<{ detail: string; penalty: number }[]>([
+    { detail: "", penalty: 0 },
+  ]);
+
+  //* API new question
+  const onCreateQuestion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+
+    // Check if a category is selected
+    if (selectedCategory === "") return;
+
+    // Append the hints JSON to the form
+    formData.append("Hints", JSON.stringify(hints));
+
+    formData.append("Practice", modeSelection.Practice.toString());
+    formData.append("Tournament", `[${selectedTournament.toString()}]`);
 
     CreateQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess });
 
     setLoading(true);
   };
+
+  const handleToggle = (buttonKey: string): void => {
+    if (buttonKey === "UnPublic") {
+      setModeSelection((prevStates) => ({
+        Practice: false,
+        Tournament: false,
+        UnPublic: true,
+      }));
+    } else if (buttonKey === "Tournament") {
+      setModeSelection((prevStates) => ({
+        Practice: false,
+        Tournament: true,
+        UnPublic: false,
+      }));
+    } else if (buttonKey === "Practice") {
+      setModeSelection((prevStates) => ({
+        Practice: true,
+        Tournament: false,
+        UnPublic: false,
+      }));
+    }
+  };
+
+  const handleHintChange = (index: number, field: string, value: any) => {
+    const newHints = [...hints];
+    newHints[index] = {
+      ...newHints[index],
+      [field]: field === "penalty" ? parseInt(value, 10) || 0 : value,
+    };
+    setHints(newHints);
+  };
+
+  const addHint = () => {
+    setHints([...hints, { detail: "", penalty: 0 }]);
+  };
+
+  const removeHint = (index: number) => {
+    setHints(hints.filter((_, i) => i !== index));
+  };
+
   useEffect(() => {
     setMessage("");
     setIsFailed(false);
     setIsSuccess(false);
-  }, [Loading]);
-
+  }, [loading]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setCategories(await GetCategories());
+    };
+    fetchCategories();
+    console.log(categories);
+  }, []);
   return (
     <>
-      {Loading && (
+      {loading && (
         <LoadingPopup
           setLoading={setLoading}
           isFailed={isFailed}
@@ -50,51 +133,129 @@ export default function CreateQuestion() {
       <Navbar />
       <div className="bg-[#ffffff] m-8 p-8 rounded-lg text-2xl ">
         <form onSubmit={onCreateQuestion}>
-          <label className="mr-2">Topic</label>
-          <input
-            type="text"
-            name="title"
-            className="text-red-400 border-2 border-stone-950 rounded-md p-1  "
-          />
+          <label className="mr-2">
+            Topic{" "}
+            <input
+              type="text"
+              name="title"
+              className="text-red-400 border-2 border-stone-950 rounded-md p-1"
+            />
+          </label>
           <br />
-          <label>Category</label>
-          <select
-            name="categories_id"
-            className="border-2 border-stone-950 rounded-md p-1"
-          >
-            <option value={""}>---please select category---</option>
-            <option value={"General Skill"}>General Skill</option>
-            <option value={"Cryptography"}>Cryptography</option>
-            <option value={"Network"}>Network</option>
-            <option value={"Forensics"}>Forensics</option>
-          </select>
+          <label>
+            Category{" "}
+            <select
+              name="categories_id"
+              className="border-2 border-stone-950 rounded-md p-1"
+              value={selectedCategory}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                if (e.target.value === "New Category") setNewCategory(true);
+                else setNewCategory(false);
+              }}
+            >
+              <option value={""}>---please select category---</option>
+              {categories.map((category: Category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+              <option value={"New Category"}>[New Category]</option>
+            </select>
+            {newCategory && (
+              <input
+                type="text"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
+              />
+            )}
+          </label>
           <br />
-          <label>Difficulty</label>
-          <select
-            name="difficultys_id"
-            className="border-2 border-stone-950 rounded-md p-1"
-          >
-            <option value={""}>---please select Difficulty---</option>
-            <option value={"Easy"}>Easy</option>
-            <option value={"Medium"}>Medium</option>
-            <option value={"Hard"}>Hard</option>
-          </select>
+          <label>
+            Difficulty{" "}
+            <select
+              name="difficultys_id"
+              className="border-2 border-stone-950 rounded-md p-1"
+            >
+              <option value={""}>---please select Difficulty---</option>
+              <option value={"Easy"}>Easy</option>
+              <option value={"Medium"}>Medium</option>
+              <option value={"Hard"}>Hard</option>
+            </select>
+          </label>
           <br />
-          <label>Mode</label>
-          <select
-            name="type"
-            className="border-2 border-stone-950 rounded-md p-1"
-          >
-            <option value={""}>---please select Mode---</option>
-            <option value={"Practice"}>Practice</option>
-            <option value={"Tournament"}>Tournament</option>
-          </select>
+          <div>
+            <p>Mode</p>
+            {Object.keys(modeSelection).map((buttonKey) => (
+              <button
+                key={buttonKey}
+                type="button"
+                className={`px-4 py-2 font-bold rounded transition ${
+                  modeSelection[buttonKey]
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                }`}
+                onClick={() => handleToggle(buttonKey)}
+              >
+                {buttonKey}
+              </button>
+            ))}
+          </div>
+          <label>
+            Description{" "}
+            <textarea
+              name="Description"
+              className="border-2 border-stone-950 rounded-md p-1"
+            />
+          </label>
           <br />
-          <label>Description</label>
-          <textarea
-            name="Description"
-            className="border-2 border-stone-950 rounded-md p-1"
-          />
+          <label>
+            Hint <br /> Detail:{" "}
+            <button type="button" onClick={addHint}>
+              Add Hint
+            </button>
+            {hints.map((hint, index) => (
+              <div key={index} className="mb-4">
+                <label>
+                  Detail:
+                  <textarea
+                    className="border-2 border-stone-950 rounded-md p-1"
+                    value={hint.detail}
+                    onChange={(e) =>
+                      handleHintChange(index, "detail", e.target.value)
+                    }
+                  />
+                </label>
+                <br />
+                <label>
+                  Penalty:
+                  <input
+                    type="number"
+                    min="0"
+                    max="10000000"
+                    className="border-2 border-stone-950 rounded-md p-1"
+                    value={hint.penalty}
+                    onChange={(e) =>
+                      handleHintChange(index, "penalty", e.target.value)
+                    }
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === "e" ||
+                        e.key === "E" ||
+                        e.key === "+" ||
+                        e.key === "-"
+                      )
+                        e.preventDefault();
+                    }}
+                  />
+                </label>
+                <button type="button" onClick={() => removeHint(index)}>
+                  Remove
+                </button>
+              </div>
+            ))}
+          </label>
           <br />
           <label>{`Answer: CTFCQ{ `}</label>
           <input
@@ -104,26 +265,30 @@ export default function CreateQuestion() {
           />
           <span>{` }`}</span>
           <br />
-          <label>Point</label>
-          <input
-            name="point"
-            type="number"
-            min="0"
-            max="10000000"
-            className="border-2 border-stone-950 rounded-md p-1"
-            onKeyDown={(e) => {
-              if (
-                e.key === "e" ||
-                e.key === "E" ||
-                e.key === "+" ||
-                e.key === "-"
-              )
-                e.preventDefault();
-            }}
-          />
+          <label>
+            Point{}
+            <input
+              name="point"
+              type="number"
+              min="0"
+              max="10000000"
+              className="border-2 border-stone-950 rounded-md p-1"
+              onKeyDown={(e) => {
+                if (
+                  e.key === "e" ||
+                  e.key === "E" ||
+                  e.key === "+" ||
+                  e.key === "-"
+                )
+                  e.preventDefault();
+              }}
+            />
+          </label>
           <br />
-          <label>File</label>
-          <input name="file" type="file" />
+          <label>
+            File{}
+            <input name="file" type="file" />
+          </label>
           <br />
           <button
             type="submit"

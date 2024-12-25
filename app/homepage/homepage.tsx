@@ -8,7 +8,6 @@ import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
-import ScoreBar from "../component/ScoreBar";
 import { GetUserPoints } from "../lib/API/GetUserAPI";
 import { questions } from "../lib/types/QuestionType";
 
@@ -19,10 +18,10 @@ export default function Homepage() {
     useState<string>("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<string>("All Difficulty");
-  const [isLogin, setIsLogin] = useState(false);
   const [point, setPoint] = useState<string>("0");
   const [questions, setQuestions] = useState<questions[]>([]);
-
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
   };
@@ -39,6 +38,8 @@ export default function Homepage() {
         page
       );
       console.log("b", userQuestion.data);
+      setTotalPages(userQuestion.totalPages);
+      setHasNextPage(userQuestion.hasNextPage);
       setQuestions(userQuestion.data);
     };
 
@@ -48,41 +49,41 @@ export default function Homepage() {
     const fetchUserData = async () => {
       const userData = await GetUserPoints(); // Now correctly awaits the returned value
       setPoint(userData);
-      console.log("a", point);
+      console.log("a", userData);
     };
     fetchUserData();
   }, [point]);
 
   return (
     <div>
-      <>
-        <Navbar />
-        <ScoreBar point={point} />
-        <div className="flex">
-          <Category
-            selectedCategory={selectedCategory}
-            onCategoryClick={handleCategoryClick}
-          />
+      <Navbar point={point} />
+      <div className="flex">
+        <Category
+          selectedCategory={selectedCategory}
+          onCategoryClick={handleCategoryClick}
+        />
 
-          <Difficult
+        <Difficult
+          selectedDifficulty={selectedDifficulty}
+          onDifficultyClick={handleDifficultyClick}
+        />
+
+        {/* Question Box */}
+        <div className="flex-1 p-6 rounded-lg">
+          <Question
             selectedDifficulty={selectedDifficulty}
-            onDifficultyClick={handleDifficultyClick}
+            selectedCategory={selectedCategory}
+            questions={questions}
           />
 
-          {/* Question Box */}
-          <div className="flex-1 p-6 rounded-lg">
-            <>
-              <Question
-                selectedDifficulty={selectedDifficulty}
-                selectedCategory={selectedCategory}
-                questions={questions}
-              />
-            </>
-
-            <Pagination pagePath={"/?page="} pageNumber={page} />
-          </div>
+          <Pagination
+            pagePath={"/?page="}
+            pageNumber={page}
+            totalPages={totalPages}
+            hasNextPage={hasNextPage}
+          />
         </div>
-      </>
+      </div>
     </div>
   );
 }
