@@ -8,7 +8,6 @@ import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
-import ScoreBar from "../component/ScoreBar";
 import { GetUserPoints } from "../lib/API/GetUserAPI";
 import { questions } from "../lib/types/QuestionType";
 
@@ -50,15 +49,14 @@ export default function Homepage() {
     const fetchUserData = async () => {
       const userData = await GetUserPoints(); // Now correctly awaits the returned value
       setPoint(userData);
-      console.log("a", point);
+      console.log("a", userData);
     };
     fetchUserData();
   }, [point]);
 
   return (
     <div>
-      <Navbar />
-      <ScoreBar point={point} />
+      <Navbar point={point} />
       <div className="flex">
         <Category
           selectedCategory={selectedCategory}
