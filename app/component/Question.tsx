@@ -6,11 +6,7 @@ interface CryptographyProps {
   questions: questions[];
 }
 
-export default function Question({
-  selectedDifficulty,
-  selectedCategory,
-  questions,
-}: Readonly<CryptographyProps>) {
+export default function Question({ questions }: Readonly<CryptographyProps>) {
   // const filtered = questions.filter((question) => {
   //   const categoryMatches =
   //     selectedCategory === "All Categories" ||

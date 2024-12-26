@@ -6,8 +6,8 @@ import {
   DownloadQuestionsByID,
   GetQuestionsByID,
 } from "../lib/API/QuestionAPI";
-import { question } from "../lib/types/QuestionType";
-
+import { Question } from "../lib/types/QuestionType";
+import Image from "next/image";
 type state = {
   id: string;
   Topic: string;
@@ -16,7 +16,7 @@ type state = {
 
 export default function QuestionPopup(param: Readonly<state>) {
   const [showPopup, setShowPopup] = useState(false);
-  const [showQuestion, setShowQuestion] = useState<question | null>(null);
+  const [showQuestion, setShowQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [name, setName] = useState("");
@@ -63,9 +63,6 @@ export default function QuestionPopup(param: Readonly<state>) {
     };
     fetchQuestion();
   }, [param.id]);
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -77,106 +74,148 @@ export default function QuestionPopup(param: Readonly<state>) {
           className="select-text cursor-auto relative w-auto my-6 mx-auto max-w-3xl"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          {/*content*/}
-          <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-            {/*header*/}
-            <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-              <h3 className="text-3xl font-semibold">{showQuestion?.title}</h3>
-              <div>
-                <button
-                  className="text-yellow-500 font-bold mx-5"
-                  onClick={() => setShowPopup(true)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="text-red-500 font-bold"
-                  onClick={() => setShowPopup(true)}
-                >
-                  Delete
-                </button>
+          {loading ? null : (
+            // content
+            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+              {/*header*/}
+              <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
+                <h3 className="text-3xl font-semibold">
+                  {showQuestion?.title}
+                </h3>
+                <div>
+                  <button
+                    className="text-yellow-500 font-bold mx-5"
+                    onClick={() => setShowPopup(true)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="text-red-500 font-bold"
+                    onClick={() => setShowPopup(true)}
+                  >
+                    Delete
+                  </button>
+                </div>
+                {showPopup && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
+                      <button
+                        onClick={handleClosePopup}
+                        className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
+                      >
+                        X
+                      </button>
+                      <h2 className="text-red-500 font-bold text-2xl mb-4">
+                        Are you sure you want to delete this question?
+                      </h2>
+                      <p className="mb-4">
+                        Please type the question&#39s name to confirm.
+                      </p>
+                      <input
+                        type="text"
+                        placeholder="Team name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={`w-full p-2 border rounded-lg mb-4 ${
+                          isError ? "border-red-500" : "border-gray-300"
+                        }`}
+                      />
+                      {isError && (
+                        <p className="text-red-500 text-sm mb-6">Wrong name</p>
+                      )}
+                      <button
+                        onClick={handleConfirmDelete}
+                        className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl w-1/2 hover:bg-red-600"
+                      >
+                        Confirm
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-              {showPopup && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                  <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
+
+              {/*body*/}
+              {}
+              <div className=" p-6 flex-auto">
+                <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
+                  {showQuestion?.description}
+                </p>
+              </div>
+              <div className="flex justify-between items-center mx-6">
+                {showQuestion?.file_path ? (
+                  <div>
                     <button
-                      onClick={handleClosePopup}
-                      className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
+                      className="text-black  p-3 bg-green-400 rounded-lg flex space-x-2"
+                      onClick={() => {
+                        DownloadQuestionsByID(param.id);
+                      }}
                     >
-                      X
-                    </button>
-                    <h2 className="text-red-500 font-bold text-2xl mb-4">
-                      Are you sure you want to delete this question?
-                    </h2>
-                    <p className="mb-4">
-                      Please type the question&#39s name to confirm.
-                    </p>
-                    <input
-                      type="text"
-                      placeholder="Team name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className={`w-full p-2 border rounded-lg mb-4 ${
-                        isError ? "border-red-500" : "border-gray-300"
-                      }`}
-                    />
-                    {isError && (
-                      <p className="text-red-500 text-sm mb-6">Wrong name</p>
-                    )}
-                    <button
-                      onClick={handleConfirmDelete}
-                      className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl w-1/2 hover:bg-red-600"
-                    >
-                      Confirm
+                      <Image
+                        src="/download.svg"
+                        alt="Download"
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                      <p>{showQuestion.file_path}</p>
                     </button>
                   </div>
+                ) : (
+                  <div></div>
+                )}
+
+                <div>
+                  <div className="inline-flex rounded-md shadow-sm">
+                    {showQuestion?.hints.map((hint, i) => (
+                      <button
+                        key={hint.id}
+                        type="button"
+                        onClick={() => {}}
+                        className={`px-4 py-2 text-white bg-blue-500 border border-blue-500 ${
+                          i === 0 ? "rounded-l-md" : ""
+                        } ${
+                          i === showQuestion?.hints.length - 1
+                            ? "rounded-r-md"
+                            : ""
+                        } hover:bg-blue-600`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              )}
-            </div>
-
-            {/*body*/}
-            <div className=" p-6 flex-auto">
-              <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
-                {showQuestion?.description}
-              </p>
-            </div>
-
-            <button
-              onClick={() => {
-                DownloadQuestionsByID(param.id);
-              }}
-            >
-              {showQuestion?.file_path}
-            </button>
-            {/*footer*/}
-            <form onSubmit={onCheckAnswer}>
-              <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-                <span className="max-w-md mx-auto">
-                  <input
-                    name="Answer"
-                    type="search"
-                    id="default-search"
-                    className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="CTFCQ{...}"
-                    required
-                  />
-                </span>
-                <button
-                  className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={() => param.ClosePopup(false)}
-                >
-                  Close
-                </button>
-                <button
-                  className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="submit"
-                >
-                  Submit
-                </button>
               </div>
-            </form>
-          </div>
+
+              {/*footer*/}
+              <form onSubmit={onCheckAnswer}>
+                <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                  <span className="max-w-md mx-auto">
+                    <input
+                      name="Answer"
+                      type="search"
+                      id="default-search"
+                      className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="CTFCQ{...}"
+                      required
+                    />
+                  </span>
+                  <button
+                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => param.ClosePopup(false)}
+                  >
+                    Close
+                  </button>
+                  <button
+                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="submit"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </button>
       </button>
       <button
