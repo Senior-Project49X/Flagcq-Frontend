@@ -2,11 +2,8 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "../component/navbar";
-import {
-  CreateCategories,
-  CreateQuestionAPI,
-  GetCategories,
-} from "../lib/API/QuestionAPI";
+import { CreateQuestionAPI, GetCategories } from "../lib/API/QuestionAPI";
+import CreateCategories from "../component/CreateCategories";
 import LoadingPopup from "../component/LoadingPopup";
 
 interface CreateNewQuestion {
@@ -48,6 +45,7 @@ export default function CreateQuestion() {
   const [hints, setHints] = useState<{ detail: string; penalty: number }[]>([
     { detail: "", penalty: 0 },
   ]);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   //* API new question
   const onCreateQuestion = async (event: FormEvent<HTMLFormElement>) => {
@@ -107,6 +105,18 @@ export default function CreateQuestion() {
     setHints(hints.filter((_, i) => i !== index));
   };
 
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const value = event.target.value;
+    setSelectedCategory(value);
+    if (value === "New Category") {
+      setIsModalVisible(true);
+    } else {
+      setIsModalVisible(false);
+    }
+  };
+
   useEffect(() => {
     setMessage("");
     setIsFailed(false);
@@ -129,8 +139,21 @@ export default function CreateQuestion() {
           Message={message}
         />
       )}
-
-      <Navbar />
+      {isModalVisible && (
+        <CreateCategories
+          onClose={async (Category: string) => {
+            setIsModalVisible(false);
+            setCategories(await GetCategories());
+            setSelectedCategory(Category);
+            console.log("CIDC,", Category);
+          }}
+        >
+          {/* Modal content goes here */}
+          <h2>Create New Category</h2>
+          {/* Add form or other content for creating a new category */}
+        </CreateCategories>
+      )}
+      <Navbar point={null} />
       <div className="bg-[#ffffff] m-8 p-8 rounded-lg text-2xl ">
         <form onSubmit={onCreateQuestion}>
           <label className="mr-2">
@@ -148,11 +171,7 @@ export default function CreateQuestion() {
               name="categories_id"
               className="border-2 border-stone-950 rounded-md p-1"
               value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
-                if (e.target.value === "New Category") setNewCategory(true);
-                else setNewCategory(false);
-              }}
+              onChange={handleCategoryChange}
             >
               <option value={""}>---please select category---</option>
               {categories.map((category: Category) => (
