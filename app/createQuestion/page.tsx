@@ -5,6 +5,7 @@ import Navbar from "../component/navbar";
 import { CreateQuestionAPI, GetCategories } from "../lib/API/QuestionAPI";
 import CreateCategories from "../component/CreateCategories";
 import LoadingPopup from "../component/LoadingPopup";
+import CreateHint from "../component/CreateHint";
 
 interface CreateNewQuestion {
   CategoriesId: string | null;
@@ -42,11 +43,11 @@ export default function CreateQuestion() {
   const [newCategory, setNewCategory] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
-  const [hints, setHints] = useState<{ detail: string; penalty: number }[]>([
-    { detail: "", penalty: 0 },
-  ]);
+  const [hints, setHints] = useState<
+    { id: string; detail: string; penalty: number }[]
+  >([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-
+  const [point, setPoint] = useState("");
   //* API new question
   const onCreateQuestion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -92,17 +93,41 @@ export default function CreateQuestion() {
     const newHints = [...hints];
     newHints[index] = {
       ...newHints[index],
-      [field]: field === "penalty" ? parseInt(value, 10) || 0 : value,
+      [field]:
+        field === "penalty"
+          ? parseInt(value.replace(/^0+/, ""), 10) || 0
+          : value,
     };
     setHints(newHints);
   };
 
   const addHint = () => {
-    setHints([...hints, { detail: "", penalty: 0 }]);
-  };
+    if (hints.length >= 3) return;
+    console.log("Before addition:", hints);
 
+    setHints([...hints, { id: crypto.randomUUID(), detail: "", penalty: 0 }]);
+    console.log("After addition:", hints);
+  };
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+
+    // Allow single zero but remove leading zeros for other numbers
+    if (value === "0") {
+      setPoint(value);
+    } else if (value === "00") {
+      return;
+    } else {
+      value = value.replace(/^0+/, "");
+      setPoint(value);
+    }
+  };
   const removeHint = (index: number) => {
-    setHints(hints.filter((_, i) => i !== index));
+    console.log("Before removal:", hints);
+    setHints((prevHints) => {
+      const newHints = prevHints.filter((_, i) => i !== index);
+      console.log("After removal:", newHints);
+      return newHints;
+    });
   };
 
   const handleCategoryChange = (
@@ -154,14 +179,14 @@ export default function CreateQuestion() {
         </CreateCategories>
       )}
       <Navbar point={null} />
-      <div className="bg-[#ffffff] m-8 p-8 rounded-lg text-2xl ">
+      <div className="max-w-3xl mx-auto p-8 bg-gray-100 p-6 rounded-lg shadow-md text-black">
         <form onSubmit={onCreateQuestion}>
           <label className="mr-2">
             Topic{" "}
             <input
               type="text"
               name="title"
-              className="text-red-400 border-2 border-stone-950 rounded-md p-1"
+              className="w-full p-2 border border-gray-300 rounded"
             />
           </label>
           <br />
@@ -169,7 +194,7 @@ export default function CreateQuestion() {
             Category{" "}
             <select
               name="categories_id"
-              className="border-2 border-stone-950 rounded-md p-1"
+              className="w-full p-2 border border-gray-300 rounded"
               value={selectedCategory}
               onChange={handleCategoryChange}
             >
@@ -195,7 +220,7 @@ export default function CreateQuestion() {
             Difficulty{" "}
             <select
               name="difficultys_id"
-              className="border-2 border-stone-950 rounded-md p-1"
+              className="w-full p-2 border border-gray-300 rounded"
             >
               <option value={""}>---please select Difficulty---</option>
               <option value={"Easy"}>Easy</option>
@@ -225,62 +250,33 @@ export default function CreateQuestion() {
             Description{" "}
             <textarea
               name="Description"
-              className="border-2 border-stone-950 rounded-md p-1"
+              className="w-full p-2 border border-gray-300 rounded"
             />
           </label>
           <br />
-          <label>
-            Hint <br /> Detail:{" "}
+          Hint <br /> Detail:{" "}
+          {hints.length > 0 &&
+            hints.map((hint, index) => (
+              <CreateHint
+                key={hint.id}
+                index={index}
+                detail={hint.detail}
+                penalty={hint.penalty}
+                handleHintChange={handleHintChange}
+                removeHint={removeHint}
+              />
+            ))}
+          <div>
             <button type="button" onClick={addHint}>
               Add Hint
             </button>
-            {hints.map((hint, index) => (
-              <div key={index} className="mb-4">
-                <label>
-                  Detail:
-                  <textarea
-                    className="border-2 border-stone-950 rounded-md p-1"
-                    value={hint.detail}
-                    onChange={(e) =>
-                      handleHintChange(index, "detail", e.target.value)
-                    }
-                  />
-                </label>
-                <br />
-                <label>
-                  Penalty:
-                  <input
-                    type="number"
-                    min="0"
-                    max="10000000"
-                    className="border-2 border-stone-950 rounded-md p-1"
-                    value={hint.penalty}
-                    onChange={(e) =>
-                      handleHintChange(index, "penalty", e.target.value)
-                    }
-                    onKeyDown={(e) => {
-                      if (
-                        e.key === "e" ||
-                        e.key === "E" ||
-                        e.key === "+" ||
-                        e.key === "-"
-                      )
-                        e.preventDefault();
-                    }}
-                  />
-                </label>
-                <button type="button" onClick={() => removeHint(index)}>
-                  Remove
-                </button>
-              </div>
-            ))}
-          </label>
+          </div>
           <br />
           <label>{`Answer: CTFCQ{ `}</label>
           <input
             name="Answer"
             type="text"
-            className="border-2 border-stone-950 rounded-md p-1"
+            className=" p-2 border border-gray-300 rounded"
           />
           <span>{` }`}</span>
           <br />
@@ -291,7 +287,7 @@ export default function CreateQuestion() {
               type="number"
               min="0"
               max="10000000"
-              className="border-2 border-stone-950 rounded-md p-1"
+              className="p-2 border border-gray-300 rounded"
               onKeyDown={(e) => {
                 if (
                   e.key === "e" ||
@@ -301,17 +297,27 @@ export default function CreateQuestion() {
                 )
                   e.preventDefault();
               }}
+              value={point}
+              onChange={handleNumberChange}
             />
           </label>
           <br />
           <label>
             File{}
-            <input name="file" type="file" />
+            <input
+              name="file"
+              type="file"
+              className="p-2 border border-gray-300 rounded"
+            />
           </label>
           <br />
           <button
             type="submit"
-            className="m-5 p-5 bg-[#ffffff] rounded-lg border-2 border-stone-950 p-1"
+            className={`w-full p-2 rounded font-bold ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-red-500 hover:bg-red-600 text-white"
+            }`}
           >
             Confirm
           </button>
