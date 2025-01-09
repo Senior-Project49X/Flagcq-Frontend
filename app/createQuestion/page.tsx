@@ -254,7 +254,12 @@ export default function CreateQuestion() {
             />
           </label>
           <br />
-          Hint <br /> Detail:{" "}
+          <p>Hint</p>
+          <div>
+            <button type="button" onClick={addHint}>
+              Add Hint
+            </button>
+          </div>
           {hints.length > 0 &&
             hints.map((hint, index) => (
               <CreateHint
@@ -266,11 +271,7 @@ export default function CreateQuestion() {
                 removeHint={removeHint}
               />
             ))}
-          <div>
-            <button type="button" onClick={addHint}>
-              Add Hint
-            </button>
-          </div>
+
           <br />
           <label>{`Answer: CTFCQ{ `}</label>
           <input

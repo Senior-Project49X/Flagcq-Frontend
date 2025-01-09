@@ -8,6 +8,7 @@ import {
 } from "../lib/API/QuestionAPI";
 import { Question } from "../lib/types/QuestionType";
 import Image from "next/image";
+import Hint from "./Hint/Hint";
 type state = {
   id: string;
   Topic: string;
@@ -167,20 +168,15 @@ export default function QuestionPopup(param: Readonly<state>) {
                 <div>
                   <div className="inline-flex rounded-md shadow-sm">
                     {showQuestion?.hints.map((hint, i) => (
-                      <button
+                      <Hint
+                        id={hint.id}
                         key={hint.id}
-                        type="button"
-                        onClick={() => {}}
-                        className={`px-4 py-2 text-white bg-blue-500 border border-blue-500 ${
-                          i === 0 ? "rounded-l-md" : ""
-                        } ${
-                          i === showQuestion?.hints.length - 1
-                            ? "rounded-r-md"
-                            : ""
-                        } hover:bg-blue-600`}
-                      >
-                        {i + 1}
-                      </button>
+                        index={i}
+                        description={hint.Description}
+                        used={hint.used}
+                        penalty={hint.point}
+                        isLast={i === showQuestion.hints.length - 1}
+                      />
                     ))}
                   </div>
                 </div>
