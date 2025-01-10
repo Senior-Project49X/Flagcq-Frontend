@@ -145,11 +145,11 @@ export const GetCategories = async () => {
     alert("Failed to download the file. Please try again.");
   }
 }
-export const CreateCategories = async (name: string) => {
+export const CreateCategoriesAPI = async (name: string) => {
   try {
     const response = await axios.post(`${ip}/api/categories`, {name}, {withCredentials: true});
     console.log(response);
-    return response;
+    return response.data.id;
     
   } catch (error) {
     console.error("Error downloading file:", error);
