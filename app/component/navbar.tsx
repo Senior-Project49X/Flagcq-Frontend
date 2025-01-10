@@ -17,7 +17,7 @@ export default function Navbar({ point }: Readonly<NavbarProps>) {
     // Add more links here as needed
   ];
   return (
-    <nav className="bg-[#090147] py-4 px-8 absolute sticky top-0 w-full z-50">
+    <nav className="bg-[#090147] py-4 px-8 absolute sticky top-0 w-full z-20">
       <div className="flex justify-between items-center">
         {/* Left side: Logo */}
         <div>
