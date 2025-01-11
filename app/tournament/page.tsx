@@ -127,7 +127,12 @@ export default function Page() {
           <div className="text-center text-gray-600">No tournaments found.</div>
         )}
       </div>
-      <Pagination pagePath={"/tournament?page="} pageNumber={page} />
+      <Pagination
+        pagePath={"/tournament?page="}
+        pageNumber={page}
+        totalPages={10} // Replace with the actual total pages
+        hasNextPage={true} // Replace with the actual condition
+      />
     </div>
   );
 }

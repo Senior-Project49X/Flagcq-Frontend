@@ -56,7 +56,7 @@ export default function Homepage() {
 
   return (
     <div>
-      <Navbar point={point} />
+      <Navbar />
       <div className="flex">
         <Category
           selectedCategory={selectedCategory}

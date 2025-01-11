@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import HintConfirm from "./HintConfirm";
+import { UseHintAPI } from "@/app/lib/API/QuestionAPI";
 
 type Hint = {
   id: number;
@@ -21,7 +22,12 @@ export default function Hint({
 }: Readonly<Hint>) {
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [showHint, setShowHint] = useState<boolean>(false);
+  const [hintUsed, setHintUsed] = useState<boolean>(used);
+  const [hintDescription, setHintDescription] = useState<string>(description);
   const handleShowHint = () => {
+    console.log("id", UseHintAPI(id));
+
+    setHintUsed(true);
     setShowHint(true);
   };
 
@@ -36,16 +42,27 @@ export default function Hint({
   return (
     <div>
       {showConfirm && (
-        <HintConfirm ClosePopup={CloseModal} cost={penalty} Topic="SomeTopic" />
+        <HintConfirm
+          id={id}
+          ClosePopup={CloseModal}
+          UserConfirm={handleShowHint}
+          cost={penalty}
+          isUsed={hintUsed}
+          Topic="SomeTopic"
+        />
       )}
 
       <button
         key={id}
         type="button"
-        onClick={used ? handleShowHint : handleShowConfirm}
-        className={`px-4 py-2 text-white bg-blue-500 border border-blue-500 ${
-          index === 0 ? "rounded-l-md" : ""
-        } ${isLast ? "rounded-r-md" : ""} hover:bg-blue-600`}
+        onClick={handleShowConfirm}
+        className={`px-4 py-2 text-white ${
+          hintUsed || penalty === 0
+            ? "bg-green-500 hover:bg-green-600"
+            : "bg-blue-500 hover:bg-blue-600"
+        } border  ${index === 0 ? "rounded-l-md" : ""} ${
+          isLast ? "rounded-r-md" : ""
+        } `}
       >
         {index + 1}
       </button>

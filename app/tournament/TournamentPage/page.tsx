@@ -121,7 +121,12 @@ export default function Homepage() {
             selectedCategory={selectedCategory}
             questions={questions}
           />
-          <Pagination pagePath={"/?page="} pageNumber={null} />
+          <Pagination
+            pagePath={"/?page="}
+            pageNumber={null}
+            totalPages={10}
+            hasNextPage={true}
+          />
         </div>
       </div>
     </div>
