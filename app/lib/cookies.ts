@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 // Set a cookie
 export const setCookie = (key: string, value: string) => {
-  Cookies.set(key, value);
+  Cookies.set(key, value, {  secure: true});
 };
 
 // Get a cookie

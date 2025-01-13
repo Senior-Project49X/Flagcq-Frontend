@@ -5,6 +5,7 @@ import ProfileToggle from "./profileToggle";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GetUserPoints } from "../lib/API/GetUserAPI";
+import { isRoleAdmin, isRoleTa } from "../lib/role";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -17,6 +18,11 @@ export default function Navbar() {
     // Add more links here as needed
   ];
   const [point, setPoint] = useState<string | undefined | null>(null);
+  const [role, setRole] = useState<boolean | undefined | null>(null);
+  useEffect(() => {
+    setRole(isRoleAdmin() || isRoleTa());
+  }, []);
+
   useEffect(() => {
     const fetchUserPoints = async () => {
       const points = await GetUserPoints();
@@ -71,16 +77,18 @@ export default function Navbar() {
             >
               Leaderboard
             </Link>
-            <Link
-              href="/createQuestion"
-              className={
-                pathname == "/createQuestion"
-                  ? "text-green-400 h-fit mt-3 "
-                  : "hover:text-white h-fit mt-3"
-              }
-            >
-              Create Question
-            </Link>
+            {role && (
+              <Link
+                href="/createQuestion"
+                className={
+                  pathname == "/createQuestion"
+                    ? "text-green-400 h-fit mt-3 "
+                    : "hover:text-white h-fit mt-3"
+                }
+              >
+                Create Question
+              </Link>
+            )}
           </div>
         </div>
         {/* Right side: Navigation buttons */}

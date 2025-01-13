@@ -60,7 +60,7 @@ export default function Hint({
           hintUsed || penalty === 0
             ? "bg-green-500 hover:bg-green-600"
             : "bg-blue-500 hover:bg-blue-600"
-        } border  ${index === 0 ? "rounded-l-md" : ""} ${
+        }   ${index === 0 ? "rounded-l-md" : ""} ${
           isLast ? "rounded-r-md" : ""
         } `}
       >

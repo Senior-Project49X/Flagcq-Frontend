@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, use, useEffect, useState } from "react";
 import {
   CheckQuestionsByID,
   DeleteQuestionsByID,
@@ -9,6 +9,7 @@ import {
 import { Question } from "../lib/types/QuestionType";
 import Image from "next/image";
 import Hint from "./Hint/Hint";
+import { isRoleAdmin, isRoleTa } from "../lib/role";
 type state = {
   id: string;
   Topic: string;
@@ -21,6 +22,13 @@ export default function QuestionPopup(param: Readonly<state>) {
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [name, setName] = useState("");
+  const [role, setRole] = useState<boolean | undefined | null>(null);
+  const [roleLoading, setRoleLoading] = useState(true);
+
+  useEffect(() => {
+    setRole(isRoleAdmin() || isRoleTa());
+    setRoleLoading(false);
+  }, []);
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -65,6 +73,10 @@ export default function QuestionPopup(param: Readonly<state>) {
     fetchQuestion();
   }, [param.id]);
 
+  if (roleLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <button
@@ -72,31 +84,34 @@ export default function QuestionPopup(param: Readonly<state>) {
         onMouseDown={() => param.ClosePopup(false)}
       >
         <button
-          className="select-text cursor-auto relative w-auto my-6 mx-auto max-w-3xl"
+          className="select-text cursor-auto relative w-5/12 h-3/6 max-h-5xl max-w-5xl"
           onMouseDown={(e) => e.stopPropagation()}
         >
           {loading ? null : (
             // content
-            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full h-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
                 <h3 className="text-3xl font-semibold">
                   {showQuestion?.title}
                 </h3>
-                <div>
-                  <button
-                    className="text-yellow-500 font-bold mx-5"
-                    onClick={() => setShowPopup(true)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="text-red-500 font-bold"
-                    onClick={() => setShowPopup(true)}
-                  >
-                    Delete
-                  </button>
-                </div>
+                {role && (
+                  <div>
+                    <button
+                      className="text-yellow-500 font-bold mx-5"
+                      onClick={() => setShowPopup(true)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="text-red-500 font-bold"
+                      onClick={() => setShowPopup(true)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+
                 {showPopup && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
@@ -136,17 +151,17 @@ export default function QuestionPopup(param: Readonly<state>) {
               </div>
 
               {/*body*/}
-              {}
+
               <div className=" p-6 flex-auto">
                 <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
                   {showQuestion?.description}
                 </p>
               </div>
-              <div className="flex justify-between items-center mx-6">
+              <div className="flex justify-between items-center mx-6 pb-6">
                 {showQuestion?.file_path ? (
                   <div>
                     <button
-                      className="text-black  p-3 bg-green-400 rounded-lg flex space-x-2"
+                      className="text-black  p-2 bg-green-400 rounded-lg flex space-x-2"
                       onClick={() => {
                         DownloadQuestionsByID(param.id);
                       }}
@@ -166,7 +181,7 @@ export default function QuestionPopup(param: Readonly<state>) {
                 )}
 
                 <div>
-                  <div className="inline-flex rounded-md shadow-sm">
+                  <div className="inline-flex rounded-md shadow-sm ">
                     {showQuestion?.hints.map((hint, i) => (
                       <Hint
                         id={hint.id}
