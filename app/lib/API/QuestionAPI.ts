@@ -104,6 +104,7 @@ export const DownloadQuestionsByID = async (id: string) => {
   try {
     const response = await axios.get(`${ip}/api/question/download/${id}`, {
       responseType: "blob", // Important for file download
+      
     });
 
     // Access the Content-Disposition header
@@ -139,7 +140,7 @@ export const DownloadQuestionsByID = async (id: string) => {
 
 export const GetCategories = async () => {
   try {
-    const response = await axios.get(`${ip}/api/categories`);
+    const response = await axios.get(`${ip}/api/categories`, {withCredentials: true} );
     return response.data;
   } catch (error) {
     console.error("Error downloading file:", error);
