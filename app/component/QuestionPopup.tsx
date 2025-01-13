@@ -10,6 +10,8 @@ import { Question } from "../lib/types/QuestionType";
 import Image from "next/image";
 import Hint from "./Hint/Hint";
 import { isRoleAdmin, isRoleTa } from "../lib/role";
+import Yay from "./yay";
+import { get } from "http";
 type state = {
   id: string;
   Topic: string;
@@ -24,6 +26,9 @@ export default function QuestionPopup(param: Readonly<state>) {
   const [name, setName] = useState("");
   const [role, setRole] = useState<boolean | undefined | null>(null);
   const [roleLoading, setRoleLoading] = useState(true);
+  const [showCongratPopup, setShowCongratPopup] = useState<boolean | undefined>(
+    false
+  );
 
   useEffect(() => {
     setRole(isRoleAdmin() || isRoleTa());
@@ -51,13 +56,18 @@ export default function QuestionPopup(param: Readonly<state>) {
   const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(param.id);
-    param.ClosePopup(false);
+
     const formData = new FormData(event.currentTarget);
     const answer = formData.get("Answer"); // Extract the value from FormData
 
     if (typeof answer === "string") {
-      console.log("check", answer); // Safely log the string value
-      CheckQuestionsByID(param.id, answer); // Pass the string to the API call
+      const fetchQuestion = async () => {
+        const isCorrect = await CheckQuestionsByID(param.id, answer);
+        if (isCorrect) {
+          setShowCongratPopup(true);
+        }
+      };
+      fetchQuestion();
     } else {
       console.error("Answer is not a string"); // Handle unexpected cases
     }
@@ -198,6 +208,7 @@ export default function QuestionPopup(param: Readonly<state>) {
               </div>
 
               {/*footer*/}
+
               <form onSubmit={onCheckAnswer}>
                 <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
                   <span className="max-w-md mx-auto">
@@ -229,6 +240,22 @@ export default function QuestionPopup(param: Readonly<state>) {
           )}
         </button>
       </button>
+      {showCongratPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold text-green-500 mb-4">
+              Congratulations!
+            </h2>
+            <p>You answered correctly!</p>
+            <button
+              className="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg"
+              onClick={() => setShowCongratPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <button
         className="opacity-40 fixed inset-0 z-40 bg-black cursor-auto"
         onMouseDown={() => param.ClosePopup(false)}
