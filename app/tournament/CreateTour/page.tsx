@@ -56,7 +56,7 @@ export default function CreateTour() {
 
   return (
     <div className="min-h-screen bg-[#090147] text-white">
-      <Navbar />
+      <Navbar point={null} />
 
       <div className="max-w-3xl mx-auto p-8">
         <h1 className="text-3xl font-bold mb-6 text-center">

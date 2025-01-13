@@ -84,7 +84,7 @@ export default function Homepage() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar point={point} />
       <div className="flex">
         <div className="w-80 p-6 bg-darkblue text-white">
           <div className="mb-6">
