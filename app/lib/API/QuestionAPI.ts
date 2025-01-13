@@ -23,7 +23,7 @@ export const CreateQuestionAPI = async (
       setState.setIsSuccess(true);
       if (resp.status === 200) {
         return resp.data;
-      } 
+      }
     })
     .catch((e) => {
       setState.setIsFailed(true);
@@ -83,19 +83,21 @@ export const DeleteQuestionsByID = async (id: string) => {
     });
 };
 
-export const CheckQuestionsByID = async (id: string, Answer: string) => {
-  axios
-    .post(
+export const CheckQuestionsByID = async (
+  id: string,
+  Answer: string
+): Promise<boolean> => {
+  try {
+    const resp = await axios.post(
       `${ip}/api/question/practice/check-answer`,
       { id: id, Answer: Answer },
       { withCredentials: true }
-    )
-    .then((resp) => {
-      console.log(resp);
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+    );
+    return resp.data.solve;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 };
 
 export const DownloadQuestionsByID = async (id: string) => {
@@ -140,31 +142,33 @@ export const GetCategories = async () => {
   try {
     const response = await axios.get(`${ip}/api/categories`, {withCredentials: true} );
     return response.data;
-    
   } catch (error) {
     console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
-}
+};
 export const CreateCategoriesAPI = async (name: string) => {
   try {
-    const response = await axios.post(`${ip}/api/categories`, {name}, {withCredentials: true});
+    const response = await axios.post(
+      `${ip}/api/categories`,
+      { name },
+      { withCredentials: true }
+    );
     console.log(response);
     return response.data.id;
-    
   } catch (error) {
     console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
-}
+};
 
 export const UseHintAPI = async (id: number) => {
   try {
-    const response = await axios.get(`${ip}/api/question/usehint/${id}`,  {withCredentials: true});
+    const response = await axios.get(`${ip}/api/question/usehint/${id}`, {
+      withCredentials: true,
+    });
     return response.data.data;
-    
   } catch (error) {
     console.error("Error downloading file:", error);
-
   }
-}
+};
