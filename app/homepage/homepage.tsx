@@ -5,7 +5,7 @@ import Navbar from "../component/navbar";
 import Category from "../category";
 import Difficult from "../difficult";
 import Pagination from "../component/Pagination";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
 import { GetUserPoints } from "../lib/API/GetUserAPI";
@@ -13,7 +13,8 @@ import { questions } from "../lib/types/QuestionType";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
-  const page = searchParams.get("page");
+  const router = useRouter();
+  const page = searchParams.get("page") ?? "1";
   const [selectedCategory, setSelectedCategory] =
     useState<string>("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
@@ -22,12 +23,15 @@ export default function Homepage() {
   const [questions, setQuestions] = useState<questions[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
+    router.push("/?page=1");
   };
 
   const handleDifficultyClick = (difficulty: string) => {
     setSelectedDifficulty(difficulty);
+    router.push("/?page=1");
   };
 
   useEffect(() => {
@@ -45,6 +49,7 @@ export default function Homepage() {
 
     fetchUserQuestions();
   }, [page, selectedCategory, selectedDifficulty]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       const userData = await GetUserPoints(); // Now correctly awaits the returned value

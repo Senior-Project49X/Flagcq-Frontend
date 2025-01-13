@@ -6,7 +6,8 @@ import { CreateQuestionAPI, GetCategories } from "../lib/API/QuestionAPI";
 import CreateCategories from "../component/CreateCategories";
 import LoadingPopup from "../component/LoadingPopup";
 import CreateHint from "../component/CreateHint";
-
+import { isRoleUser } from "../lib/role";
+import { useRouter } from "next/navigation";
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
@@ -26,12 +27,13 @@ interface Category {
   name: string;
 }
 export default function CreateQuestion() {
+  const router = useRouter();
   const [modeSelection, setModeSelection] = useState<ButtonStates>({
     Practice: false,
     Tournament: false,
     UnPublic: true,
   });
-
+  const [role, setRole] = useState<boolean | undefined | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -93,10 +95,7 @@ export default function CreateQuestion() {
     const newHints = [...hints];
     newHints[index] = {
       ...newHints[index],
-      [field]:
-        field === "penalty"
-          ? parseInt(value.replace(/^0+/, ""), 10) || 0
-          : value,
+      [field]: field === "penalty" ? handleCheckNumber(value) : value,
     };
     setHints(newHints);
   };
@@ -108,18 +107,22 @@ export default function CreateQuestion() {
     setHints([...hints, { id: crypto.randomUUID(), detail: "", penalty: 0 }]);
     console.log("After addition:", hints);
   };
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
 
-    // Allow single zero but remove leading zeros for other numbers
+  const handleCheckNumber = (value: string) => {
     if (value === "0") {
-      setPoint(value);
+      return value;
     } else if (value === "00") {
-      return;
+      return "0";
     } else {
       value = value.replace(/^0+/, "");
-      setPoint(value);
+      return value;
     }
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    // Allow single zero but remove leading zeros for other numbers
+    setPoint(handleCheckNumber(value));
   };
   const removeHint = (index: number) => {
     console.log("Before removal:", hints);
@@ -152,8 +155,14 @@ export default function CreateQuestion() {
       setCategories(await GetCategories());
     };
     fetchCategories();
-    console.log(categories);
   }, []);
+
+  useEffect(() => {
+    if (isRoleUser()) {
+      router.push("/unauthorized");
+    }
+  }, []);
+
   return (
     <>
       {loading && (
@@ -256,9 +265,15 @@ export default function CreateQuestion() {
           <br />
           <p>Hint</p>
           <div>
-            <button type="button" onClick={addHint}>
-              Add Hint
-            </button>
+            {hints.length < 3 && (
+              <button
+                type="button"
+                onClick={addHint}
+                className="p-2 border rounded border-gray-300 mb-2 bg-green-500 text-white hover:bg-green-600 transition-colors duration-100 "
+              >
+                Add Hint
+              </button>
+            )}
           </div>
           {hints.length > 0 &&
             hints.map((hint, index) => (
