@@ -112,7 +112,7 @@ export default function Navbar() {
             Log in
           </a> */}
           <div className="flex items-center space-x-2">
-            {point && (
+            {point !== null && point !== undefined && (
               <>
                 <Image
                   src="/trophy.svg"

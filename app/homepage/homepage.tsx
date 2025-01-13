@@ -75,18 +75,26 @@ export default function Homepage() {
 
         {/* Question Box */}
         <div className="flex-1 p-6 rounded-lg">
-          <Question
-            selectedDifficulty={selectedDifficulty}
-            selectedCategory={selectedCategory}
-            questions={questions}
-          />
+          {questions.length !== 0 ? (
+            <>
+              <Question
+                selectedDifficulty={selectedDifficulty}
+                selectedCategory={selectedCategory}
+                questions={questions}
+              />
 
-          <Pagination
-            pagePath={"/?page="}
-            pageNumber={page}
-            totalPages={totalPages}
-            hasNextPage={hasNextPage}
-          />
+              <Pagination
+                pagePath={"/?page="}
+                pageNumber={page}
+                totalPages={totalPages}
+                hasNextPage={hasNextPage}
+              />
+            </>
+          ) : (
+            <div className="text-center text-2xl font-bold text-red-400">
+              No Question Found
+            </div>
+          )}
         </div>
       </div>
     </div>
