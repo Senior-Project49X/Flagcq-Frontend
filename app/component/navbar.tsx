@@ -3,10 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import ProfileToggle from "./profileToggle";
 import { usePathname } from "next/navigation";
-type NavbarProps = {
-  point: string | undefined | null;
-};
-export default function Navbar({ point }: Readonly<NavbarProps>) {
+import { useEffect, useState } from "react";
+import { GetUserPoints } from "../lib/API/GetUserAPI";
+
+export default function Navbar() {
   const pathname = usePathname();
   const navLinks = [
     { href: "/", label: "Home" },
@@ -16,6 +16,14 @@ export default function Navbar({ point }: Readonly<NavbarProps>) {
 
     // Add more links here as needed
   ];
+  const [point, setPoint] = useState<string | undefined | null>(null);
+  useEffect(() => {
+    const fetchUserPoints = async () => {
+      const points = await GetUserPoints();
+      setPoint(points);
+    };
+    fetchUserPoints();
+  }, []);
   return (
     <nav className="bg-[#090147] py-4 px-8 absolute sticky top-0 w-full z-20">
       <div className="flex justify-between items-center">

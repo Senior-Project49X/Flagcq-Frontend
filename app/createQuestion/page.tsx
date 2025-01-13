@@ -178,7 +178,7 @@ export default function CreateQuestion() {
           {/* Add form or other content for creating a new category */}
         </CreateCategories>
       )}
-      <Navbar point={null} />
+      <Navbar />
       <div className="max-w-3xl mx-auto p-8 bg-gray-100 p-6 rounded-lg shadow-md text-black">
         <form onSubmit={onCreateQuestion}>
           <label className="mr-2">

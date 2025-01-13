@@ -6,7 +6,7 @@ import { tokenDecode } from "../lib/jwtDecode";
 import { JwtPayload } from "jwt-decode";
 import { DecodedToken } from "../lib/types/DecodedToken";
 import { GetUserData } from "../lib/API/GetUserAPI";
-export default function profile() {
+export default function Profile() {
   const [data, setData] = useState<undefined | DecodedToken>(undefined);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {

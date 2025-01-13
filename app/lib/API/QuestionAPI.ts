@@ -156,3 +156,14 @@ export const CreateCategoriesAPI = async (name: string) => {
     alert("Failed to download the file. Please try again.");
   }
 }
+
+export const UseHintAPI = async (id: number) => {
+  try {
+    const response = await axios.get(`${ip}/api/question/usehint/${id}`,  {withCredentials: true});
+    return response.data.data;
+    
+  } catch (error) {
+    console.error("Error downloading file:", error);
+
+  }
+}
