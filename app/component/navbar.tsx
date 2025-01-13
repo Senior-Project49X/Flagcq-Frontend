@@ -73,6 +73,17 @@ export default function Navbar({ point }: Readonly<NavbarProps>) {
             >
               Create Question
             </Link>
+
+            <Link
+              href="/tournament/CreateTour"
+              className={
+                pathname == "/tournament/CreateTour"
+                  ? "text-green-400 h-fit mt-3 "
+                  : "hover:text-white h-fit mt-3"
+              }
+            >
+              Create Tournament
+            </Link>
           </div>
         </div>
         {/* Right side: Navigation buttons */}

@@ -19,7 +19,7 @@ export default function profile() {
   }, []);
   return (
     <div>
-      <Navbar />
+      <Navbar point={data?.points} />
       <div className="  flex justify-center items-center">
         <div className="bg-white rounded-lg p-8 w-full max-w-4xl shadow-lg">
           <div className="flex mt-8">
