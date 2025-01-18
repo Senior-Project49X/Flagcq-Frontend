@@ -1,9 +1,8 @@
-"use client";
-
 import React, { useState } from "react";
 import EnrollModal from "./EnrollModal";
 
 type TournamentDetail = {
+  id: number;
   topic: string;
   detail: string;
   quantity: number;
@@ -16,6 +15,7 @@ type TournamentDetail = {
 };
 
 export default function TournamentCard({
+  id,
   topic,
   detail,
   quantity,
@@ -26,11 +26,23 @@ export default function TournamentCard({
   eventtime,
   event_endDate,
 }: TournamentDetail) {
-  const [CloseModal, setCloseModal] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    if (status === "open") {
+      setIsModalOpen(true);
+    }
+  };
+
   return (
-    <div className="py-6 px-5 bg-white rounded-lg ">
-      {!CloseModal && (
-        <EnrollModal ClosePopup={setCloseModal} Topic={topic} Detail={detail} />
+    <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
+      {isModalOpen && (
+        <EnrollModal
+          ClosePopup={setIsModalOpen}
+          Topic={topic}
+          Detail={detail}
+          tournament_id={id}
+        />
       )}
       <div className="flex justify-between items-center">
         <div>
@@ -38,12 +50,12 @@ export default function TournamentCard({
           <div className="text-gray-600 text-sm">
             <div>
               Event Start: {eventStart}{" "}
-              <span className=" text-red-500">({eventtime})</span>
+              <span className="text-red-500">({eventtime})</span>
             </div>
-            <div>Event End : {event_endDate}</div>
+            <div>Event End: {event_endDate}</div>
             <div>
               Enroll End: {enrollEnd}{" "}
-              <span className=" text-red-500">({enrolltime})</span>
+              <span className="text-red-500">({enrolltime})</span>
             </div>
           </div>
         </div>
@@ -52,16 +64,12 @@ export default function TournamentCard({
             <span className="text-xl font-bold">{quantity}</span>
           </div>
           <button
-            className={
+            className={`px-10 py-2 rounded-lg ${
               status === "open"
-                ? "bg-customGreen hover:bg-green-500 px-10 py-2 rounded-lg ease-out duration-300 focus:pointer-events-auto"
-                : "bg-customGrey px-10 py-2 rounded-lg cursor-not-allowed"
-            }
-            onClick={() => {
-              if (status === "open") {
-                setCloseModal(false);
-              }
-            }}
+                ? "bg-customGreen hover:bg-green-500 ease-out duration-300 focus:pointer-events-auto"
+                : "bg-customGrey cursor-not-allowed"
+            }`}
+            onClick={handleOpenModal}
             disabled={status !== "open"}
           >
             {status === "open" ? "Enroll" : "Closed"}

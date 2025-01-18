@@ -8,19 +8,27 @@ import { GetQuestions } from "../../lib/API/QuestionAPI";
 import { GetUserPoints } from "../../lib/API/GetUserAPI";
 import { GetLbTourData } from "../../lib/API/GetLbTourAPI";
 import { questions } from "../../lib/types/QuestionType";
+import { GetTourPage } from "@/app/lib/API/GetTourPage";
 
 export default function Homepage() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
     useState("All Difficulty");
-  const [point, setPoint] = useState<string>("0");
   const [questions, setQuestions] = useState<questions[]>([]);
   const [leaderboardData, setLeaderboardData] = useState<
     { team_name: string; total_points: number; rank: string }[]
   >([]);
+  const [tourData, setTourData] = useState<
+    {
+      name: string;
+      teamName: string;
+      teamRank: string;
+      teamScore: number;
+      individualScore: number;
+      eventEndDate: string;
+    }[]
+  >([]);
   const [remainingTime, setRemainingTime] = useState("");
-
-  const eventStartDate = new Date("2024-12-06T08:00:00Z");
   const eventEndDate = new Date("2024-12-07T23:59:59Z");
 
   useEffect(() => {
@@ -37,14 +45,6 @@ export default function Homepage() {
   }, [selectedCategory, selectedDifficulty]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const userData = await GetUserPoints();
-      setPoint(userData);
-    };
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
         const response = await GetLbTourData("1");
@@ -56,6 +56,20 @@ export default function Homepage() {
     };
 
     fetchLeaderboardData();
+  }, []);
+
+  useEffect(() => {
+    const fetchTourData = async () => {
+      try {
+        const response = await GetTourPage("1");
+        const parsedData = Array.isArray(response) ? response : [];
+        setTourData(parsedData);
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      }
+    };
+
+    fetchTourData();
   }, []);
 
   // Countdown Logic
@@ -84,12 +98,12 @@ export default function Homepage() {
 
   return (
     <div>
-      <Navbar point={point} />
+      <Navbar />
       <div className="flex">
         <div className="w-80 p-6 bg-darkblue text-white">
           <div className="mb-6">
             <h2 className="text-xl font-bold">Tournament Name</h2>
-            <p className="text-lg">CyberSec Challenge</p>
+            <p className="text-lg">{tourData[0]?.name}</p>
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Remaining Time</h2>
@@ -107,7 +121,7 @@ export default function Homepage() {
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Individual Score</h2>
-            <p className="text-lg">{point} Points</p>
+            <p className="text-lg">{tourData[0]?.individualScore} Points</p>
           </div>
           <button className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600">
             Leaderboard

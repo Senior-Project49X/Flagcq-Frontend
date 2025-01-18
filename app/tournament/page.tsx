@@ -14,6 +14,7 @@ interface RemainingTime {
 }
 
 interface Tournament {
+  id: number;
   name: string;
   enroll_startDate: string;
   enroll_endDate: string;
@@ -112,6 +113,7 @@ export default function Page() {
           tourData.map((tournament, i) => (
             <TournamentCard
               key={i}
+              id={tournament.id}
               topic={tournament.name}
               detail={tournament.description}
               quantity={0}

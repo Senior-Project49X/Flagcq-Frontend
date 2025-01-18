@@ -1,29 +1,53 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { PostCreateTeam } from "../lib/API/GetCreateTeam";
 
 type ModalDetail = {
   ClosePopup: Function;
   Topic: string;
   Detail: string;
+  tournament_id: number; // Add tournament_id prop
 };
+
+interface TeamData {
+  name: string;
+  tournament_id: number;
+}
 
 export default function EnrollModal({
   ClosePopup,
   Topic,
   Detail,
+  tournament_id, // Destructure tournament_id
 }: ModalDetail) {
-  async function onCreateTeam(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    console.log(formData.get("TeamName"));
-  }
+  const [CreateTeamData, setCreateTeamData] = useState<TeamData>({
+    name: "",
+    tournament_id, // Initialize with the tournament_id from props
+  });
 
-  async function onJoinTeam(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    console.log(formData.get("TeamCode"));
-  }
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      setSuccessMessage(null);
+      await PostCreateTeam(CreateTeamData);
+      setSuccessMessage("Team created successfully!");
+    } catch (error) {
+      console.error("Error creating team:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCreateTeamData({
+      ...CreateTeamData,
+      name: e.target.value, // Update team name in state
+    });
+  };
 
   return (
     <>
@@ -42,7 +66,7 @@ export default function EnrollModal({
               className="text-black text-2xl"
               onClick={() => ClosePopup(true)}
             >
-              ×
+              x
             </button>
           </div>
 
@@ -52,51 +76,35 @@ export default function EnrollModal({
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col items-center border-r pr-4">
                 <h5 className="text-sm font-bold mb-2">Create new team</h5>
-                <form onSubmit={onCreateTeam} className="w-full">
+                <form onSubmit={handleSubmit} className="w-full">
                   <input
                     type="text"
                     name="TeamName"
-                    placeholder="ชื่อทีม"
+                    placeholder="Team Name"
                     className="w-full px-3 py-2 border rounded mb-4"
                     maxLength={50}
+                    value={CreateTeamData.name}
+                    onChange={handleInputChange}
                   />
-                  <Link href="/tournament/Tourteam">
-                    <button
-                      type="submit"
-                      className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
-                    >
-                      Create
-                    </button>
-                  </Link>
+                  <button
+                    type="submit"
+                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Creating..." : "Create"}
+                  </button>
                 </form>
               </div>
 
-              {/* Join Team */}
               <div className="flex flex-col items-center">
-                <h5 className="text-sm font-bold mb-2">Already has team</h5>
-                <form onSubmit={onJoinTeam} className="w-full">
-                  <input
-                    type="text"
-                    name="TeamCode"
-                    placeholder="รหัสเชิญ"
-                    className="w-full px-3 py-2 border rounded mb-4"
-                  />
-                  <Link href="/tournament/Tourteam">
-                    <button
-                      type="submit"
-                      className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
-                    >
-                      Join
-                    </button>
-                  </Link>
-                </form>
+                <h5 className="text-sm font-bold mb-2">Already have a team</h5>
+                {/* Add logic for joining a team */}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Background Overlay */}
       <div className="opacity-40 fixed inset-0 z-40 bg-black"></div>
     </>
   );
