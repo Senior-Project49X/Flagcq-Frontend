@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/router"; // Import useRouter
 import { PostCreateTeam } from "../lib/API/GetCreateTeam";
+import { PostJoinTeam } from "../lib/API/PostJoinTeam";
 
 type ModalDetail = {
   ClosePopup: Function;
@@ -14,6 +15,10 @@ interface TeamData {
   tournament_id: number;
 }
 
+interface JoinTeamData {
+  invite_code: string;
+}
+
 export default function EnrollModal({
   ClosePopup,
   Topic,
@@ -25,6 +30,9 @@ export default function EnrollModal({
     tournament_id, // Initialize with the tournament_id from props
   });
 
+  const [inviteCode, setInviteCode] = useState<JoinTeamData>({
+    invite_code: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -33,10 +41,25 @@ export default function EnrollModal({
     try {
       setIsLoading(true);
       setSuccessMessage(null);
-      await PostCreateTeam(CreateTeamData);
+      await PostCreateTeam(CreateTeamData); // API call to create the team
       setSuccessMessage("Team created successfully!");
     } catch (error) {
       console.error("Error creating team:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleJoinTeam = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      setSuccessMessage(null);
+      // Replace with actual API call for joining a team using invite_code
+      await PostJoinTeam(inviteCode);
+      setSuccessMessage("Successfully joined the team!");
+    } catch (error) {
+      console.error("Error joining team:", error);
     } finally {
       setIsLoading(false);
     }
@@ -46,6 +69,13 @@ export default function EnrollModal({
     setCreateTeamData({
       ...CreateTeamData,
       name: e.target.value, // Update team name in state
+    });
+  };
+
+  const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInviteCode({
+      ...inviteCode,
+      invite_code: e.target.value,
     });
   };
 
@@ -74,6 +104,7 @@ export default function EnrollModal({
             <h4 className="text-center text-lg font-semibold mb-6">Detail</h4>
             <div className="text-center mb-6">{Detail}</div>
             <div className="grid grid-cols-2 gap-4">
+              {/* Create New Team Section */}
               <div className="flex flex-col items-center border-r pr-4">
                 <h5 className="text-sm font-bold mb-2">Create new team</h5>
                 <form onSubmit={handleSubmit} className="w-full">
@@ -96,9 +127,27 @@ export default function EnrollModal({
                 </form>
               </div>
 
+              {/* Already Have a Team Section */}
               <div className="flex flex-col items-center">
                 <h5 className="text-sm font-bold mb-2">Already have a team</h5>
-                {/* Add logic for joining a team */}
+                <form onSubmit={handleJoinTeam} className="w-full">
+                  <input
+                    type="text"
+                    name="InviteCode"
+                    placeholder="Invite Code"
+                    className="w-full px-3 py-2 border rounded mb-4"
+                    maxLength={50}
+                    value={inviteCode.invite_code}
+                    onChange={handleInviteCodeChange}
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Joining..." : "Join"}
+                  </button>
+                </form>
               </div>
             </div>
           </div>

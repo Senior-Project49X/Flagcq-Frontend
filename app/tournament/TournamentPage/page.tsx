@@ -15,21 +15,20 @@ export default function Homepage() {
   const [selectedDifficulty, setSelectedDifficulty] =
     useState("All Difficulty");
   const [questions, setQuestions] = useState<questions[]>([]);
-  const [leaderboardData, setLeaderboardData] = useState<
-    { team_name: string; total_points: number; rank: string }[]
-  >([]);
+  // const [leaderboardData, setLeaderboardData] = useState<
+  //   { team_name: string; total_points: number; rank: string }[]
+  // >([]);
   const [tourData, setTourData] = useState<
     {
       name: string;
       teamName: string;
-      teamRank: string;
+      teamRank: number;
       teamScore: number;
       individualScore: number;
-      eventEndDate: string;
+      eventEndDate: Date;
     }[]
   >([]);
   const [remainingTime, setRemainingTime] = useState("");
-  const eventEndDate = new Date("2024-12-07T23:59:59Z");
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
@@ -44,24 +43,24 @@ export default function Homepage() {
     fetchUserQuestions();
   }, [selectedCategory, selectedDifficulty]);
 
-  useEffect(() => {
-    const fetchLeaderboardData = async () => {
-      try {
-        const response = await GetLbTourData("1");
-        const parsedData = Array.isArray(response) ? response : [];
-        setLeaderboardData(parsedData);
-      } catch (error) {
-        console.error("Error fetching leaderboard data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchLeaderboardData = async () => {
+  //     try {
+  //       const response = await GetLbTourData("1");
+  //       const parsedData = Array.isArray(response) ? response : [];
+  //       setLeaderboardData(parsedData);
+  //     } catch (error) {
+  //       console.error("Error fetching leaderboard data:", error);
+  //     }
+  //   };
 
-    fetchLeaderboardData();
-  }, []);
+  //   fetchLeaderboardData();
+  // }, []);
 
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await GetTourPage("1");
+        const response = await GetTourPage(1);
         const parsedData = Array.isArray(response) ? response : [];
         setTourData(parsedData);
       } catch (error) {
@@ -76,7 +75,7 @@ export default function Homepage() {
   useEffect(() => {
     const calculateRemainingTime = () => {
       const now = new Date();
-      const remaining = eventEndDate.getTime() - now.getTime();
+      const remaining = tourData[0]?.eventEndDate.getTime() - now.getTime();
 
       if (remaining <= 0) {
         setRemainingTime("Event Ended");
@@ -94,7 +93,7 @@ export default function Homepage() {
     calculateRemainingTime(); // Initial calculation
 
     return () => clearInterval(interval); // Cleanup interval
-  }, [eventEndDate]);
+  }, [tourData[0]?.eventEndDate]);
 
   return (
     <div>
@@ -111,12 +110,12 @@ export default function Homepage() {
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Team Rank</h2>
-            <p className="text-lg">{leaderboardData[0]?.rank || "N/A"}</p>
+            <p className="text-lg">{tourData[0]?.teamRank || "N/A"}</p>
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Team Score</h2>
             <p className="text-lg">
-              {leaderboardData[0]?.total_points || 0} Points
+              {tourData[0]?.individualScore || 0} Points
             </p>
           </div>
           <div className="mb-6">
