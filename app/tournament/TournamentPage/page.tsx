@@ -5,77 +5,67 @@ import Navbar from "../../component/navbar";
 import Pagination from "../../component/Pagination";
 import Question from "../../component/Question";
 import { GetQuestions } from "../../lib/API/QuestionAPI";
-import { GetUserPoints } from "../../lib/API/GetUserAPI";
-import { GetLbTourData } from "../../lib/API/GetLbTourAPI";
 import { questions } from "../../lib/types/QuestionType";
 import { GetTourPage } from "@/app/lib/API/GetTourPage";
+import Link from "next/link";
+
+interface TourData {
+  name: string;
+  teamName: string;
+  teamRank: number;
+  teamScore: number;
+  individualScore: number;
+  eventEndDate: string; // Using ISO string to handle Date parsing safely
+}
 
 export default function Homepage() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
     useState("All Difficulty");
   const [questions, setQuestions] = useState<questions[]>([]);
-  // const [leaderboardData, setLeaderboardData] = useState<
-  //   { team_name: string; total_points: number; rank: string }[]
-  // >([]);
-  const [tourData, setTourData] = useState<
-    {
-      name: string;
-      teamName: string;
-      teamRank: number;
-      teamScore: number;
-      individualScore: number;
-      eventEndDate: Date;
-    }[]
-  >([]);
+  const [tourData, setTourData] = useState<TourData | null>(null); // Nullable type
   const [remainingTime, setRemainingTime] = useState("");
 
+  // Fetch questions based on selected filters
   useEffect(() => {
     const fetchUserQuestions = async () => {
-      const userQuestion = await GetQuestions(
-        selectedCategory,
-        selectedDifficulty,
-        null
-      );
-      setQuestions(userQuestion.data);
+      try {
+        const userQuestions = await GetQuestions(
+          selectedCategory,
+          selectedDifficulty,
+          null
+        );
+        setQuestions(userQuestions.data);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      }
     };
 
     fetchUserQuestions();
   }, [selectedCategory, selectedDifficulty]);
 
-  // useEffect(() => {
-  //   const fetchLeaderboardData = async () => {
-  //     try {
-  //       const response = await GetLbTourData("1");
-  //       const parsedData = Array.isArray(response) ? response : [];
-  //       setLeaderboardData(parsedData);
-  //     } catch (error) {
-  //       console.error("Error fetching leaderboard data:", error);
-  //     }
-  //   };
-
-  //   fetchLeaderboardData();
-  // }, []);
-
+  // Fetch tournament data
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await GetTourPage(1);
-        const parsedData = Array.isArray(response) ? response : [];
-        setTourData(parsedData);
+        const response = await GetTourPage(3);
+        setTourData(response);
       } catch (error) {
-        console.error("Error fetching leaderboard data:", error);
+        console.error("Error fetching tournament data:", error);
       }
     };
 
     fetchTourData();
   }, []);
 
-  // Countdown Logic
+  // Countdown logic
   useEffect(() => {
+    if (!tourData?.eventEndDate) return;
+
     const calculateRemainingTime = () => {
       const now = new Date();
-      const remaining = tourData[0]?.eventEndDate.getTime() - now.getTime();
+      const endDate = new Date(tourData.eventEndDate);
+      const remaining = endDate.getTime() - now.getTime();
 
       if (remaining <= 0) {
         setRemainingTime("Event Ended");
@@ -93,38 +83,41 @@ export default function Homepage() {
     calculateRemainingTime(); // Initial calculation
 
     return () => clearInterval(interval); // Cleanup interval
-  }, [tourData[0]?.eventEndDate]);
+  }, [tourData?.eventEndDate]);
 
   return (
     <div>
       <Navbar />
       <div className="flex">
+        {/* Sidebar */}
         <div className="w-80 p-6 bg-darkblue text-white">
           <div className="mb-6">
             <h2 className="text-xl font-bold">Tournament Name</h2>
-            <p className="text-lg">{tourData[0]?.name}</p>
+            <p className="text-lg">{tourData?.name || "Loading..."}</p>
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Remaining Time</h2>
-            <p className="text-lg">{remainingTime}</p>
+            <p className="text-lg">{remainingTime || "Calculating..."}</p>
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Team Rank</h2>
-            <p className="text-lg">{tourData[0]?.teamRank || "N/A"}</p>
+            <p className="text-lg">{tourData?.teamRank || "N/A"}</p>
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Team Score</h2>
-            <p className="text-lg">
-              {tourData[0]?.individualScore || 0} Points
-            </p>
+            <p className="text-lg">{tourData?.teamScore || 0} Points</p>
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Individual Score</h2>
-            <p className="text-lg">{tourData[0]?.individualScore} Points</p>
+            <p className="text-lg">{tourData?.individualScore || 0} Points</p>
           </div>
-          <button className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600">
+
+          <Link
+            href="/tournament/Tourleaderboard" // Replace "/" with the actual path to navigate back
+            className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
+          >
             Leaderboard
-          </button>
+          </Link>
         </div>
 
         {/* Question Box */}
