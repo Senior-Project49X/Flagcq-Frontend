@@ -38,7 +38,7 @@ export default function TournamentCard({
     <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
       {isModalOpen && (
         <EnrollModal
-          ClosePopup={setIsModalOpen}
+          ClosePopup={() => setIsModalOpen(false)}
           Topic={topic}
           Detail={detail}
           tournament_id={id}
