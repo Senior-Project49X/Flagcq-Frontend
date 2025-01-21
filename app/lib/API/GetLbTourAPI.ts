@@ -1,7 +1,7 @@
 import axios from "axios";
 const ip = process.env.NEXT_PUBLIC_IP_URL;
 
-export const GetLbTourData = async (tournament_id: string) => {
+export const GetLbTourData = async (tournament_id: number) => {
   try {
     const resp = await axios.get(`${ip}/api/lb/tournament/${tournament_id}`, {
       withCredentials: true,
