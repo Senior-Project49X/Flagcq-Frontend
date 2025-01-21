@@ -104,7 +104,7 @@ export const DownloadQuestionsByID = async (id: string) => {
   try {
     const response = await axios.get(`${ip}/api/question/download/${id}`, {
       responseType: "blob", // Important for file download
-      
+      withCredentials: true,
     });
 
     // Access the Content-Disposition header
