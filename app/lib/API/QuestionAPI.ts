@@ -1,4 +1,5 @@
 import axios from "axios";
+import { isRoleAdmin } from "../role";
 
 const ip = process.env.NEXT_PUBLIC_IP_URL;
 interface SetState {
@@ -34,30 +35,59 @@ export const CreateQuestionAPI = async (
     });
 };
 
+// export const GetQuestions = async (
+//   selectedCategory: string,
+//   selectedDifficulty: string,
+//   page: string | null
+// ) => {
+//   const NewPage = page ?? 1;
+  
+//   try {
+    
+//     const resp = await axios.get(
+//       `${ip}/api/questions/practice?mode=Practice${
+//         selectedCategory === "All Categories"
+//           ? ""
+//           : `&category=${selectedCategory}`
+//       }${
+//         selectedDifficulty === "All Difficulty"
+//           ? ""
+//           : `&Difficulty=${selectedDifficulty}`
+//       }&page=${NewPage}`,
+//       { withCredentials: true }
+//     );
+//     return resp.data;
+//   } catch (e) {
+//     console.error("Error fetching questions:", e);
+//   }
+//   // console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
+// };
+
 export const GetQuestions = async (
   selectedCategory: string,
   selectedDifficulty: string,
   page: string | null
 ) => {
   const NewPage = page ?? 1;
-  try {
-    const resp = await axios.get(
-      `${ip}/api/questions/practice?mode=Practice${
-        selectedCategory === "All Categories"
-          ? ""
-          : `&category=${selectedCategory}`
-      }${
-        selectedDifficulty === "All Difficulty"
-          ? ""
-          : `&Difficulty=${selectedDifficulty}`
-      }&page=${NewPage}`,
-      { withCredentials: true }
-    );
-    return resp.data;
-  } catch (e) {
-    console.error("Error fetching questions:", e);
+
+  let url = isRoleAdmin() ? `${ip}/api/questions?page=${NewPage}` : `${ip}/api/questions/practice?mode=Practice&page=${NewPage}`  ;
+
+  if (selectedCategory !== "All Categories") {
+    url += `&category=${selectedCategory}`;
   }
-  // console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
+
+  if (selectedDifficulty !== "All Difficulty") {
+    url += `&difficulty=${selectedDifficulty}`;
+  }
+
+  try {
+    const response = await axios.get(url, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error downloading file:", error);
+  }
 };
 
 export const GetQuestionsByID = async (id: string) => {
@@ -172,3 +202,5 @@ export const UseHintAPI = async (id: number) => {
     console.error("Error downloading file:", error);
   }
 };
+
+

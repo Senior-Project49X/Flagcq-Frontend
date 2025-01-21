@@ -1,12 +1,12 @@
 "use client";
 import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
-import Navbar from "../component/navbar";
-import { CreateQuestionAPI, GetCategories } from "../lib/API/QuestionAPI";
+import Navbar from "../../component/navbar";
+import { CreateQuestionAPI, GetCategories } from "../../lib/API/QuestionAPI";
 import CreateCategories from "../component/CreateCategories";
-import LoadingPopup from "../component/LoadingPopup";
-import CreateHint from "../component/CreateHint";
-import { isRoleUser } from "../lib/role";
+import LoadingPopup from "../../component/LoadingPopup";
+import CreateHint from "../../component/CreateHint";
+import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
 interface CreateNewQuestion {
   CategoriesId: string | null;

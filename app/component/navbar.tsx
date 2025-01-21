@@ -80,9 +80,9 @@ export default function Navbar() {
             {role && (
               <>
                 <Link
-                  href="/createQuestion"
+                  href="/admin/CreateQuestion"
                   className={
-                    pathname == "/createQuestion"
+                    pathname == "/admin/CreateQuestion"
                       ? "text-green-400 h-fit mt-3 "
                       : "hover:text-white h-fit mt-3"
                   }
@@ -90,9 +90,9 @@ export default function Navbar() {
                   Create Question
                 </Link>
                 <Link
-                  href="/tournament/CreateTour"
+                  href="/admin/CreateTournament"
                   className={
-                    pathname == "/tournament/CreateTour"
+                    pathname == "/admin/CreateTournament"
                       ? "text-green-400 h-fit mt-3 "
                       : "hover:text-white h-fit mt-3"
                   }

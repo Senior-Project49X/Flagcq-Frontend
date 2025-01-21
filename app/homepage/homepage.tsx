@@ -36,15 +36,16 @@ export default function Homepage() {
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
-      const userQuestion = await GetQuestions(
+      const result = await GetQuestions(
         selectedCategory,
         selectedDifficulty,
         page
       );
-      console.log("b", userQuestion.data);
-      setTotalPages(userQuestion.totalPages);
-      setHasNextPage(userQuestion.hasNextPage);
-      setQuestions(userQuestion.data);
+
+      console.log("b", result.data);
+      setTotalPages(result.totalPages);
+      setHasNextPage(result.hasNextPage);
+      setQuestions(result.data);
     };
 
     fetchUserQuestions();
