@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
 // 1. Specify protected and public routes
-const protectedRoutes = ["/*"]; // Protect all routes
+const protectedRoutes = [/^\/(?!login|cmuOAuthCallback|logo-login.svg).*$/]; // Protect all routes except public ones
 const publicRoutes = ["/login", "/cmuOAuthCallback"]; // Except these
 
 const adminRoutes = [ /^\/admin.*/];
