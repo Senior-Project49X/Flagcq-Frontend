@@ -1,5 +1,5 @@
 import React, { FormEvent } from "react";
-import { CreateCategoriesAPI } from "../lib/API/QuestionAPI";
+import { CreateCategoriesAPI } from "../../lib/API/QuestionAPI";
 type ModalProps = {
   onClose: (Category: string) => void;
   children: React.ReactNode;

@@ -249,7 +249,10 @@ export default function QuestionPopup(param: Readonly<state>) {
             <p>You answered correctly!</p>
             <button
               className="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg"
-              onClick={() => setShowCongratPopup(false)}
+              onClick={() => {
+                setShowCongratPopup(false);
+                location.reload();
+              }}
             >
               Close
             </button>
