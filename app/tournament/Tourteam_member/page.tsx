@@ -3,6 +3,8 @@ import Navbar from "../../component/navbar";
 import { useState, useEffect } from "react";
 import { GetTourMem } from "../../lib/API/GetTourMem";
 import Image from "next/image";
+import EnrollModal from "../../component/EnrollModal";
+import { useSearchParams } from "next/navigation";
 
 type TourMemData = {
   tournamentName: string;
@@ -23,6 +25,9 @@ export default function Tourteam_member() {
   const [showPopupKick, setShowPopupKick] = useState(false);
   const [mem_number, setMem_number] = useState(2);
   const [isError, setIsError] = useState(false);
+  const searchParams = useSearchParams();
+  const teamId = searchParams.get("teamId");
+  const tournamentId = searchParams.get("tournamentId");
 
   const handleDeleteClick = () => {
     setShowPopup(true);
@@ -34,28 +39,18 @@ export default function Tourteam_member() {
 
   const handleClosePopup = () => {
     setShowPopup(false);
-    // setTeamNameInput("");
     setIsError(false);
   };
 
   const handleCloseKickPopup = () => {
     setShowPopupKick(false);
-    // setTeamNameInput("");
     setIsError(false);
   };
-
-  // const handleConfirm = () => {
-  //   if (teamNameInput === teamName) {
-  //     handleClosePopup();
-  //   } else {
-  //     setIsError(true);
-  //   }
-  // };
 
   useEffect(() => {
     const fetchTourMemData = async () => {
       try {
-        const response = await GetTourMem(3, 1);
+        const response = await GetTourMem(Number(tournamentId), Number(teamId));
         setTourMemdData(response);
       } catch (error) {
         console.error("Error fetching tournament data:", error);
