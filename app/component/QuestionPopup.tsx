@@ -47,7 +47,7 @@ export default function QuestionPopup(param: Readonly<state>) {
       DeleteQuestionsByID(param.id);
       handleClosePopup();
       param.ClosePopup(false);
-      // location.reload();
+      location.reload();
     } else {
       setIsError(true);
     }
