@@ -77,7 +77,7 @@ export const GetQuestions = async (
   }
 
   if (selectedDifficulty !== "All Difficulty") {
-    url += `&Difficulty=${selectedDifficulty}`;
+    url += `&difficulty=${selectedDifficulty}`;
   }
 
   try {
