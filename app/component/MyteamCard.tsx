@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import EnrollModal from "./EnrollModal";
+import { useRouter } from "next/navigation";
 
 type TournamentDetail = {
   id: number;
@@ -16,7 +16,7 @@ type TournamentDetail = {
   teamCount: number;
 };
 
-export default function TournamentCard({
+export default function MyteamCard({
   id,
   topic,
   detail,
@@ -30,27 +30,18 @@ export default function TournamentCard({
   teamId,
   teamCount,
 }: TournamentDetail) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
-  const handleOpenModal = () => {
+  const handleButtonClick = () => {
     if (status === "open") {
-      setIsModalOpen(true);
+      router.push(
+        `/tournament/Tourteam_member?tournamentId=${id}&teamId=${teamId}`
+      );
     }
   };
 
   return (
     <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
-      {isModalOpen && (
-        <EnrollModal
-          ClosePopup={() => setIsModalOpen(false)}
-          Topic={topic}
-          Detail={detail}
-          tournament_id={id}
-          TeamId={teamId}
-          TeamCount={teamCount}
-          hasJoined={hasJoined}
-        />
-      )}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold mb-1">{topic}</h2>
@@ -67,19 +58,17 @@ export default function TournamentCard({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-bold">{teamCount}</span>
-          </div>
+          <span className="text-xl font-bold">{teamCount}</span>
           <button
             className={`px-10 py-2 rounded-lg ${
               status === "open"
-                ? "bg-customGreen hover:bg-green-500 ease-out duration-300 focus:pointer-events-auto"
+                ? "bg-customGreen hover:bg-green-500 ease-out duration-300"
                 : "bg-customGrey cursor-not-allowed"
             }`}
-            onClick={handleOpenModal}
+            onClick={handleButtonClick}
             disabled={status !== "open"}
           >
-            {status === "open" ? "Enroll" : "Closed"}
+            {status === "open" ? "Joined" : "Closed"}
           </button>
         </div>
       </div>

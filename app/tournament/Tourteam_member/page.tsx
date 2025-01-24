@@ -3,13 +3,13 @@ import Navbar from "../../component/navbar";
 import { useState, useEffect } from "react";
 import { GetTourMem } from "../../lib/API/GetTourMem";
 import Image from "next/image";
-import EnrollModal from "../../component/EnrollModal";
 import { useSearchParams } from "next/navigation";
 
 type TourMemData = {
   tournamentName: string;
   teamName: string;
   invitedCode: string;
+  memberCount: number;
   members: {
     userId: number;
     isLeader: boolean;
@@ -23,7 +23,6 @@ export default function Tourteam_member() {
   const [TourMemData, setTourMemdData] = useState<TourMemData | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [showPopupKick, setShowPopupKick] = useState(false);
-  const [mem_number, setMem_number] = useState(2);
   const [isError, setIsError] = useState(false);
   const searchParams = useSearchParams();
   const teamId = searchParams.get("teamId");
@@ -70,7 +69,7 @@ export default function Tourteam_member() {
           </p>
           <p className="text-md">Team {TourMemData?.teamName}</p>
           <p className="text-md">รหัสเชิญ: {TourMemData?.invitedCode}</p>
-          <p className="text-lg font-bold mt-4">{mem_number}/4</p>
+          <p className="text-lg font-bold mt-4">{TourMemData?.memberCount}/4</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-8 px-8">

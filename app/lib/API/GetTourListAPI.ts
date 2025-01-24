@@ -1,14 +1,17 @@
 import axios from "axios";
+
 const ip = process.env.NEXT_PUBLIC_IP_URL;
 
-export const GetTourList = async () => {
+export const GetTourList = async (page: string | null) => {
+  const NewPage = page ?? "1"; // Ensure the default page is a string
   try {
-    const resp = await axios.get(`${ip}/api/tournaments`, {
+    // Include the page parameter in the API call
+    const resp = await axios.get(`${ip}/api/tournaments?page=${NewPage}`, {
       withCredentials: true,
     });
     return resp.data;
   } catch (e) {
-    console.error("Error fetching user data:", e);
-    return "0";
+    console.error("Error fetching tournament data:", e);
+    return {};
   }
 };

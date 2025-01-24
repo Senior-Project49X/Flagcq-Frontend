@@ -1,6 +1,5 @@
 import React, { FormEvent, useState, useEffect } from "react";
 import { PostCreateTeam } from "../lib/API/GetCreateTeam";
-import { PostJoinTeam } from "../lib/API/PostJoinTeam";
 import { isRoleAdmin } from "../lib/role";
 import { DeleteTour } from "../lib/API/DelTourAPI";
 import Link from "next/link";
@@ -11,6 +10,9 @@ type ModalDetail = {
   Topic: string;
   Detail: string;
   tournament_id: number;
+  TeamId: number;
+  TeamCount: number;
+  hasJoined: boolean;
 };
 
 export default function EnrollModal({
@@ -18,6 +20,9 @@ export default function EnrollModal({
   Topic,
   Detail,
   tournament_id,
+  TeamId,
+  TeamCount,
+  hasJoined,
 }: ModalDetail) {
   const [teamName, setTeamName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
@@ -43,24 +48,6 @@ export default function EnrollModal({
       console.error("Error creating team:", error);
     } finally {
       setIsLoadingCreate(false);
-    }
-  };
-
-  // Join a team
-  const handleJoinTeam = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      setIsLoadingJoin(true);
-      setSuccessMessage(null);
-      const teamData = await PostJoinTeam({ invite_code: inviteCode }); // Joining a team
-      setSuccessMessage("Successfully joined the team!");
-      router.push(
-        `/tournament/Tourteam_member?teamId=${teamData.team.id}&tournamentId=${teamData.team.tournament_id}`
-      );
-    } catch (error) {
-      console.error("Error joining team:", error);
-    } finally {
-      setIsLoadingJoin(false);
     }
   };
 
@@ -105,8 +92,11 @@ export default function EnrollModal({
           <div className="px-6 py-6">
             <h4 className="text-center text-lg font-semibold mb-6">Detail</h4>
             <div className="text-center mb-6">{Detail}</div>
-            <div className="grid grid-cols-2 gap-4">
-              {role ? (
+
+            {/* Admin View */}
+            {role ? (
+              <div className="grid grid-cols-2 gap-4">
+                {/* Delete Tournament */}
                 <div className="flex flex-col items-center border-r pr-4">
                   <h5 className="text-sm font-bold mb-2">
                     Delete this Tournament
@@ -119,52 +109,50 @@ export default function EnrollModal({
                     {isLoadingDelete ? "Deleting..." : "Delete"}
                   </button>
                 </div>
-              ) : (
-                <>
-                  <div className="flex flex-col items-center border-r pr-4">
-                    <h5 className="text-sm font-bold mb-2">Create new team</h5>
-                    <form onSubmit={handleCreate} className="w-full">
-                      <input
-                        type="text"
-                        placeholder="Team Name"
-                        className="w-full px-3 py-2 border rounded mb-4"
-                        maxLength={50}
-                        value={teamName}
-                        onChange={(e) => setTeamName(e.target.value)}
-                      />
-                      <button
-                        type="submit"
-                        className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
-                        disabled={isLoadingCreate}
-                      >
-                        {isLoadingCreate ? "Creating..." : "Create"}
-                      </button>
-                    </form>
-                  </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center">
+                <h5 className="text-sm font-bold mb-2">Create new team</h5>
+                <form onSubmit={handleCreate} className="w-full">
+                  <input
+                    type="text"
+                    placeholder="Team Name"
+                    className="w-full px-3 py-2 border rounded mb-4"
+                    maxLength={50}
+                    value={teamName}
+                    onChange={(e) => setTeamName(e.target.value)}
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                    disabled={isLoadingCreate}
+                  >
+                    {isLoadingCreate ? "Creating..." : "Create"}
+                  </button>
+                </form>
+              </div>
 
-                  <div className="flex flex-col items-center">
-                    <h5 className="text-sm font-bold mb-2">Join team</h5>
-                    <form onSubmit={handleJoinTeam} className="w-full">
-                      <input
-                        type="text"
-                        placeholder="Invite Code"
-                        className="w-full px-3 py-2 border rounded mb-4"
-                        maxLength={50}
-                        value={inviteCode}
-                        onChange={(e) => setInviteCode(e.target.value)}
-                      />
-                      <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
-                        disabled={isLoadingJoin}
-                      >
-                        {isLoadingJoin ? "Joining..." : "Join"}
-                      </button>
-                    </form>
-                  </div>
-                </>
-              )}
-            </div>
+              // <div className="border-2 border-gray-300 rounded-lg p-6">
+              //   <h5 className="text-sm font-bold mb-2">Join team</h5>
+              //   <form onSubmit={handleJoinTeam} className="w-full">
+              //     <input
+              //       type="text"
+              //       placeholder="Invite Code"
+              //       className="w-full px-3 py-2 border rounded mb-4"
+              //       maxLength={50}
+              //       value={inviteCode}
+              //       onChange={(e) => setInviteCode(e.target.value)}
+              //     />
+              //     <button
+              //       type="submit"
+              //       className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
+              //       disabled={isLoadingJoin}
+              //     >
+              //       {isLoadingJoin ? "Joining..." : "Join"}
+              //     </button>
+              //   </form>
+              // </div>
+            )}
           </div>
         </div>
       </div>
