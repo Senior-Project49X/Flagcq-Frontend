@@ -3,11 +3,13 @@ import Navbar from "../../component/navbar";
 import { useState, useEffect } from "react";
 import { GetTourMem } from "../../lib/API/GetTourMem";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 type TourMemData = {
   tournamentName: string;
   teamName: string;
   invitedCode: string;
+  memberCount: number;
   members: {
     userId: number;
     isLeader: boolean;
@@ -21,8 +23,10 @@ export default function Tourteam_member() {
   const [TourMemData, setTourMemdData] = useState<TourMemData | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [showPopupKick, setShowPopupKick] = useState(false);
-  const [mem_number, setMem_number] = useState(2);
   const [isError, setIsError] = useState(false);
+  const searchParams = useSearchParams();
+  const teamId = searchParams.get("teamId");
+  const tournamentId = searchParams.get("tournamentId");
 
   const handleDeleteClick = () => {
     setShowPopup(true);
@@ -34,28 +38,18 @@ export default function Tourteam_member() {
 
   const handleClosePopup = () => {
     setShowPopup(false);
-    // setTeamNameInput("");
     setIsError(false);
   };
 
   const handleCloseKickPopup = () => {
     setShowPopupKick(false);
-    // setTeamNameInput("");
     setIsError(false);
   };
-
-  // const handleConfirm = () => {
-  //   if (teamNameInput === teamName) {
-  //     handleClosePopup();
-  //   } else {
-  //     setIsError(true);
-  //   }
-  // };
 
   useEffect(() => {
     const fetchTourMemData = async () => {
       try {
-        const response = await GetTourMem(3, 1);
+        const response = await GetTourMem(Number(tournamentId), Number(teamId));
         setTourMemdData(response);
       } catch (error) {
         console.error("Error fetching tournament data:", error);
@@ -75,7 +69,7 @@ export default function Tourteam_member() {
           </p>
           <p className="text-md">Team {TourMemData?.teamName}</p>
           <p className="text-md">รหัสเชิญ: {TourMemData?.invitedCode}</p>
-          <p className="text-lg font-bold mt-4">{mem_number}/4</p>
+          <p className="text-lg font-bold mt-4">{TourMemData?.memberCount}/4</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-8 px-8">
