@@ -62,7 +62,7 @@ export default function CreateQuestion() {
     formData.append("Hints", JSON.stringify(hints));
 
     formData.append("Practice", modeSelection.Practice.toString());
-    formData.append("Tournament", `[${selectedTournament.toString()}]`);
+    formData.append("Tournament", modeSelection.Tournament.toString());
 
     CreateQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess });
 

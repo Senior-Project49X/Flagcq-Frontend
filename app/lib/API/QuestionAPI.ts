@@ -70,14 +70,14 @@ export const GetQuestions = async (
 ) => {
   const NewPage = page ?? 1;
 
-  let url = isRoleAdmin() ? `${ip}/api/questions?page=${NewPage}` : `${ip}/api/questions/practice?mode=Practice&page=${NewPage}`;
+  let url = isRoleAdmin() ? `${ip}/api/questions/admin?page=${NewPage}` : `${ip}/api/questions/user?mode=Practice&page=${NewPage}`;
 
   if (selectedCategory !== "All Categories") {
     url += `&category=${selectedCategory}`;
   }
 
   if (selectedDifficulty !== "All Difficulty") {
-    url += `&Difficulty=${selectedDifficulty}`;
+    url += `&difficulty=${selectedDifficulty}`;
   }
 
   try {
