@@ -71,7 +71,11 @@ export const GetQuestions = async (
 ) => {
   const NewPage = page ?? 1;
 
-  let url = isRoleAdmin() ? `${ip}/api/questions/admin?mode=${mode}&page=${NewPage}` : `${ip}/api/questions/user?mode=${mode}&page=${NewPage}`;
+  let url = isRoleAdmin() ? `${ip}/api/questions/admin?page=${NewPage}` : `${ip}/api/questions/user?&page=${NewPage}`;
+
+  if (mode !== "") {
+    url += `&mode=${mode}`;
+  }
 
   if (selectedCategory !== "All Categories") {
     url += `&category=${selectedCategory}`;

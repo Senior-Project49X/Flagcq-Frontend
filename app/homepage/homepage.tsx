@@ -51,7 +51,7 @@ export default function Homepage() {
         selectedCategory,
         selectedDifficulty,
         page,
-        isAdmin ? mode : "Practice"
+        isRoleAdmin() ? mode : "Practice"
       );
 
       console.log("b", result.data);
