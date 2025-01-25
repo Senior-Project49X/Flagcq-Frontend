@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Leader from "./Leader";
+import Leader from "./leader";
 import Member from "./member";
 import { GetTourMem } from "../../lib/API/GetTourMem";
 import { useSearchParams } from "next/navigation";
