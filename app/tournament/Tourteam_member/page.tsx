@@ -1,50 +1,46 @@
 "use client";
-import Navbar from "../../component/navbar";
 import { useState, useEffect } from "react";
+import Leader from "./Leader";
+import Member from "./member";
 import { GetTourMem } from "../../lib/API/GetTourMem";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-
-type TourMemData = {
-  tournamentName: string;
-  teamName: string;
-  invitedCode: string;
-  memberCount: number;
-  members: {
-    userId: number;
-    isLeader: boolean;
-    student_id: number;
-    first_name: string;
-    last_name: string;
-  }[];
-};
+import { GetUserData } from "../../lib/API/GetUserAPI";
+import { DecodedToken } from "../../lib/types/DecodedToken";
 
 export default function Tourteam_member() {
+  const roles = {
+    leader: "Leader",
+    member: "Member",
+  };
   const [TourMemData, setTourMemdData] = useState<TourMemData | null>(null);
-  const [showPopup, setShowPopup] = useState(false);
-  const [showPopupKick, setShowPopupKick] = useState(false);
-  const [isError, setIsError] = useState(false);
   const searchParams = useSearchParams();
   const teamId = searchParams.get("teamId");
   const tournamentId = searchParams.get("tournamentId");
 
-  const handleDeleteClick = () => {
-    setShowPopup(true);
+  type TourMemData = {
+    tournamentName: string;
+    teamName: string;
+    invitedCode: string;
+    memberCount: number;
+    members: {
+      userId: number;
+      isLeader: boolean;
+      student_id: number;
+      first_name: string;
+      last_name: string;
+    }[];
   };
 
-  const handleKickClick = () => {
-    setShowPopupKick(true);
-  };
+  const [role, setRole] = useState<keyof typeof roles | null>(null);
+  const [data, setData] = useState<undefined | DecodedToken>(undefined);
+  useEffect(() => {
+    // setData(GetUserData());
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    setIsError(false);
-  };
-
-  const handleCloseKickPopup = () => {
-    setShowPopupKick(false);
-    setIsError(false);
-  };
+    GetUserData().then((data) => {
+      console.log(data);
+      setData(data);
+    });
+  }, []);
 
   useEffect(() => {
     const fetchTourMemData = async () => {
@@ -59,153 +55,28 @@ export default function Tourteam_member() {
     fetchTourMemData();
   }, []);
 
+  useEffect(() => {
+    if (TourMemData && TourMemData.members && TourMemData.members.length > 0) {
+      if (
+        (TourMemData.members[0].first_name &&
+          TourMemData.members[0].last_name) ==
+        (data?.first_name && data?.last_name)
+      ) {
+        setRole("leader");
+      } else {
+        setRole("member");
+      }
+    }
+  }, [TourMemData]);
+  if (role === null) {
+    // Optional: Show a loading state while role is being determined
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-[#090147] text-white">
-      <Navbar />
-      <div className="min-h-screen bg-[#090147] text-white">
-        <div className="text-center mt-8">
-          <p className="text-lg font-semibold">
-            Tournament: {TourMemData?.tournamentName}
-          </p>
-          <p className="text-md">Team {TourMemData?.teamName}</p>
-          <p className="text-md">รหัสเชิญ: {TourMemData?.invitedCode}</p>
-          <p className="text-lg font-bold mt-4">{TourMemData?.memberCount}/4</p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 mt-8 px-8">
-          <div className="bg-white rounded-lg flex items-center justify-center text-black font-bold py-24 relative">
-            {TourMemData?.members[0]?.first_name}{" "}
-            {TourMemData?.members[0]?.last_name}
-            <span className="absolute top-2 right-2 text-yellow-500">👑</span>
-          </div>
-
-          <div className="bg-white rounded-lg flex items-center justify-center text-black font-bold py-24 relative">
-            {TourMemData?.members[1]?.first_name &&
-            TourMemData?.members[1]?.last_name ? (
-              <>
-                {TourMemData.members[1].first_name}{" "}
-                {TourMemData.members[1].last_name}
-              </>
-            ) : (
-              <span className="text-gray-400">👤</span>
-            )}
-            <button
-              className="absolute top-2 right-2"
-              onClick={handleKickClick}
-            >
-              <Image
-                src="/kick.svg"
-                alt="FlagConquest logo"
-                width={35}
-                height={35}
-                className="object-contain"
-              />
-            </button>
-          </div>
-
-          <div className="bg-white rounded-lg flex items-center justify-center text-black font-bold py-24 relative">
-            {TourMemData?.members[2]?.first_name &&
-            TourMemData?.members[2]?.last_name ? (
-              <>
-                {TourMemData.members[2].first_name}{" "}
-                {TourMemData.members[2].last_name}
-              </>
-            ) : (
-              <span className="text-gray-400">👤</span>
-            )}
-            <button
-              className="absolute top-2 right-2"
-              onClick={handleKickClick}
-            >
-              <Image
-                src="/kick.svg"
-                alt="FlagConquest logo"
-                width={35}
-                height={35}
-                className="object-contain"
-              />
-            </button>
-          </div>
-
-          <div className="bg-white rounded-lg flex items-center justify-center text-black font-bold py-24 relative">
-            {TourMemData?.members[3]?.first_name &&
-            TourMemData?.members[3]?.last_name ? (
-              <>
-                {TourMemData.members[3].first_name}{" "}
-                {TourMemData.members[3].last_name}
-              </>
-            ) : (
-              <span className="text-gray-400">👤</span>
-            )}
-            <button
-              className="absolute top-2 right-2"
-              onClick={handleKickClick}
-            >
-              <Image
-                src="/kick.svg"
-                alt="FlagConquest logo"
-                width={35}
-                height={35}
-                className="object-contain"
-              />
-            </button>
-          </div>
-        </div>
-
-        <div className="text-center mt-8">
-          <button
-            onClick={handleDeleteClick}
-            className="text-red-500 font-bold hover:underline"
-          >
-            Delete Team
-          </button>
-        </div>
-
-        {showPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-12 max-w-2xl w-full text-center relative">
-              <button
-                onClick={handleClosePopup}
-                className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
-              >
-                X
-              </button>
-              <h2 className="text-red-500 font-bold text-3xl mb-8">
-                Are you sure to leave this team?
-              </h2>
-
-              <button
-                onClick={handleClosePopup}
-                className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl w-1/2 hover:bg-red-600"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        )}
-        {showPopupKick && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-12 max-w-2xl w-full text-center relative">
-              <button
-                onClick={handleCloseKickPopup}
-                className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
-              >
-                X
-              </button>
-              <h2 className="text-red-500 font-bold text-3xl mb-8">
-                Are you sure to kick this player?
-              </h2>
-
-              <button
-                onClick={handleCloseKickPopup}
-                className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl w-1/2 hover:bg-red-600"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      {role === "leader" && <Leader />}
+      {role === "member" && <Member />}
     </div>
   );
 }
