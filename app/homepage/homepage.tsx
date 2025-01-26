@@ -10,6 +10,8 @@ import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
 import { GetUserPoints } from "../lib/API/GetUserAPI";
 import { questions } from "../lib/types/QuestionType";
+import ModeFilter from "../component/ModeFilter";
+import { isRoleAdmin } from "../lib/role";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -23,7 +25,8 @@ export default function Homepage() {
   const [questions, setQuestions] = useState<questions[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [mode, setMode] = useState<string>("");
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
     router.push("/?page=1");
@@ -35,11 +38,20 @@ export default function Homepage() {
   };
 
   useEffect(() => {
+    const role = isRoleAdmin();
+    setIsAdmin(role);
+    if (!role) {
+      setMode("Practice");
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchUserQuestions = async () => {
       const result = await GetQuestions(
         selectedCategory,
         selectedDifficulty,
-        page
+        page,
+        isRoleAdmin() ? mode : "Practice"
       );
 
       console.log("b", result.data);
@@ -49,7 +61,7 @@ export default function Homepage() {
     };
 
     fetchUserQuestions();
-  }, [page, selectedCategory, selectedDifficulty]);
+  }, [page, selectedCategory, selectedDifficulty, mode]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -76,6 +88,7 @@ export default function Homepage() {
 
         {/* Question Box */}
         <div className="flex-1 p-6 rounded-lg">
+          {isAdmin ? <ModeFilter setMode={setMode} Mode={mode} /> : ""}
           {questions.length !== 0 ? (
             <>
               <Question

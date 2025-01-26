@@ -66,11 +66,16 @@ export const CreateQuestionAPI = async (
 export const GetQuestions = async (
   selectedCategory: string,
   selectedDifficulty: string,
-  page: string | null
+  page: string | null,
+  mode: string
 ) => {
   const NewPage = page ?? 1;
 
-  let url = isRoleAdmin() ? `${ip}/api/questions/admin?page=${NewPage}` : `${ip}/api/questions/user?mode=Practice&page=${NewPage}`;
+  let url = isRoleAdmin() ? `${ip}/api/questions/admin?page=${NewPage}` : `${ip}/api/questions/user?&page=${NewPage}`;
+
+  if (mode !== "") {
+    url += `&mode=${mode}`;
+  }
 
   if (selectedCategory !== "All Categories") {
     url += `&category=${selectedCategory}`;
