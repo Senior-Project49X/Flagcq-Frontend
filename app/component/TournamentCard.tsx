@@ -46,9 +46,6 @@ export default function TournamentCard({
           Topic={topic}
           Detail={detail}
           tournament_id={id}
-          TeamId={teamId}
-          TeamCount={teamCount}
-          hasJoined={hasJoined}
         />
       )}
       <div className="flex justify-between items-center">

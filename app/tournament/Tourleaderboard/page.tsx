@@ -4,6 +4,7 @@ import Navbar from "../../component/navbar";
 import { GetLbTeamTourData } from "../../lib/API/GetLbTeamTourAPI";
 import { GetLbTeamTourAllData } from "../../lib/API/GetLbTeamTourAllAPI";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 // Define types for the leaderboard data and team data
 type TeamLeaderboardData = {
@@ -22,6 +23,9 @@ type TeamLeaderboardAllData = {
 }[];
 
 export default function TeamLeaderboard() {
+  const searchParams = useSearchParams();
+  const tournamentId = searchParams.get("tournamentId");
+  const teamId = searchParams.get("teamId");
   const [teamLeaderboardData, setTeamLeaderboardData] =
     useState<TeamLeaderboardData | null>(null);
   const [teamLeaderboardAllData, setTeamLeaderboardAllData] =
@@ -29,11 +33,14 @@ export default function TeamLeaderboard() {
   const [isLoadingTeam, setIsLoadingTeam] = useState(true);
   const [isLoadingAllTeams, setIsLoadingAllTeams] = useState(true);
 
-  // Fetch data for a specific team's leaderboard
   useEffect(() => {
     const fetchTeamLeaderboardData = async () => {
       try {
-        const response = await GetLbTeamTourData(1, 3); // API call
+        if (!tournamentId) return;
+        const response = await GetLbTeamTourData(
+          Number(tournamentId),
+          Number(teamId)
+        ); // Use the dynamic ID
         setTeamLeaderboardData(response);
       } catch (error) {
         console.error("Error fetching team leaderboard data:", error);
@@ -43,13 +50,13 @@ export default function TeamLeaderboard() {
     };
 
     fetchTeamLeaderboardData();
-  }, []);
+  }, [tournamentId]);
 
-  // Fetch data for all teams' leaderboard
   useEffect(() => {
     const fetchTeamLeaderboardAllData = async () => {
       try {
-        const response = await GetLbTeamTourAllData(3); // API call
+        if (!tournamentId) return;
+        const response = await GetLbTeamTourAllData(Number(tournamentId)); // Use the dynamic ID
         setTeamLeaderboardAllData(response);
       } catch (error) {
         console.error("Error fetching all teams leaderboard data:", error);
@@ -59,14 +66,12 @@ export default function TeamLeaderboard() {
     };
 
     fetchTeamLeaderboardAllData();
-  }, []);
+  }, [tournamentId]);
 
   return (
     <div className="min-h-screen bg-[#090147] text-white">
-      {/* Navbar */}
       <Navbar />
 
-      {/* Back Button */}
       <div className="flex justify-between items-center p-6">
         <button
           onClick={() => window.history.back()}
@@ -76,7 +81,6 @@ export default function TeamLeaderboard() {
         </button>
       </div>
 
-      {/* All Teams Leaderboard */}
       <div className="max-w-3xl mx-auto p-8">
         <h1 className="text-2xl font-bold mb-8 text-center">
           Tournament Leaderboard
@@ -108,13 +112,11 @@ export default function TeamLeaderboard() {
         </div>
       </div>
 
-      {/* Specific Team Leaderboard */}
       <div>
         {isLoadingTeam ? (
           <div className="text-center text-gray-400">Loading...</div>
         ) : (
           <>
-            {/* Team Overview */}
             <h1 className="text-2xl font-bold mb-8 text-center">
               Our Team Leaderboard
             </h1>
@@ -131,7 +133,6 @@ export default function TeamLeaderboard() {
             </div>
 
             <div className="max-w-4xl mx-auto p-6">
-              {/* Team Members */}
               <div className="bg-white text-black rounded-lg shadow-md p-6">
                 <div className="flex justify-between font-bold text-lg mb-4">
                   <span className="text-green-600">Member</span>

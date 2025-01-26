@@ -6,6 +6,7 @@ import { GetTourMem } from "../../lib/API/GetTourMem";
 import { useSearchParams } from "next/navigation";
 import { GetUserData } from "../../lib/API/GetUserAPI";
 import { DecodedToken } from "../../lib/types/DecodedToken";
+import { useRouter } from "next/navigation";
 
 export default function Tourteam_member() {
   const roles = {
@@ -16,6 +17,7 @@ export default function Tourteam_member() {
   const searchParams = useSearchParams();
   const teamId = searchParams.get("teamId");
   const tournamentId = searchParams.get("tournamentId");
+  const router = useRouter();
 
   type TourMemData = {
     tournamentName: string;
@@ -33,9 +35,8 @@ export default function Tourteam_member() {
 
   const [role, setRole] = useState<keyof typeof roles | null>(null);
   const [data, setData] = useState<undefined | DecodedToken>(undefined);
-  useEffect(() => {
-    // setData(GetUserData());
 
+  useEffect(() => {
     GetUserData().then((data) => {
       console.log(data);
       setData(data);
@@ -68,8 +69,8 @@ export default function Tourteam_member() {
       }
     }
   }, [TourMemData]);
+
   if (role === null) {
-    // Optional: Show a loading state while role is being determined
     return <div>Loading...</div>;
   }
 
@@ -77,6 +78,18 @@ export default function Tourteam_member() {
     <div className="min-h-screen bg-[#090147] text-white">
       {role === "leader" && <Leader />}
       {role === "member" && <Member />}
+      <div className=" flex justify-center">
+        <button
+          onClick={() =>
+            router.push(
+              `/tournament/TournamentPage?tournamentId=${tournamentId}`
+            )
+          }
+          className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-lg font-medium"
+        >
+          Go to Tournament Page
+        </button>
+      </div>
     </div>
   );
 }
