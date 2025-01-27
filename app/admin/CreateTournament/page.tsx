@@ -76,16 +76,8 @@ export default function CreateTour() {
     try {
       setIsLoading(true);
       await PostCreateTour(formattedData);
-      if (
-        formattedData.enroll_startDate < formattedData.enroll_endDate &&
-        formattedData.event_startDate < formattedData.event_endDate &&
-        formattedData.enroll_endDate < formattedData.event_startDate &&
-        formattedData.event_endDate < formattedData.enroll_startDate
-      ) {
-        setSuccessMessage("Tournament created successfully!");
-      } else {
-        setSuccessMessage("Invalid Date");
-      }
+
+      setSuccessMessage("Tournament created successfully!");
     } catch (error) {
       console.error("Error creating tournament:", error);
       setErrorMessage("Failed to create the tournament. Please try again.");
