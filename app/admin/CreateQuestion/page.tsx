@@ -107,8 +107,9 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
 
     formData.append("Practice", modeSelection.Practice.toString());
     formData.append("Tournament", modeSelection.Tournament.toString());
+    console.log(id);
 
-    if (id !== null || id !== undefined) {
+    if (id !== null && id !== undefined) {
       if (id) {
         EditQuestionAPI(
           formData,
