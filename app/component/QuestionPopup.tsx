@@ -12,13 +12,14 @@ import Hint from "./Hint/Hint";
 import { isRoleAdmin, isRoleTa } from "../lib/role";
 import Yay from "./yay";
 import { get } from "http";
+import Link from "next/link";
 type state = {
   id: string;
   Topic: string;
   ClosePopup: Function;
 };
 
-export default function QuestionPopup(param: Readonly<state>) {
+export default function QuestionPopup(Question: Readonly<state>) {
   const [showPopup, setShowPopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,9 +45,9 @@ export default function QuestionPopup(param: Readonly<state>) {
   // Handle delete confirmation
   const handleConfirmDelete = () => {
     if (name === showQuestion?.title) {
-      DeleteQuestionsByID(param.id);
+      DeleteQuestionsByID(Question.id);
       handleClosePopup();
-      param.ClosePopup(false);
+      Question.ClosePopup(false);
       location.reload();
     } else {
       setIsError(true);
@@ -55,14 +56,14 @@ export default function QuestionPopup(param: Readonly<state>) {
 
   const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(param.id);
+    console.log(Question.id);
 
     const formData = new FormData(event.currentTarget);
     const answer = formData.get("Answer"); // Extract the value from FormData
 
     if (typeof answer === "string") {
       const fetchQuestion = async () => {
-        const isCorrect = await CheckQuestionsByID(param.id, answer);
+        const isCorrect = await CheckQuestionsByID(Question.id, answer);
         if (isCorrect) {
           setShowCongratPopup(true);
         }
@@ -75,13 +76,13 @@ export default function QuestionPopup(param: Readonly<state>) {
 
   useEffect(() => {
     const fetchQuestion = async () => {
-      const getQuestion = await GetQuestionsByID(param.id);
+      const getQuestion = await GetQuestionsByID(Question.id);
       setShowQuestion(getQuestion);
 
       setLoading(false);
     };
     fetchQuestion();
-  }, [param.id]);
+  }, [Question.id]);
 
   if (roleLoading) {
     return <div>Loading...</div>;
@@ -91,7 +92,7 @@ export default function QuestionPopup(param: Readonly<state>) {
     <>
       <button
         className=" justify-center items-center cursor-auto flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-        onMouseDown={() => param.ClosePopup(false)}
+        onMouseDown={() => Question.ClosePopup(false)}
       >
         <button
           className="select-text cursor-auto relative w-5/12 h-3/6 max-h-5xl max-w-5xl"
@@ -107,12 +108,12 @@ export default function QuestionPopup(param: Readonly<state>) {
                 </h3>
                 {role && (
                   <div>
-                    <button
+                    <Link
                       className="text-yellow-500 font-bold mx-5"
-                      onClick={() => setShowPopup(true)}
+                      href={`/admin/EditQuestion?QuestionID=${Question.id}`}
                     >
                       Edit
-                    </button>
+                    </Link>
                     <button
                       className="text-red-500 font-bold"
                       onClick={() => setShowPopup(true)}
@@ -173,7 +174,7 @@ export default function QuestionPopup(param: Readonly<state>) {
                     <button
                       className="text-black  p-2 bg-green-400 rounded-lg flex space-x-2"
                       onClick={() => {
-                        DownloadQuestionsByID(param.id);
+                        DownloadQuestionsByID(Question.id);
                       }}
                     >
                       <Image
@@ -224,7 +225,7 @@ export default function QuestionPopup(param: Readonly<state>) {
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => param.ClosePopup(false)}
+                    onClick={() => Question.ClosePopup(false)}
                   >
                     Close
                   </button>
@@ -261,7 +262,7 @@ export default function QuestionPopup(param: Readonly<state>) {
       )}
       <button
         className="opacity-40 fixed inset-0 z-40 bg-black cursor-auto"
-        onMouseDown={() => param.ClosePopup(false)}
+        onMouseDown={() => Question.ClosePopup(false)}
       ></button>
     </>
   );
