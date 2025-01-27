@@ -2,12 +2,19 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "../../component/navbar";
-import { CreateQuestionAPI, GetCategories } from "../../lib/API/QuestionAPI";
+import {
+  CreateQuestionAPI,
+  DownloadQuestionsByID,
+  EditQuestionAPI,
+  GetCategories,
+  GetQuestionsByID,
+} from "../../lib/API/QuestionAPI";
 import CreateCategories from "../component/CreateCategories";
 import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
+import { get } from "http";
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
@@ -26,7 +33,10 @@ interface Category {
   id: string;
   name: string;
 }
-export default function CreateQuestion() {
+interface EditQuestionProps {
+  id: string | null | undefined;
+}
+export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   const router = useRouter();
   const [modeSelection, setModeSelection] = useState<ButtonStates>({
     Practice: false,
@@ -46,13 +56,47 @@ export default function CreateQuestion() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [hints, setHints] = useState<
-    { id: string; detail: string; penalty: number }[]
+    { id: string | number; detail: string; penalty: number }[]
   >([]);
+  const [category, setCategory] = useState<string>("");
+  const [difficultysID, setDifficultysID] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [point, setPoint] = useState("");
+  const [answer, setAnswer] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [topic, setTopic] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  useEffect(() => {
+    if (id !== null && id !== undefined) {
+      console.log("Edit question with ID:", id);
+      const fetchQuestion = async () => {
+        const getQuestion = await GetQuestionsByID(id);
+
+        setTopic(getQuestion.title);
+        setPoint(getQuestion.point);
+        setSelectedCategory(getQuestion.categories_id);
+
+        setDifficultysID(getQuestion.difficultys_id);
+        setHints(
+          getQuestion.hints.map((hint: any) => ({
+            id: hint.id,
+            detail: hint.Description,
+            penalty: hint.point,
+          }))
+        );
+        setAnswer(getQuestion.answer);
+        handleToggle(getQuestion.mode);
+        setDescription(getQuestion.description);
+        setFile(getQuestion.file_path); // Update to handle file path string
+      };
+      fetchQuestion();
+    }
+  }, [id]);
+
   //* API new question
   const onCreateQuestion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const formData = new FormData(event.currentTarget);
 
     // Check if a category is selected
@@ -63,10 +107,21 @@ export default function CreateQuestion() {
 
     formData.append("Practice", modeSelection.Practice.toString());
     formData.append("Tournament", modeSelection.Tournament.toString());
+    console.log(id);
 
-    CreateQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess });
-
+    if (id !== null && id !== undefined) {
+      if (id) {
+        EditQuestionAPI(
+          formData,
+          { setIsFailed, setMessage, setIsSuccess },
+          id
+        );
+      }
+    } else {
+      CreateQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess });
+    }
     setLoading(true);
+    // setFile(null); // Reset file state to avoid InvalidStateError
   };
 
   const handleToggle = (buttonKey: string): void => {
@@ -193,6 +248,8 @@ export default function CreateQuestion() {
           <label className="mr-2">
             Topic{" "}
             <input
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
               type="text"
               name="title"
               className="w-full p-2 border border-gray-300 rounded"
@@ -207,7 +264,7 @@ export default function CreateQuestion() {
               value={selectedCategory}
               onChange={handleCategoryChange}
             >
-              <option value={""}>---please select category---</option>
+              <option value={category}>---please select category---</option>
               {categories.map((category: Category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -228,8 +285,10 @@ export default function CreateQuestion() {
           <label>
             Difficulty{" "}
             <select
+              value={difficultysID}
               name="difficultys_id"
               className="w-full p-2 border border-gray-300 rounded"
+              onChange={(e) => setDifficultysID(e.target.value)}
             >
               <option value={""}>---please select Difficulty---</option>
               <option value={"Easy"}>Easy</option>
@@ -258,6 +317,8 @@ export default function CreateQuestion() {
           <label>
             Description{" "}
             <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               name="Description"
               className="w-full p-2 border border-gray-300 rounded"
             />
@@ -290,6 +351,8 @@ export default function CreateQuestion() {
           <br />
           <label>{`Answer: CTFCQ{ `}</label>
           <input
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
             name="Answer"
             type="text"
             className=" p-2 border border-gray-300 rounded"
@@ -321,10 +384,27 @@ export default function CreateQuestion() {
           <label>
             File{}
             <input
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
               name="file"
               type="file"
               className="p-2 border border-gray-300 rounded"
             />
+            {file && typeof file === "string" && (
+              <p>
+                Current file:
+                {id && (
+                  <button
+                    type="button" // Ensure the button does not submit the form
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent form submission
+                      DownloadQuestionsByID(id);
+                    }}
+                  >
+                    {file}
+                  </button>
+                )}
+              </p>
+            )}
           </label>
           <br />
           <button

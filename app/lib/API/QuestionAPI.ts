@@ -35,6 +35,34 @@ export const CreateQuestionAPI = async (
     });
 };
 
+export const EditQuestionAPI = async (
+  CreateData: FormData,
+  setState: SetState,
+  id: string 
+): Promise<any> => {
+  axios
+    .put(`${ip}/api/questions/${id}`, CreateData, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((resp) => {
+      console.log(resp);
+      setState.setIsSuccess(true);
+      if (resp.status === 200) {
+        return resp.data;
+      }
+    })
+    .catch((e) => {
+      setState.setIsFailed(true);
+      console.log("e", e.response.data.message);
+      setState.setMessage(e.response.data.message);
+
+      return e;
+    });
+};
+
 // export const GetQuestions = async (
 //   selectedCategory: string,
 //   selectedDifficulty: string,
