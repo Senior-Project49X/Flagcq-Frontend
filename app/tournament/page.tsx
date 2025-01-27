@@ -125,7 +125,7 @@ export default function Page() {
       const teamData = await PostJoinTeam({ invite_code: inviteCode }); // Joining a team
       setSuccessMessage("Successfully joined the team!");
       router.push(
-        `/tournament/Tourteam_member?tournamentId=${teamData.team.tournament_id}}&teamId=${teamData.team.id}`
+        `/tournament/Tourteam_member?tournamentId=${teamData.team.tournament_id}&teamId=${teamData.team.id}`
       );
     } catch (error) {
       console.error("Error joining team:", error);

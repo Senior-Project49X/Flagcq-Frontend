@@ -1,39 +1,46 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../../component/navbar";
 import Pagination from "../../component/Pagination";
 import Question from "../../component/Question";
 import { GetQuestions } from "../../lib/API/QuestionAPI";
 import { questions } from "../../lib/types/QuestionType";
 import { GetTourPage } from "@/app/lib/API/GetTourPage";
-import Link from "next/link";
 
 interface TourData {
   name: string;
   teamName: string;
+  teamId: number;
   teamRank: number;
   teamScore: number;
   individualScore: number;
-  eventEndDate: string; // Using ISO string to handle Date parsing safely
+  eventEndDate: string;
 }
 
 export default function Homepage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("tournamentId");
+
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
     useState("All Difficulty");
   const [questions, setQuestions] = useState<questions[]>([]);
-  const [tourData, setTourData] = useState<TourData | null>(null); // Nullable type
+  const [tourData, setTourData] = useState<TourData | null>(null);
   const [remainingTime, setRemainingTime] = useState("");
+  const [page, setPage] = useState("1");
+  const [mode, setMode] = useState<string>("Tournament");
 
-  // Fetch questions based on selected filters
   useEffect(() => {
     const fetchUserQuestions = async () => {
       try {
         const userQuestions = await GetQuestions(
           selectedCategory,
           selectedDifficulty,
-          null
+          page,
+          mode
         );
         setQuestions(userQuestions.data);
       } catch (error) {
@@ -44,11 +51,11 @@ export default function Homepage() {
     fetchUserQuestions();
   }, [selectedCategory, selectedDifficulty]);
 
-  // Fetch tournament data
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await GetTourPage(3);
+        if (!id) return;
+        const response = await GetTourPage(Number(id));
         setTourData(response);
       } catch (error) {
         console.error("Error fetching tournament data:", error);
@@ -56,9 +63,8 @@ export default function Homepage() {
     };
 
     fetchTourData();
-  }, []);
+  }, [id]);
 
-  // Countdown logic
   useEffect(() => {
     if (!tourData?.eventEndDate) return;
 
@@ -80,16 +86,15 @@ export default function Homepage() {
     };
 
     const interval = setInterval(calculateRemainingTime, 1000);
-    calculateRemainingTime(); // Initial calculation
+    calculateRemainingTime();
 
-    return () => clearInterval(interval); // Cleanup interval
+    return () => clearInterval(interval);
   }, [tourData?.eventEndDate]);
 
   return (
     <div>
       <Navbar />
       <div className="flex">
-        {/* Sidebar */}
         <div className="w-80 p-6 bg-darkblue text-white">
           <div className="mb-6">
             <h2 className="text-xl font-bold">Tournament Name</h2>
@@ -111,16 +116,20 @@ export default function Homepage() {
             <h2 className="text-xl font-bold">Individual Score</h2>
             <p className="text-lg">{tourData?.individualScore || 0} Points</p>
           </div>
-
-          <Link
-            href="/tournament/Tourleaderboard" // Replace "/" with the actual path to navigate back
+          <button
+            onClick={() =>
+              router.push(
+                `/tournament/Tourleaderboard?tournamentId=${Number(
+                  id
+                )}&teamId=${tourData?.teamId}`
+              )
+            }
             className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
           >
             Leaderboard
-          </Link>
+          </button>
         </div>
 
-        {/* Question Box */}
         <div className="flex-1 p-6 rounded-lg">
           <Question
             selectedDifficulty={selectedDifficulty}

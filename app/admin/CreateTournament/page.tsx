@@ -25,16 +25,23 @@ export default function CreateTour() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCreateTourData((prevData) => ({ ...prevData, [name]: value }));
+    setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: false })); // Clear error on change
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Convert date strings to fully qualified ISO 8601 with timezone 'Z'
+    // Reset messages and errors
+    setSuccessMessage(null);
+    setErrorMessage(null);
+    setFieldErrors({});
+
     const formattedData = {
       ...CreateTourData,
       enroll_startDate: new Date(CreateTourData.enroll_startDate).toISOString(),
@@ -43,9 +50,31 @@ export default function CreateTour() {
       event_endDate: new Date(CreateTourData.event_endDate).toISOString(),
     };
 
+    const errors: Record<string, boolean> = {};
+
+    // Validation checks
+    if (formattedData.enroll_startDate >= formattedData.enroll_endDate) {
+      errors.enroll_startDate = true;
+      errors.enroll_endDate = true;
+      setErrorMessage("Enroll start date must be before Enroll end date.");
+    } else if (formattedData.enroll_endDate >= formattedData.event_startDate) {
+      errors.enroll_endDate = true;
+      errors.event_startDate = true;
+      setErrorMessage("Enroll end date must be before Event start date.");
+    } else if (formattedData.event_startDate >= formattedData.event_endDate) {
+      errors.event_startDate = true;
+      errors.event_endDate = true;
+      setErrorMessage("Event start date must be before Event end date.");
+    }
+
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return; // Prevent form submission if there are errors
+    }
+
     try {
       setIsLoading(true);
-      setSuccessMessage(null);
       await PostCreateTour(formattedData);
       if (
         formattedData.enroll_startDate < formattedData.enroll_endDate &&
@@ -59,10 +88,18 @@ export default function CreateTour() {
       }
     } catch (error) {
       console.error("Error creating tournament:", error);
+      setErrorMessage("Failed to create the tournament. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const getInputClass = (field: string) =>
+    `w-full p-2 rounded ${
+      fieldErrors[field]
+        ? "border-2 border-red-600"
+        : "border-2 border-gray-300"
+    }`;
 
   return (
     <div className="min-h-screen bg-[#090147] text-white">
@@ -87,7 +124,7 @@ export default function CreateTour() {
               name="topic"
               value={CreateTourData.topic}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className={getInputClass("topic")}
               required
             />
           </div>
@@ -103,7 +140,7 @@ export default function CreateTour() {
               name="description"
               value={CreateTourData.description}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className={getInputClass("description")}
               required
             />
           </div>
@@ -122,7 +159,7 @@ export default function CreateTour() {
               name="enroll_startDate"
               value={CreateTourData.enroll_startDate}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className={getInputClass("enroll_startDate")}
               required
             />
           </div>
@@ -138,7 +175,7 @@ export default function CreateTour() {
               name="enroll_endDate"
               value={CreateTourData.enroll_endDate}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className={getInputClass("enroll_endDate")}
               required
             />
           </div>
@@ -154,7 +191,7 @@ export default function CreateTour() {
               name="event_startDate"
               value={CreateTourData.event_startDate}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className={getInputClass("event_startDate")}
               required
             />
           </div>
@@ -170,7 +207,7 @@ export default function CreateTour() {
               name="event_endDate"
               value={CreateTourData.event_endDate}
               onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className={getInputClass("event_endDate")}
               required
             />
           </div>
@@ -188,9 +225,18 @@ export default function CreateTour() {
             {isLoading ? "Submitting..." : "Confirm"}
           </button>
         </form>
+
+        {/* Success Message */}
         {successMessage && (
           <div className="mt-4 p-2 text-center bg-green-100 text-green-700 rounded">
             {successMessage}
+          </div>
+        )}
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mt-4 p-2 text-center bg-red-100 text-red-700 rounded">
+            {errorMessage}
           </div>
         )}
       </div>
