@@ -8,7 +8,7 @@ export interface questions {
     solved: boolean;
   }
 
-  export interface question {
+  export interface Question {
     title: string;
     categories_name: string;
     difficultys_id: string;
@@ -17,4 +17,12 @@ export interface questions {
     solved: boolean;
     id: string;
     point: string;
+    hints: Hint[];
+}
+
+interface Hint {
+  id: number;
+  Description: string;
+  point: number;
+  used: boolean;
 }

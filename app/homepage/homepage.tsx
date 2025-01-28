@@ -5,15 +5,18 @@ import Navbar from "../component/navbar";
 import Category from "../category";
 import Difficult from "../difficult";
 import Pagination from "../component/Pagination";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Question from "../component/Question";
 import { GetQuestions } from "../lib/API/QuestionAPI";
 import { GetUserPoints } from "../lib/API/GetUserAPI";
 import { questions } from "../lib/types/QuestionType";
+import ModeFilter from "../component/ModeFilter";
+import { isRoleAdmin } from "../lib/role";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
-  const page = searchParams.get("page");
+  const router = useRouter();
+  const page = searchParams.get("page") ?? "1";
   const [selectedCategory, setSelectedCategory] =
     useState<string>("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
@@ -22,29 +25,44 @@ export default function Homepage() {
   const [questions, setQuestions] = useState<questions[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [mode, setMode] = useState<string>("");
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
+    router.push("/?page=1");
   };
 
   const handleDifficultyClick = (difficulty: string) => {
     setSelectedDifficulty(difficulty);
+    router.push("/?page=1");
   };
 
   useEffect(() => {
+    const role = isRoleAdmin();
+    setIsAdmin(role);
+    if (!role) {
+      setMode("Practice");
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchUserQuestions = async () => {
-      const userQuestion = await GetQuestions(
+      const result = await GetQuestions(
         selectedCategory,
         selectedDifficulty,
-        page
+        page,
+        isRoleAdmin() ? mode : "Practice"
       );
-      console.log("b", userQuestion.data);
-      setTotalPages(userQuestion.totalPages);
-      setHasNextPage(userQuestion.hasNextPage);
-      setQuestions(userQuestion.data);
+
+      console.log("b", result.data);
+      setTotalPages(result.totalPages);
+      setHasNextPage(result.hasNextPage);
+      setQuestions(result.data);
     };
 
     fetchUserQuestions();
-  }, [page, selectedCategory, selectedDifficulty]);
+  }, [page, selectedCategory, selectedDifficulty, mode]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       const userData = await GetUserPoints(); // Now correctly awaits the returned value
@@ -56,7 +74,7 @@ export default function Homepage() {
 
   return (
     <div>
-      <Navbar point={point} />
+      <Navbar />
       <div className="flex">
         <Category
           selectedCategory={selectedCategory}
@@ -70,18 +88,27 @@ export default function Homepage() {
 
         {/* Question Box */}
         <div className="flex-1 p-6 rounded-lg">
-          <Question
-            selectedDifficulty={selectedDifficulty}
-            selectedCategory={selectedCategory}
-            questions={questions}
-          />
+          {isAdmin ? <ModeFilter setMode={setMode} Mode={mode} /> : ""}
+          {questions.length !== 0 ? (
+            <>
+              <Question
+                selectedDifficulty={selectedDifficulty}
+                selectedCategory={selectedCategory}
+                questions={questions}
+              />
 
-          <Pagination
-            pagePath={"/?page="}
-            pageNumber={page}
-            totalPages={totalPages}
-            hasNextPage={hasNextPage}
-          />
+              <Pagination
+                pagePath={"/?page="}
+                pageNumber={page}
+                totalPages={totalPages}
+                hasNextPage={hasNextPage}
+              />
+            </>
+          ) : (
+            <div className="text-center text-2xl font-bold text-red-400">
+              No Question Found
+            </div>
+          )}
         </div>
       </div>
     </div>

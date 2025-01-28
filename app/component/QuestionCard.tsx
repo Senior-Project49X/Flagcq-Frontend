@@ -33,7 +33,9 @@ export default function QuestionCard({
         <QuestionPopup id={id} ClosePopup={setShowModal} Topic={Topic} />
       ) : null}
       <button
-        className="relative bg-white rounded-lg p-6 text-center cursor-pointer"
+        className={`relative bg-white ${
+          Solved && "opacity-60"
+        } rounded-lg p-6 text-center cursor-pointer`}
         onClick={() => setShowModal(true)}
       >
         <h2 className="text-xl font-bold mt-5">{Topic}</h2>

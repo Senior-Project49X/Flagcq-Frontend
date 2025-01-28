@@ -1,80 +1,165 @@
 "use client";
 
 import Navbar from "../../component/navbar";
-import { GetLbTourData } from "../../lib/API/GetLbTourAPI";
+import { GetLbTeamTourData } from "../../lib/API/GetLbTeamTourAPI";
+import { GetLbTeamTourAllData } from "../../lib/API/GetLbTeamTourAllAPI";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+
+// Define types for the leaderboard data and team data
+type TeamLeaderboardData = {
+  team_name: string;
+  members: {
+    first_name: string;
+    last_name: string;
+    points: string;
+  }[];
+  total_points: string;
+  rank: string;
+};
+
+type TeamLeaderboardAllData = {
+  name: string;
+}[];
 
 export default function TeamLeaderboard() {
-  const [leaderboardData, setLeaderboardData] = useState<
-    { team_name: string; total_points: number; rank: string }[]
-  >([]); // Leaderboard data
+  const searchParams = useSearchParams();
+  const tournamentId = searchParams.get("tournamentId");
+  const teamId = searchParams.get("teamId");
+  const [teamLeaderboardData, setTeamLeaderboardData] =
+    useState<TeamLeaderboardData | null>(null);
+  const [teamLeaderboardAllData, setTeamLeaderboardAllData] =
+    useState<TeamLeaderboardAllData | null>(null);
+  const [isLoadingTeam, setIsLoadingTeam] = useState(true);
+  const [isLoadingAllTeams, setIsLoadingAllTeams] = useState(true);
 
   useEffect(() => {
-    const fetchLeaderboardData = async () => {
+    const fetchTeamLeaderboardData = async () => {
       try {
-        const response = await GetLbTourData("1");
-        console.log("Leaderboard data:", response); // Debugging the response
-        const parsedData = Array.isArray(response) ? response : [];
-        setLeaderboardData(parsedData);
+        if (!tournamentId) return;
+        const response = await GetLbTeamTourData(
+          Number(tournamentId),
+          Number(teamId)
+        ); // Use the dynamic ID
+        setTeamLeaderboardData(response);
       } catch (error) {
-        console.error("Error fetching leaderboard data:", error);
+        console.error("Error fetching team leaderboard data:", error);
+      } finally {
+        setIsLoadingTeam(false);
       }
     };
 
-    fetchLeaderboardData();
-  }, []); // Dependency array ensures this runs once on mount
+    fetchTeamLeaderboardData();
+  }, [tournamentId]);
 
-  const Team = { team: "team1", rank: "1st", score: 4500 };
+  useEffect(() => {
+    const fetchTeamLeaderboardAllData = async () => {
+      try {
+        if (!tournamentId) return;
+        const response = await GetLbTeamTourAllData(Number(tournamentId)); // Use the dynamic ID
+        setTeamLeaderboardAllData(response);
+      } catch (error) {
+        console.error("Error fetching all teams leaderboard data:", error);
+      } finally {
+        setIsLoadingAllTeams(false);
+      }
+    };
+
+    fetchTeamLeaderboardAllData();
+  }, [tournamentId]);
 
   return (
     <div className="min-h-screen bg-[#090147] text-white">
       <Navbar />
 
+      <div className="flex justify-between items-center p-6">
+        <button
+          onClick={() => window.history.back()}
+          className="text-xl text-green-300 hover:underline ml-auto"
+        >
+          Back →
+        </button>
+      </div>
+
       <div className="max-w-3xl mx-auto p-8">
         <h1 className="text-2xl font-bold mb-8 text-center">
           Tournament Leaderboard
         </h1>
-        <h1 className="text-2xl font-bold mb-8 text-center">
-          Linux for CPE 2025
-        </h1>
-
-        {/* Leaderboard */}
         <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
           <div className="flex justify-between mb-4">
-            <span className="font-bold">Team</span>
-            <span className="font-bold">Score</span>
+            <span className="font-bold">Rank</span>
+            <span className="font-bold">Team Name</span>
           </div>
           <hr className="border-t-2 mb-4" />
-          {Array.isArray(leaderboardData) && leaderboardData.length > 0 ? (
-            leaderboardData.map((entry, index) => (
+
+          {!isLoadingAllTeams && teamLeaderboardAllData?.length ? (
+            teamLeaderboardAllData.map((team, index) => (
               <div
                 key={index}
                 className="flex justify-between items-center text-lg mb-2"
               >
-                <span>{entry.rank}</span>
-                <span>{entry.team_name}</span>
-                <span>{entry.total_points}</span>
+                <span>{index + 1}</span>
+                <span>{team.name}</span>
               </div>
             ))
           ) : (
-            <div className="text-center text-gray-500">
-              No leaderboard data available.
-            </div>
+            <p className="text-center">
+              {isLoadingAllTeams
+                ? "Loading leaderboard..."
+                : "No team data available."}
+            </p>
           )}
         </div>
-        <br />
-        {/* Team Summary */}
-        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md mb-8">
-          <div className="mb-4">
-            <div className="font-semibold text-xl">Team: {Team.team}</div>
-          </div>
-          <div className="mb-2">
-            <div className="font-medium">{Team.rank} place</div>
-          </div>
-          <div className="mb-2">
-            <div>{Team.score} points</div>
-          </div>
-        </div>
+      </div>
+
+      <div>
+        {isLoadingTeam ? (
+          <div className="text-center text-gray-400">Loading...</div>
+        ) : (
+          <>
+            <h1 className="text-2xl font-bold mb-8 text-center">
+              Our Team Leaderboard
+            </h1>
+            <div className="bg-white text-black rounded-lg shadow-md px-4 py-6 mb-6 max-w-[400px] mx-auto">
+              <h2 className="text-xl sm:text-2xl font-bold text-center mb-4">
+                Team {teamLeaderboardData?.team_name || "N/A"}
+              </h2>
+              <div className="text-center text-base sm:text-lg mb-4">
+                Rank: {teamLeaderboardData?.rank || "N/A"}
+              </div>
+              <div className="text-center text-lg sm:text-xl font-semibold text-green-600">
+                Total Points: {teamLeaderboardData?.total_points || "0"}
+              </div>
+            </div>
+
+            <div className="max-w-4xl mx-auto p-6">
+              <div className="bg-white text-black rounded-lg shadow-md p-6">
+                <div className="flex justify-between font-bold text-lg mb-4">
+                  <span className="text-green-600">Member</span>
+                  <span className="text-red-500">Score</span>
+                </div>
+                <hr className="border-t-2 mb-4" />
+                {teamLeaderboardData?.members?.length ? (
+                  teamLeaderboardData.members.map((member, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center text-lg mb-2"
+                    >
+                      <span>
+                        {index + 1}. {member.first_name} {member.last_name}
+                      </span>
+                      <span className="text-red-500">{member.points}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No member data available.
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
