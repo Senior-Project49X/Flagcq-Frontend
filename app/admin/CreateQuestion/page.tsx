@@ -14,7 +14,6 @@ import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
-import { get } from "http";
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
@@ -56,7 +55,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [hints, setHints] = useState<
-    { id: string | number; detail: string; penalty: number }[]
+    { id: string | number | null; detail: string; penalty: number }[]
   >([]);
   const [category, setCategory] = useState<string>("");
   const [difficultysID, setDifficultysID] = useState<string>("");
@@ -159,7 +158,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     if (hints.length >= 3) return;
     console.log("Before addition:", hints);
 
-    setHints([...hints, { id: crypto.randomUUID(), detail: "", penalty: 0 }]);
+    setHints([...hints, { id: null, detail: "", penalty: 0 }]);
     console.log("After addition:", hints);
   };
 
