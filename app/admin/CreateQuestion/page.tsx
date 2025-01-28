@@ -252,7 +252,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               onChange={(e) => setTopic(e.target.value)}
               type="text"
               name="title"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
             />
           </label>
           <br />
@@ -260,7 +260,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
             Category{" "}
             <select
               name="categories_id"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
               value={selectedCategory}
               onChange={handleCategoryChange}
             >
@@ -287,7 +287,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
             <select
               value={difficultysID}
               name="difficultys_id"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
               onChange={(e) => setDifficultysID(e.target.value)}
             >
               <option value={""}>---please select Difficulty---</option>
@@ -320,7 +320,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               name="Description"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
             />
           </label>
           <br />
@@ -355,7 +355,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
             onChange={(e) => setAnswer(e.target.value)}
             name="Answer"
             type="text"
-            className=" p-2 border border-gray-300 rounded"
+            className=" p-2 border-2 border-gray-300 rounded"
           />
           <span>{` }`}</span>
           <br />
@@ -366,7 +366,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               type="number"
               min="0"
               max="10000000"
-              className="p-2 border border-gray-300 rounded"
+              className="p-2 border-2 border-gray-300 rounded"
               onKeyDown={(e) => {
                 if (
                   e.key === "e" ||
