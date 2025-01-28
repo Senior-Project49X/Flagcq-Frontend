@@ -106,6 +106,10 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
 
     formData.append("Practice", modeSelection.Practice.toString());
     formData.append("Tournament", modeSelection.Tournament.toString());
+    formData.append(
+      "isFileEdited",
+      typeof file === "string" ? "false" : "true"
+    );
     console.log(id);
 
     if (id !== null && id !== undefined) {
