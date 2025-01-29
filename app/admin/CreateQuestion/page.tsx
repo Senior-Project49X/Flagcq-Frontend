@@ -391,7 +391,23 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               name="file"
               type="file"
               className="p-2 border border-gray-300 rounded"
+              ref={(input) => {
+                if (input && file === null) input.value = "";
+              }}
             />
+            <button
+              type="button"
+              className={`px-4 py-2 font-bold rounded transition 
+                bg-red-500 text-white
+              `}
+              onClick={(e) => {
+                e.preventDefault();
+                setFile(null);
+              }}
+            >
+              {" "}
+              Delete File that Exists
+            </button>
             {file && typeof file === "string" && (
               <p>
                 Current file:
