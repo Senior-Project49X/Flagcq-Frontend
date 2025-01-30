@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { isRoleAdmin } from "../lib/role";
 
 type TournamentDetail = {
   id: number;
@@ -31,11 +32,20 @@ export default function MyteamCard({
   teamCount,
 }: TournamentDetail) {
   const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsAdmin(isRoleAdmin());
+  }, []);
 
   const handleButtonClick = () => {
-    router.push(
-      `/tournament/Tourteam_member?tournamentId=${id}&teamId=${teamId}`
-    );
+    if (isAdmin) {
+      router.push(`/tournament/TournamentPage?tournamentId=${id}`);
+    } else {
+      router.push(
+        `/tournament/Tourteam_member?tournamentId=${id}&teamId=${teamId}`
+      );
+    }
   };
 
   return (
@@ -58,12 +68,10 @@ export default function MyteamCard({
         <div className="flex items-center gap-4">
           <span className="text-xl font-bold">{teamCount}</span>
           <button
-            className={
-              "px-10 py-2 rounded-lg bg-customGreen hover:bg-green-500 ease-out duration-300"
-            }
+            className="px-10 py-2 rounded-lg bg-customGreen hover:bg-green-500 ease-out duration-300"
             onClick={handleButtonClick}
           >
-            Joined
+            {isAdmin ? "Manage" : "Joined"}
           </button>
         </div>
       </div>
