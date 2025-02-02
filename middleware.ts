@@ -3,9 +3,9 @@ import axios from "axios";
 
 // 1. Specify protected and public routes
 const protectedRoutes = [/^\/(?!login|cmuOAuthCallback|logo-login.svg).*$/]; // Protect all routes except public ones
-const publicRoutes = ["/login", "/cmuOAuthCallback"]; // Except these
+const publicRoutes = ["/login", "/cmuEntraIDCallback"]; // Except these
 
-const adminRoutes = [ /^\/admin.*/];
+const adminRoutes = [/^\/admin.*/];
 
 const ip = process.env.NEXT_PUBLIC_IP_URL;
 export const CheckToken = async (token: string | undefined) => {
@@ -24,9 +24,13 @@ export default async function middleware(req: NextRequest) {
   // 2. Check if the current route is protected or public
 
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.some((route: string | RegExp) => typeof route === 'string' ? route === path : route.test(path)); // Check if path matches any protected route
+  const isProtectedRoute = protectedRoutes.some((route: string | RegExp) =>
+    typeof route === "string" ? route === path : route.test(path)
+  ); // Check if path matches any protected route
   const isPublicRoute = publicRoutes.includes(path);
-  const isAdminRoute = adminRoutes.some(route => typeof route === 'string' ? route === path : route.test(path)); // Check if path matches any admin route
+  const isAdminRoute = adminRoutes.some((route) =>
+    typeof route === "string" ? route === path : route.test(path)
+  ); // Check if path matches any admin route
   const token = req.cookies.get("cmu-oauth-token")?.value;
   const { tokenValid, role } = await CheckToken(token);
 
