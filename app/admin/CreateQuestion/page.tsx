@@ -14,7 +14,6 @@ import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
-import { get } from "http";
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
@@ -56,7 +55,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [hints, setHints] = useState<
-    { id: string | number; detail: string; penalty: number }[]
+    { id: string | number | null; detail: string; penalty: number }[]
   >([]);
   const [category, setCategory] = useState<string>("");
   const [difficultysID, setDifficultysID] = useState<string>("");
@@ -107,6 +106,10 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
 
     formData.append("Practice", modeSelection.Practice.toString());
     formData.append("Tournament", modeSelection.Tournament.toString());
+    formData.append(
+      "isFileEdited",
+      typeof file === "string" ? "false" : "true"
+    );
     console.log(id);
 
     if (id !== null && id !== undefined) {
@@ -159,7 +162,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     if (hints.length >= 3) return;
     console.log("Before addition:", hints);
 
-    setHints([...hints, { id: crypto.randomUUID(), detail: "", penalty: 0 }]);
+    setHints([...hints, { id: null, detail: "", penalty: 0 }]);
     console.log("After addition:", hints);
   };
 
@@ -252,7 +255,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               onChange={(e) => setTopic(e.target.value)}
               type="text"
               name="title"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
             />
           </label>
           <br />
@@ -260,7 +263,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
             Category{" "}
             <select
               name="categories_id"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
               value={selectedCategory}
               onChange={handleCategoryChange}
             >
@@ -287,7 +290,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
             <select
               value={difficultysID}
               name="difficultys_id"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
               onChange={(e) => setDifficultysID(e.target.value)}
             >
               <option value={""}>---please select Difficulty---</option>
@@ -320,7 +323,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               name="Description"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border-2 border-gray-300 rounded"
             />
           </label>
           <br />
@@ -355,7 +358,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
             onChange={(e) => setAnswer(e.target.value)}
             name="Answer"
             type="text"
-            className=" p-2 border border-gray-300 rounded"
+            className=" p-2 border-2 border-gray-300 rounded"
           />
           <span>{` }`}</span>
           <br />
@@ -366,7 +369,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               type="number"
               min="0"
               max="10000000"
-              className="p-2 border border-gray-300 rounded"
+              className="p-2 border-2 border-gray-300 rounded"
               onKeyDown={(e) => {
                 if (
                   e.key === "e" ||
@@ -388,7 +391,23 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               name="file"
               type="file"
               className="p-2 border border-gray-300 rounded"
+              ref={(input) => {
+                if (input && file === null) input.value = "";
+              }}
             />
+            <button
+              type="button"
+              className={`px-4 py-2 font-bold rounded transition 
+                bg-red-500 text-white
+              `}
+              onClick={(e) => {
+                e.preventDefault();
+                setFile(null);
+              }}
+            >
+              {" "}
+              Delete File that Exists
+            </button>
             {file && typeof file === "string" && (
               <p>
                 Current file:
