@@ -33,7 +33,7 @@ interface Category {
   name: string;
 }
 interface EditQuestionProps {
-  id: string | null | undefined;
+  id: number | null | undefined;
 }
 export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   const router = useRouter();

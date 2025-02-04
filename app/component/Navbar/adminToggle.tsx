@@ -10,8 +10,11 @@ export default function AdminTogglePage({
   const navLinks = [
     { href: "/admin/CreateQuestion", label: "Create Question" },
     { href: "/admin/CreateTournament", label: "Create Tournament" },
+    {
+      href: "/admin/CreateQuestionTournament",
+      label: "Add Question to Tournament",
+    },
     { href: "/admin/AddRole", label: "Add Role" },
-
     // Add more links here as needed
   ];
   const [open, setOpen] = useState(false);

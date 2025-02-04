@@ -4,15 +4,14 @@ const ip = process.env.NEXT_PUBLIC_IP_URL;
 export const LoginUser=(code:string)=>{
     
     axios
-      .post(`${ip}/api/login`, { authorizationCode: code })
+      .post(`${ip}/api/login`, { authorizationCode: code }, {
+        withCredentials: true
+      })
       .then((resp) => {
         console.log(resp);
         console.log(resp.data);
 
         if (resp.status === 200) {
-          removeCookie("cmu-oauth-token");
-          setCookie("cmu-oauth-token", resp.data.token);
-
           window.location.href = "/";
         } else {
           // Handle login failure (optional)

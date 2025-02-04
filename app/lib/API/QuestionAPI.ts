@@ -38,7 +38,7 @@ export const CreateQuestionAPI = async (
 export const EditQuestionAPI = async (
   CreateData: FormData,
   setState: SetState,
-  id: string
+  id: number
 ): Promise<any> => {
   axios
     .put(`${ip}/api/questions/${id}`, CreateData, {
