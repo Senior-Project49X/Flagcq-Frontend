@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EnrollModal from "./EnrollModal";
 import Image from "next/image";
+import { isRoleAdmin } from "../lib/role";
 
 type TournamentDetail = {
   id: number;
@@ -23,7 +24,7 @@ export default function TournamentCard({
   detail,
   eventStart,
   enrollEnd,
-  status,
+  status: originalStatus,
   enrolltime,
   eventtime,
   event_endDate,
@@ -32,6 +33,15 @@ export default function TournamentCard({
   teamCount,
 }: TournamentDetail) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const role = isRoleAdmin();
+    setIsAdmin(role);
+  }, []);
+
+  // Override status if the user is an admin
+  const status = isAdmin ? "open" : originalStatus;
 
   const handleOpenModal = () => {
     if (status === "open") {
@@ -84,7 +94,7 @@ export default function TournamentCard({
             onClick={handleOpenModal}
             disabled={status !== "open"}
           >
-            {status === "open" ? "Enroll" : "Closed"}
+            {isAdmin ? "Manage" : status === "open" ? "Enroll" : "Closed"}
           </button>
         </div>
       </div>
