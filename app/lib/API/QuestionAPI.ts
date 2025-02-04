@@ -118,7 +118,8 @@ export const GetQuestions = async (
   selectedCategory: string,
   selectedDifficulty: string,
   page: string | null,
-  mode: string
+  mode: string,
+  tournament_id?: number
 ) => {
   const NewPage = page ?? 1;
 
@@ -136,6 +137,10 @@ export const GetQuestions = async (
 
   if (selectedDifficulty !== "All Difficulty") {
     url += `&difficulty=${selectedDifficulty}`;
+  }
+
+  if (tournament_id) {
+    url += `&tournament_id=${tournament_id}`;
   }
 
   try {
