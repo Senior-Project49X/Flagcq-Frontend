@@ -139,7 +139,7 @@ export default function Page() {
       <Navbar />
       <div className="relative">
         {/* Join Team Heading */}
-        <h5 className="text-lg font-semibold text-green-600 mb-4 ml-[1470px]">
+        <h5 className="text-lg font-semibold text-green-600 mb-4 ml-[1640px]">
           Join Team
         </h5>
 

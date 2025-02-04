@@ -21,9 +21,14 @@ export default function EnrollModal({
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [role, setRole] = useState<boolean | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const router = useRouter();
+
+  // Check if the user is an admin
+  useEffect(() => {
+    setIsAdmin(isRoleAdmin());
+  }, []);
 
   // Create a team
   const handleCreate = async (e: FormEvent) => {
@@ -43,6 +48,11 @@ export default function EnrollModal({
     }
   };
 
+  // Admin-specific navigation
+  const handleAdminRoute = () => {
+    router.push(`/tournament/TournamentPage?tournamentId=${tournament_id}`);
+  };
+
   // Delete the tournament
   const handleDeleteTournament = async () => {
     try {
@@ -58,10 +68,6 @@ export default function EnrollModal({
       setShowConfirmDelete(false);
     }
   };
-
-  useEffect(() => {
-    setRole(isRoleAdmin());
-  }, []);
 
   return (
     <>
@@ -85,38 +91,27 @@ export default function EnrollModal({
             <h4 className="text-center text-lg font-semibold mb-6">Detail</h4>
             <div className="text-center mb-6">{Detail}</div>
 
-            {role ? (
+            {isAdmin ? (
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col items-center border-r pr-4">
-                  <h5 className="text-sm font-bold mb-2 pb-14">
+                  <h5 className="text-sm font-bold mb-2">
                     Delete this Tournament
                   </h5>
                   <button
                     onClick={() => setShowConfirmDelete(true)}
-                    className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300 "
+                    className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300"
                   >
                     Delete
                   </button>
                 </div>
                 <div className="flex flex-col items-center">
-                  <h5 className="text-sm font-bold mb-2">Create new team</h5>
-                  <form onSubmit={handleCreate} className="w-full">
-                    <input
-                      type="text"
-                      placeholder="Team Name"
-                      className="w-full px-3 py-2 border rounded mb-4"
-                      maxLength={50}
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
-                    />
-                    <button
-                      type="submit"
-                      className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
-                      disabled={isLoadingCreate}
-                    >
-                      {isLoadingCreate ? "Creating..." : "Create"}
-                    </button>
-                  </form>
+                  <h5 className="text-sm font-bold mb-2">View Tournament</h5>
+                  <button
+                    onClick={handleAdminRoute}
+                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                  >
+                    Go
+                  </button>
                 </div>
               </div>
             ) : (
