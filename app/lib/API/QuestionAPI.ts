@@ -38,7 +38,7 @@ export const CreateQuestionAPI = async (
 export const EditQuestionAPI = async (
   CreateData: FormData,
   setState: SetState,
-  id: string 
+  id: string
 ): Promise<any> => {
   axios
     .put(`${ip}/api/questions/${id}`, CreateData, {
@@ -63,15 +63,38 @@ export const EditQuestionAPI = async (
     });
 };
 
+export const CreateQuestionTournamentAPI = async (
+  question_id: number[],
+  tournament_id: number
+): Promise<any> => {
+  try {
+    const response = await axios.post(
+      `${ip}/api/questions/tournament`,
+      {
+        question_id: question_id,
+        tournament_id: tournament_id,
+      },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // Use application/json if the data is not a form
+        },
+      }
+    );
+  } catch (error: any) {
+    console.error("Error creating questions for the tournament:", error);
+  }
+};
+
 // export const GetQuestions = async (
 //   selectedCategory: string,
 //   selectedDifficulty: string,
 //   page: string | null
 // ) => {
 //   const NewPage = page ?? 1;
-  
+
 //   try {
-    
+
 //     const resp = await axios.get(
 //       `${ip}/api/questions/practice?mode=Practice${
 //         selectedCategory === "All Categories"
@@ -99,7 +122,9 @@ export const GetQuestions = async (
 ) => {
   const NewPage = page ?? 1;
 
-  let url = isRoleAdmin() ? `${ip}/api/questions/admin?page=${NewPage}` : `${ip}/api/questions/user?&page=${NewPage}`;
+  let url = isRoleAdmin()
+    ? `${ip}/api/questions/admin?page=${NewPage}`
+    : `${ip}/api/questions/user?&page=${NewPage}`;
 
   if (mode !== "") {
     url += `&mode=${mode}`;
@@ -203,7 +228,9 @@ export const DownloadQuestionsByID = async (id: string) => {
 
 export const GetCategories = async () => {
   try {
-    const response = await axios.get(`${ip}/api/categories`, {withCredentials: true} );
+    const response = await axios.get(`${ip}/api/categories`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     console.error("Error downloading file:", error);
@@ -235,5 +262,3 @@ export const UseHintAPI = async (id: number) => {
     console.error("Error downloading file:", error);
   }
 };
-
-

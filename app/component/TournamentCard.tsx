@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import EnrollModal from "./EnrollModal";
+import Image from "next/image";
 
 type TournamentDetail = {
   id: number;
@@ -65,7 +66,14 @@ export default function TournamentCard({
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold">{teamCount}</span>
+            <Image
+              src="/people.svg"
+              alt="Category logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
+            <span className="text-xl font-bold">{teamCount}/50</span>
           </div>
           <button
             className={`px-10 py-2 rounded-lg ${

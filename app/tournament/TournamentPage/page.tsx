@@ -8,6 +8,7 @@ import Question from "../../component/Question";
 import { GetQuestions } from "../../lib/API/QuestionAPI";
 import { questions } from "../../lib/types/QuestionType";
 import { GetTourPage } from "@/app/lib/API/GetTourPage";
+import { isRoleAdmin } from "../../lib/role";
 
 interface TourData {
   name: string;
@@ -32,6 +33,15 @@ export default function Homepage() {
   const [remainingTime, setRemainingTime] = useState("");
   const [page, setPage] = useState("1");
   const [mode, setMode] = useState<string>("Tournament");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const role = isRoleAdmin();
+    setIsAdmin(role);
+    if (!role) {
+      setMode("Tournament");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
@@ -104,24 +114,28 @@ export default function Homepage() {
             <h2 className="text-xl font-bold">Remaining Time</h2>
             <p className="text-lg">{remainingTime || "Calculating..."}</p>
           </div>
-          <div className="mb-6">
-            <h2 className="text-xl font-bold">Team Rank</h2>
-            <p className="text-lg">{tourData?.teamRank || "N/A"}</p>
-          </div>
-          <div className="mb-6">
-            <h2 className="text-xl font-bold">Team Score</h2>
-            <p className="text-lg">{tourData?.teamScore || 0} Points</p>
-          </div>
-          <div className="mb-6">
-            <h2 className="text-xl font-bold">Individual Score</h2>
-            <p className="text-lg">{tourData?.individualScore || 0} Points</p>
-          </div>
+          {!isAdmin && (
+            <>
+              <div className="mb-6">
+                <h2 className="text-xl font-bold">Team Rank</h2>
+                <p className="text-lg">{tourData?.teamRank || "N/A"}</p>
+              </div>
+              <div className="mb-6">
+                <h2 className="text-xl font-bold">Team Score</h2>
+                <p className="text-lg">{tourData?.teamScore || 0} Points</p>
+              </div>
+              <div className="mb-6">
+                <h2 className="text-xl font-bold">Individual Score</h2>
+                <p className="text-lg">
+                  {tourData?.individualScore || 0} Points
+                </p>
+              </div>
+            </>
+          )}
           <button
             onClick={() =>
               router.push(
-                `/tournament/Tourleaderboard?tournamentId=${Number(
-                  id
-                )}&teamId=${tourData?.teamId}`
+                `/tournament/Tourleaderboard?tournamentId=${Number(id)}`
               )
             }
             className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"

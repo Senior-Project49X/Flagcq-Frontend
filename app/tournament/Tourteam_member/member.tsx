@@ -2,8 +2,9 @@
 import Navbar from "../../component/Navbar/navbar";
 import { useState, useEffect } from "react";
 import { GetTourMem } from "../../lib/API/GetTourMem";
-import Image from "next/image";
+import { LeaveTeam } from "@/app/lib/API/LeaveTeam";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type TourMemData = {
   tournamentName: string;
@@ -26,15 +27,18 @@ export default function Member() {
   const searchParams = useSearchParams();
   const teamId = searchParams.get("teamId");
   const tournamentId = searchParams.get("tournamentId");
+  const router = useRouter();
 
   const handleLeaveTeam = async () => {
+    if (!teamId) {
+      setIsError(true);
+      return;
+    }
     try {
-      // Call API to leave the team (replace this with your actual API logic)
-      console.log("Leaving the team...");
-      setShowPopup(false);
-      alert("You have successfully left the team!");
+      await LeaveTeam({ team_id: Number(teamId) });
+      router.push("/myteam");
     } catch (error) {
-      console.error("Error leaving the team:", error);
+      console.error("Error leaving team:", error);
       setIsError(true);
     }
   };
@@ -45,6 +49,11 @@ export default function Member() {
   };
 
   useEffect(() => {
+    if (!tournamentId || !teamId) {
+      console.error("Missing tournamentId or teamId in URL");
+      return;
+    }
+
     const fetchTourMemData = async () => {
       try {
         const response = await GetTourMem(Number(tournamentId), Number(teamId));
@@ -55,7 +64,7 @@ export default function Member() {
     };
 
     fetchTourMemData();
-  }, []);
+  }, [tournamentId, teamId]);
 
   return (
     <div className="min-h-screen bg-[#090147] text-white">
@@ -65,8 +74,8 @@ export default function Member() {
           <p className="text-lg font-semibold">
             Tournament: {TourMemData?.tournamentName}
           </p>
-          <p className="text-md">Team {TourMemData?.teamName}</p>
-          <p className="text-md">รหัสเชิญ: {TourMemData?.invitedCode}</p>
+          <p className="text-md">Team: {TourMemData?.teamName}</p>
+          <p className="text-md">Invitation Code: {TourMemData?.invitedCode}</p>
           <p className="text-lg font-bold mt-4">{TourMemData?.memberCount}/4</p>
         </div>
 

@@ -61,7 +61,7 @@ export default function Leaderboard() {
     if (rank === 1) return "text-yellow-600";
     if (rank === 2) return "text-gray-500";
     if (rank === 3) return "text-orange-500";
-    return "text-white"; // Default color for other ranks
+    return "text-black"; // Default color for other ranks
   };
 
   const getOrdinalSuffix = (rank: number): string => {

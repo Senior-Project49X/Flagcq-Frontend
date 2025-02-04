@@ -15,3 +15,15 @@ export const GetTourList = async (page: string | null) => {
     return {};
   }
 };
+
+export const GetAllTourList = async () => {
+  try {
+    const resp = await axios.get(`${ip}/api/tournaments/list`, {
+      withCredentials: true,
+    });
+    return resp.data;
+  } catch (e) {
+    console.error("Error fetching tournament data:", e);
+    return {};
+  }
+};

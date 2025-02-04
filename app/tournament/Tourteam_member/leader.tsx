@@ -69,8 +69,6 @@ export default function Leader() {
         team_id: Number(teamId),
         member_id: String(selectedMemberId),
       });
-
-      // Update state after successfully kicking the player
       setSuccessMessage("Player kicked successfully!");
       setTourMemdData((prev) => {
         if (!prev) return prev;
