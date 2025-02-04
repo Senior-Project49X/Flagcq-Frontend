@@ -148,7 +148,7 @@ export const GetQuestions = async (
   }
 };
 
-export const GetQuestionsByID = async (id: string) => {
+export const GetQuestionsByID = async (id: number) => {
   try {
     const resp = await axios.get(`${ip}/api/question/${id}`, {
       withCredentials: true,
@@ -160,7 +160,7 @@ export const GetQuestionsByID = async (id: string) => {
   }
 };
 
-export const DeleteQuestionsByID = async (id: string) => {
+export const DeleteQuestionsByID = async (id: number) => {
   await axios
     .delete(`${ip}/api/question/${id}`, { withCredentials: true })
     .then((resp) => {
@@ -172,7 +172,7 @@ export const DeleteQuestionsByID = async (id: string) => {
 };
 
 export const CheckQuestionsByID = async (
-  id: string,
+  id: number,
   Answer: string
 ): Promise<boolean> => {
   try {
@@ -188,7 +188,7 @@ export const CheckQuestionsByID = async (
   }
 };
 
-export const DownloadQuestionsByID = async (id: string) => {
+export const DownloadQuestionsByID = async (id: number) => {
   try {
     const response = await axios.get(`${ip}/api/question/download/${id}`, {
       responseType: "blob", // Important for file download

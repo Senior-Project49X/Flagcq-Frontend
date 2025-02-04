@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, use, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import {
   CheckQuestionsByID,
   DeleteQuestionsByID,
@@ -14,7 +14,7 @@ import Yay from "./yay";
 import { get } from "http";
 import Link from "next/link";
 type state = {
-  id: string;
+  id: number;
   Topic: string;
   ClosePopup: Function;
 };
