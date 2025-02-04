@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function ProfileToggle() {
@@ -31,6 +32,13 @@ export default function ProfileToggle() {
       }}
       className="w-12 h-12 rounded-full object-cover bg-white"
     >
+      <Image
+        src="/aw_eng_secondary&icon-03.svg"
+        alt="Profile"
+        width={60}
+        height={60}
+        className="object-contain"
+      />
       {open && (
         <div className="absolute right-0 mt-2 w-48 bg-gray-100 rounded-md shadow-lg z-20 ">
           <Link

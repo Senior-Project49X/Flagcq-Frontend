@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Navbar from "../component/navbar";
-
+import Image from "next/image";
 import { tokenDecode } from "../lib/jwtDecode";
 import { JwtPayload } from "jwt-decode";
 import { DecodedToken } from "../lib/types/DecodedToken";
@@ -23,7 +23,15 @@ export default function Profile() {
       <div className="  flex justify-center items-center">
         <div className="bg-white rounded-lg p-8 w-full max-w-4xl shadow-lg">
           <div className="flex mt-8">
-            <div className="w-48 h-48 rounded-lg">photo</div>
+            <div className="w-48 h-48 rounded-lg">
+              <Image
+                src="/logo_eng.svg"
+                alt="logo"
+                width={500}
+                height={500}
+                className="object-contain"
+              />
+            </div>
             <div className="ml-8 space-y-4">
               <div className="text-2xl font-bold">
                 {data?.first_name} {data?.last_name}
