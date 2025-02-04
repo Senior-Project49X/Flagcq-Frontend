@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
-import Navbar from "../../component/navbar";
+import Navbar from "../../component/Navbar/navbar";
 import Category from "../../category";
 import Difficult from "../../difficult";
 import Pagination from "../../component/Pagination";
