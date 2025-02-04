@@ -64,7 +64,8 @@ export default function Homepage() {
         selectedCategory,
         selectedDifficulty,
         page,
-        "Tournament"
+        "Tournament",
+        tournament_id
       );
       setTotalPages(result.totalPages);
       setHasNextPage(result.hasNextPage);
@@ -132,7 +133,9 @@ export default function Homepage() {
             id="tournament-dropdown"
             className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={tournament_id}
-            onChange={(e) => setTournament_id(Number(e.target.value))}
+            onChange={(e) => {
+              setTournament_id(Number(e.target.value));
+            }}
           >
             <option value="" disabled>
               Select a Tournament
