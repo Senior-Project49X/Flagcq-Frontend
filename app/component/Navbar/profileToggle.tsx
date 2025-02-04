@@ -54,7 +54,7 @@ export default function ProfileToggle() {
             My team
           </Link>
           <Link
-            href={process.env.NEXT_PUBLIC_CMU_ENTRAID_LOGOUT_URL}
+            href={"/logout"}
             className="block px-4 py-2 text-red-700 hover:bg-gray-200"
           >
             logout

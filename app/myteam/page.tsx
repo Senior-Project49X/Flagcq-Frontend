@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Navbar from "../component/navbar";
+import React, { FormEvent, useState, useEffect } from "react";
+import Navbar from "../component/Navbar/navbar";
 import { GetTourList } from "../lib/API/GetTourListAPI";
 import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";

@@ -19,3 +19,13 @@ export const GetUserPoints = async () => {
       return "0"; // Return a fallback value in case of error
     }
   };
+
+  export const AddRole = async (role: string) => {
+    try {
+      const resp = await axios.get(`${ip}/api/user`, { withCredentials: true });
+      return resp.data; // Return the points
+    } catch (e) {
+      console.error("Error fetching user data:", e);
+      return "0"; // Return a fallback value in case of error
+    }
+  }

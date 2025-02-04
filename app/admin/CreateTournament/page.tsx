@@ -1,7 +1,7 @@
 "use client";
 import { PostCreateTour } from "../../lib/API/PostCreateTour";
 import { useState } from "react";
-import Navbar from "../../component/navbar";
+import Navbar from "../../component/Navbar/navbar";
 import { formatDynamicAPIAccesses } from "next/dist/server/app-render/dynamic-rendering";
 
 interface CreateTourState {

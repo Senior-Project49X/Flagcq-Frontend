@@ -1,7 +1,7 @@
 "use client";
 import React, { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
-import Navbar from "../../component/navbar";
+import Navbar from "../../component/Navbar/navbar";
 import {
   CreateQuestionAPI,
   DownloadQuestionsByID,
@@ -246,197 +246,203 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
         </CreateCategories>
       )}
       <Navbar />
-      <div className="max-w-3xl mx-auto p-8 bg-gray-100 p-6 rounded-lg shadow-md text-black">
-        <form onSubmit={onCreateQuestion}>
-          <label className="mr-2">
-            Topic{" "}
-            <input
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              type="text"
-              name="title"
-              className="w-full p-2 border-2 border-gray-300 rounded"
-            />
-          </label>
-          <br />
-          <label>
-            Category{" "}
-            <select
-              name="categories_id"
-              className="w-full p-2 border-2 border-gray-300 rounded"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-            >
-              <option value={category}>---please select category---</option>
-              {categories.map((category: Category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-              <option value={"New Category"}>[New Category]</option>
-            </select>
-            {newCategory && (
-              <input
-                type="text"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
-              />
-            )}
-          </label>
-          <br />
-          <label>
-            Difficulty{" "}
-            <select
-              value={difficultysID}
-              name="difficultys_id"
-              className="w-full p-2 border-2 border-gray-300 rounded"
-              onChange={(e) => setDifficultysID(e.target.value)}
-            >
-              <option value={""}>---please select Difficulty---</option>
-              <option value={"Easy"}>Easy</option>
-              <option value={"Medium"}>Medium</option>
-              <option value={"Hard"}>Hard</option>
-            </select>
-          </label>
-          <br />
-          <div>
-            <p>Mode</p>
-            {Object.keys(modeSelection).map((buttonKey) => (
-              <button
-                key={buttonKey}
-                type="button"
-                className={`px-4 py-2 font-bold rounded transition ${
-                  modeSelection[buttonKey]
-                    ? "bg-green-500 text-white"
-                    : "bg-red-500 text-white"
-                }`}
-                onClick={() => handleToggle(buttonKey)}
-              >
-                {buttonKey}
-              </button>
-            ))}
-          </div>
-          <label>
-            Description{" "}
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              name="Description"
-              className="w-full p-2 border-2 border-gray-300 rounded"
-            />
-          </label>
-          <br />
-          <p>Hint</p>
-          <div>
-            {hints.length < 3 && (
-              <button
-                type="button"
-                onClick={addHint}
-                className="p-2 border rounded border-gray-300 mb-2 bg-green-500 text-white hover:bg-green-600 transition-colors duration-100 "
-              >
-                Add Hint
-              </button>
-            )}
-          </div>
-          {hints.length > 0 &&
-            hints.map((hint, index) => (
-              <CreateHint
-                key={hint.id}
-                index={index}
-                detail={hint.detail}
-                penalty={hint.penalty}
-                handleHintChange={handleHintChange}
-                removeHint={removeHint}
-              />
-            ))}
+      <div className="p-8">
+        <h1 className="text-3xl font-bold mb-6 text-center text-white ">
+          CreateQuestion
+        </h1>
 
-          <br />
-          <label>{`Answer: CTFCQ{ `}</label>
-          <input
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            name="Answer"
-            type="text"
-            className=" p-2 border-2 border-gray-300 rounded"
-          />
-          <span>{` }`}</span>
-          <br />
-          <label>
-            Point{}
+        <div className="max-w-3xl mx-auto p-8 bg-gray-100 p-6 rounded-lg shadow-md text-black">
+          <form onSubmit={onCreateQuestion}>
+            <label className="mr-2">
+              Topic{" "}
+              <input
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                type="text"
+                name="title"
+                className="w-full p-2 border-2 border-gray-300 rounded"
+              />
+            </label>
+            <br />
+            <label>
+              Category{" "}
+              <select
+                name="categories_id"
+                className="w-full p-2 border-2 border-gray-300 rounded"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+              >
+                <option value={category}>---please select category---</option>
+                {categories.map((category: Category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+                <option value={"New Category"}>[New Category]</option>
+              </select>
+              {newCategory && (
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
+                />
+              )}
+            </label>
+            <br />
+            <label>
+              Difficulty{" "}
+              <select
+                value={difficultysID}
+                name="difficultys_id"
+                className="w-full p-2 border-2 border-gray-300 rounded"
+                onChange={(e) => setDifficultysID(e.target.value)}
+              >
+                <option value={""}>---please select Difficulty---</option>
+                <option value={"Easy"}>Easy</option>
+                <option value={"Medium"}>Medium</option>
+                <option value={"Hard"}>Hard</option>
+              </select>
+            </label>
+            <br />
+            <div>
+              <p>Mode</p>
+              {Object.keys(modeSelection).map((buttonKey) => (
+                <button
+                  key={buttonKey}
+                  type="button"
+                  className={`px-4 py-2 font-bold rounded transition ${
+                    modeSelection[buttonKey]
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                  }`}
+                  onClick={() => handleToggle(buttonKey)}
+                >
+                  {buttonKey}
+                </button>
+              ))}
+            </div>
+            <label>
+              Description{" "}
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                name="Description"
+                className="w-full p-2 border-2 border-gray-300 rounded"
+              />
+            </label>
+            <br />
+            <p>Hint</p>
+            <div>
+              {hints.length < 3 && (
+                <button
+                  type="button"
+                  onClick={addHint}
+                  className="p-2 border rounded border-gray-300 mb-2 bg-green-500 text-white hover:bg-green-600 transition-colors duration-100 "
+                >
+                  Add Hint
+                </button>
+              )}
+            </div>
+            {hints.length > 0 &&
+              hints.map((hint, index) => (
+                <CreateHint
+                  key={hint.id}
+                  index={index}
+                  detail={hint.detail}
+                  penalty={hint.penalty}
+                  handleHintChange={handleHintChange}
+                  removeHint={removeHint}
+                />
+              ))}
+
+            <br />
+            <label>{`Answer: CTFCQ{ `}</label>
             <input
-              name="point"
-              type="number"
-              min="0"
-              max="10000000"
-              className="p-2 border-2 border-gray-300 rounded"
-              onKeyDown={(e) => {
-                if (
-                  e.key === "e" ||
-                  e.key === "E" ||
-                  e.key === "+" ||
-                  e.key === "-"
-                )
-                  e.preventDefault();
-              }}
-              value={point}
-              onChange={handleNumberChange}
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              name="Answer"
+              type="text"
+              className=" p-2 border-2 border-gray-300 rounded"
             />
-          </label>
-          <br />
-          <label>
-            File{}
-            <input
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              name="file"
-              type="file"
-              className="p-2 border border-gray-300 rounded"
-              ref={(input) => {
-                if (input && file === null) input.value = "";
-              }}
-            />
-            <button
-              type="button"
-              className={`px-4 py-2 font-bold rounded transition 
+            <span>{` }`}</span>
+            <br />
+            <label>
+              Point{}
+              <input
+                name="point"
+                type="number"
+                min="0"
+                max="10000000"
+                className="p-2 border-2 border-gray-300 rounded"
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "e" ||
+                    e.key === "E" ||
+                    e.key === "+" ||
+                    e.key === "-"
+                  )
+                    e.preventDefault();
+                }}
+                value={point}
+                onChange={handleNumberChange}
+              />
+            </label>
+            <br />
+            <label>
+              File{}
+              <input
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                name="file"
+                type="file"
+                className="p-2 border border-gray-300 rounded"
+                ref={(input) => {
+                  if (input && file === null) input.value = "";
+                }}
+              />
+              <button
+                type="button"
+                className={`px-4 py-2 font-bold rounded transition 
                 bg-red-500 text-white
               `}
-              onClick={(e) => {
-                e.preventDefault();
-                setFile(null);
-              }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setFile(null);
+                }}
+              >
+                {" "}
+                Delete File that Exists
+              </button>
+              {file && typeof file === "string" && (
+                <p>
+                  Current file:
+                  {id && (
+                    <button
+                      type="button" // Ensure the button does not submit the form
+                      onClick={(e) => {
+                        e.preventDefault(); // Prevent form submission
+                        DownloadQuestionsByID(id);
+                      }}
+                    >
+                      {file}
+                    </button>
+                  )}
+                </p>
+              )}
+            </label>
+            <br />
+            <button
+              type="submit"
+              className={`w-full p-2 rounded font-bold ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-red-500 hover:bg-red-600 text-white"
+              }`}
             >
-              {" "}
-              Delete File that Exists
+              Confirm
             </button>
-            {file && typeof file === "string" && (
-              <p>
-                Current file:
-                {id && (
-                  <button
-                    type="button" // Ensure the button does not submit the form
-                    onClick={(e) => {
-                      e.preventDefault(); // Prevent form submission
-                      DownloadQuestionsByID(id);
-                    }}
-                  >
-                    {file}
-                  </button>
-                )}
-              </p>
-            )}
-          </label>
-          <br />
-          <button
-            type="submit"
-            className={`w-full p-2 rounded font-bold ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-500 hover:bg-red-600 text-white"
-            }`}
-          >
-            Confirm
-          </button>
-        </form>
+          </form>
+        </div>
       </div>
     </>
   );

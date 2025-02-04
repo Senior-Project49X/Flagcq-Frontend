@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FormEvent, useState, useEffect } from "react";
-import Navbar from "../component/navbar";
+import Navbar from "../component/Navbar/navbar";
 import { GetTourList } from "../lib/API/GetTourListAPI";
 import TournamentCard from "../component/TournamentCard";
 import Pagination from "../component/Pagination";

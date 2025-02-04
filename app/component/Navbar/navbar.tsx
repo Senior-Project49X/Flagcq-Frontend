@@ -4,8 +4,9 @@ import Link from "next/link";
 import ProfileToggle from "./profileToggle";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GetUserPoints } from "../lib/API/GetUserAPI";
-import { isRoleAdmin, isRoleTa } from "../lib/role";
+import { GetUserPoints } from "../../lib/API/GetUserAPI";
+import { isRoleAdmin, isRoleTa } from "../../lib/role";
+import AdminTogglePage from "./adminToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -77,30 +78,7 @@ export default function Navbar() {
             >
               Leaderboard
             </Link>
-            {role && (
-              <>
-                <Link
-                  href="/admin/CreateQuestion"
-                  className={
-                    pathname == "/admin/CreateQuestion"
-                      ? "text-green-400 h-fit mt-3 "
-                      : "hover:text-white h-fit mt-3"
-                  }
-                >
-                  Create Question
-                </Link>
-                <Link
-                  href="/admin/CreateTournament"
-                  className={
-                    pathname == "/admin/CreateTournament"
-                      ? "text-green-400 h-fit mt-3 "
-                      : "hover:text-white h-fit mt-3"
-                  }
-                >
-                  Create Tournament
-                </Link>
-              </>
-            )}
+            {role && <AdminTogglePage pathname={pathname} />}
           </div>
         </div>
         {/* Right side: Navigation buttons */}
