@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "../component/navbar";
+import Navbar from "../component/Navbar/navbar";
 import { GetLbData } from "../lib/API/GetLbAPI";
 import { GetUserData } from "../lib/API/GetUserAPI";
 import { useState, useEffect } from "react";

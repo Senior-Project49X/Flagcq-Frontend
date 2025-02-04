@@ -1,5 +1,5 @@
 "use client";
-import Navbar from "../../component/navbar";
+import Navbar from "../../component/Navbar/navbar";
 import { useState, useEffect } from "react";
 import { GetTourMem } from "../../lib/API/GetTourMem";
 import Image from "next/image";

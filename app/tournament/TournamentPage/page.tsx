@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Navbar from "../../component/navbar";
+import Navbar from "../../component/Navbar/navbar";
 import Pagination from "../../component/Pagination";
 import Question from "../../component/Question";
 import { GetQuestions } from "../../lib/API/QuestionAPI";

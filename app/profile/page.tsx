@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Navbar from "../component/navbar";
+import Navbar from "../component/Navbar/navbar";
 
 import { tokenDecode } from "../lib/jwtDecode";
 import { JwtPayload } from "jwt-decode";
