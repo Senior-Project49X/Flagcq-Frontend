@@ -23,7 +23,7 @@ interface TourData {
 export default function Homepage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("tournamentId");
+  const tournament_id = searchParams.get("tournamentId");
 
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
@@ -32,15 +32,13 @@ export default function Homepage() {
   const [tourData, setTourData] = useState<TourData | null>(null);
   const [remainingTime, setRemainingTime] = useState("");
   const [page, setPage] = useState("1");
-  const [mode, setMode] = useState<string>("Tournament");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
 
   useEffect(() => {
     const role = isRoleAdmin();
     setIsAdmin(role);
-    if (!role) {
-      setMode("Tournament");
-    }
   }, []);
 
   useEffect(() => {
@@ -50,8 +48,12 @@ export default function Homepage() {
           selectedCategory,
           selectedDifficulty,
           page,
-          mode
+          "Tournament",
+          Number(tournament_id),
+          true
         );
+        setTotalPages(userQuestions.totalPages);
+        setHasNextPage(userQuestions.hasNextPage);
         setQuestions(userQuestions.data);
       } catch (error) {
         console.error("Error fetching questions:", error);
@@ -64,8 +66,8 @@ export default function Homepage() {
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        if (!id) return;
-        const response = await GetTourPage(Number(id));
+        if (!tournament_id) return;
+        const response = await GetTourPage(Number(tournament_id));
         setTourData(response);
       } catch (error) {
         console.error("Error fetching tournament data:", error);
@@ -73,7 +75,7 @@ export default function Homepage() {
     };
 
     fetchTourData();
-  }, [id]);
+  }, [tournament_id]);
 
   useEffect(() => {
     if (!tourData?.eventEndDate) return;
@@ -108,7 +110,7 @@ export default function Homepage() {
         <div className="w-80 p-6 bg-darkblue text-white">
           <div className="mb-6">
             <h2 className="text-xl font-bold">Tournament Name</h2>
-            <p className="text-lg">{tourData?.name || "Loading..."}</p>
+            <p className="text-lg">{tourData?.name ?? "Loading..."}</p>
           </div>
           <div className="mb-6">
             <h2 className="text-xl font-bold">Remaining Time</h2>
@@ -135,7 +137,9 @@ export default function Homepage() {
           <button
             onClick={() =>
               router.push(
-                `/tournament/Tourleaderboard?tournamentId=${Number(id)}`
+                `/tournament/Tourleaderboard?tournamentId=${Number(
+                  tournament_id
+                )}`
               )
             }
             className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
@@ -151,10 +155,10 @@ export default function Homepage() {
             questions={questions}
           />
           <Pagination
-            pagePath={"/?page="}
-            pageNumber={null}
-            totalPages={10}
-            hasNextPage={true}
+            pagePath={`?tournamentId=${tournament_id}&page=`}
+            pageNumber={page}
+            totalPages={totalPages}
+            hasNextPage={hasNextPage}
           />
         </div>
       </div>

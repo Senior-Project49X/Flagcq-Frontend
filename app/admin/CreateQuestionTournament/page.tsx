@@ -7,12 +7,11 @@ import Difficult from "../../difficult";
 import Pagination from "../../component/Pagination";
 import { useSearchParams, useRouter } from "next/navigation";
 import Question from "../../component/Question";
-import { GetQuestions } from "../../lib/API/QuestionAPI";
-import { GetUserPoints } from "../../lib/API/GetUserAPI";
+import {
+  GetQuestions,
+  CreateQuestionTournamentAPI,
+} from "../../lib/API/QuestionAPI";
 import { questions } from "../../lib/types/QuestionType";
-import ModeFilter from "../../component/ModeFilter";
-import { isRoleAdmin } from "../../lib/role";
-import { CreateQuestionTournamentAPI } from "../../lib/API/QuestionAPI";
 import { GetAllTourList } from "@/app/lib/API/GetTourListAPI";
 
 export default function Homepage() {
@@ -26,7 +25,6 @@ export default function Homepage() {
   const [questions, setQuestions] = useState<questions[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [mode, setMode] = useState<string>("");
   const [tournament_id, setTournament_id] = useState<number>(0);
   const [question_id, setQuestion_id] = useState<number[]>([]);
@@ -34,14 +32,19 @@ export default function Homepage() {
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    router.push("/?page=1");
+    router.push("?page=1");
   };
 
   const handleDifficultyClick = (difficulty: string) => {
     setSelectedDifficulty(difficulty);
-    router.push("/?page=1");
+    router.push("?page=1");
   };
 
+  const handlePushQuestionID = (id: number) => {
+    if (question_id.includes(id))
+      setQuestion_id(question_id.filter((qid) => qid !== id));
+    else setQuestion_id([...question_id, id]);
+  };
   const handleGetAllTourList = async () => {
     try {
       const data = await GetAllTourList();
@@ -52,13 +55,24 @@ export default function Homepage() {
   };
 
   useEffect(() => {
-    const role = isRoleAdmin();
-    setIsAdmin(role);
-    if (!role) {
-      setMode("Practice");
-    }
     handleGetAllTourList();
   }, []);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const result = await GetQuestions(
+        selectedCategory,
+        selectedDifficulty,
+        page,
+        "Tournament",
+        tournament_id
+      );
+      setTotalPages(result.totalPages);
+      setHasNextPage(result.hasNextPage);
+      setQuestions(result.data);
+    };
+    fetchQuestions();
+  }, [page, selectedCategory, selectedDifficulty, mode]);
 
   const handleCreateQT = async (e: FormEvent) => {
     e.preventDefault();
@@ -89,13 +103,15 @@ export default function Homepage() {
           {questions.length !== 0 ? (
             <>
               <Question
+                addQuestionTournament={handlePushQuestionID}
                 selectedDifficulty={selectedDifficulty}
                 selectedCategory={selectedCategory}
                 questions={questions}
+                question_id={question_id} // Add this prop
               />
 
               <Pagination
-                pagePath={"/?page="}
+                pagePath={"?page="}
                 pageNumber={page}
                 totalPages={totalPages}
                 hasNextPage={hasNextPage}
@@ -117,7 +133,9 @@ export default function Homepage() {
             id="tournament-dropdown"
             className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={tournament_id}
-            onChange={(e) => setTournament_id(Number(e.target.value))}
+            onChange={(e) => {
+              setTournament_id(Number(e.target.value));
+            }}
           >
             <option value="" disabled>
               Select a Tournament

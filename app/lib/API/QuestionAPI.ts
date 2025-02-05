@@ -38,7 +38,7 @@ export const CreateQuestionAPI = async (
 export const EditQuestionAPI = async (
   CreateData: FormData,
   setState: SetState,
-  id: string
+  id: number
 ): Promise<any> => {
   axios
     .put(`${ip}/api/questions/${id}`, CreateData, {
@@ -118,11 +118,13 @@ export const GetQuestions = async (
   selectedCategory: string,
   selectedDifficulty: string,
   page: string | null,
-  mode: string
+  mode: string,
+  tournament_id?: number,
+  isUseUserPath?: boolean
 ) => {
   const NewPage = page ?? 1;
-
-  let url = isRoleAdmin()
+  const useUser = isUseUserPath ?? false;
+  let url = isRoleAdmin() && !useUser
     ? `${ip}/api/questions/admin?page=${NewPage}`
     : `${ip}/api/questions/user?&page=${NewPage}`;
 
@@ -138,6 +140,10 @@ export const GetQuestions = async (
     url += `&difficulty=${selectedDifficulty}`;
   }
 
+  if (tournament_id) {
+    url += `&tournament_id=${tournament_id}`;
+  }
+
   try {
     const response = await axios.get(url, {
       withCredentials: true,
@@ -148,7 +154,7 @@ export const GetQuestions = async (
   }
 };
 
-export const GetQuestionsByID = async (id: string) => {
+export const GetQuestionsByID = async (id: number) => {
   try {
     const resp = await axios.get(`${ip}/api/question/${id}`, {
       withCredentials: true,
@@ -160,7 +166,7 @@ export const GetQuestionsByID = async (id: string) => {
   }
 };
 
-export const DeleteQuestionsByID = async (id: string) => {
+export const DeleteQuestionsByID = async (id: number) => {
   await axios
     .delete(`${ip}/api/question/${id}`, { withCredentials: true })
     .then((resp) => {
@@ -172,7 +178,7 @@ export const DeleteQuestionsByID = async (id: string) => {
 };
 
 export const CheckQuestionsByID = async (
-  id: string,
+  id: number,
   Answer: string
 ): Promise<boolean> => {
   try {
@@ -188,7 +194,7 @@ export const CheckQuestionsByID = async (
   }
 };
 
-export const DownloadQuestionsByID = async (id: string) => {
+export const DownloadQuestionsByID = async (id: number) => {
   try {
     const response = await axios.get(`${ip}/api/question/download/${id}`, {
       responseType: "blob", // Important for file download
