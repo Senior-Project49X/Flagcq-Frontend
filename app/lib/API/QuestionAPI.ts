@@ -119,11 +119,12 @@ export const GetQuestions = async (
   selectedDifficulty: string,
   page: string | null,
   mode: string,
-  tournament_id?: number
+  tournament_id?: number,
+  isUseUserPath?: boolean
 ) => {
   const NewPage = page ?? 1;
-
-  let url = isRoleAdmin()
+  const useUser = isUseUserPath ?? false;
+  let url = isRoleAdmin() && !useUser
     ? `${ip}/api/questions/admin?page=${NewPage}`
     : `${ip}/api/questions/user?&page=${NewPage}`;
 
