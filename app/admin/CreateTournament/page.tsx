@@ -3,6 +3,7 @@ import { PostCreateTour } from "../../lib/API/PostCreateTour";
 import { useState } from "react";
 import Navbar from "../../component/Navbar/navbar";
 import { formatDynamicAPIAccesses } from "next/dist/server/app-render/dynamic-rendering";
+import { useRouter } from "next/navigation";
 
 interface CreateTourState {
   topic: string;
@@ -27,6 +28,7 @@ export default function CreateTour() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -76,8 +78,8 @@ export default function CreateTour() {
     try {
       setIsLoading(true);
       await PostCreateTour(formattedData);
-
       setSuccessMessage("Tournament created successfully!");
+      router.push("/tournament");
     } catch (error) {
       console.error("Error creating tournament:", error);
       setErrorMessage("Failed to create the tournament. Please try again.");
