@@ -30,7 +30,7 @@ export default function Page() {
         alert("Please fill in all required fields.");
         return;
       }
-      await PostAddRole(studentCode, selectedRole); // Pass arguments separately
+      await PostAddRole(studentCode, selectedRole);
       console.log(`Confirmed role: ${selectedRole}, for user: ${studentCode}`);
     } catch (error) {
       console.error("Error adding role:", error);
@@ -56,30 +56,23 @@ export default function Page() {
           />
         </div>
         <div className="flex space-x-4 mb-6 justify-center">
-          <button
-            onClick={() => handleRoleToggle("Admin")}
-            className={`py-2 px-4 rounded-md ${
-              selectedRole === "Admin"
-                ? "bg-green-500 text-white"
-                : "bg-green-300 hover:bg-green-400"
-            }`}
-          >
-            Admin
-          </button>
-          <button
-            onClick={() => handleRoleToggle("User")}
-            className={`py-2 px-4 rounded-md ${
-              selectedRole === "User"
-                ? "bg-red-500 text-white"
-                : "bg-red-300 hover:bg-red-400"
-            }`}
-          >
-            Student
-          </button>
+          {(["Admin", "User"] as const).map((role) => (
+            <button
+              key={role}
+              onClick={() => handleRoleToggle(role)}
+              className={`px-4 py-2 font-bold rounded transition ${
+                selectedRole === role
+                  ? "bg-green-500 text-white"
+                  : "bg-red-500 text-white"
+              }`}
+            >
+              {role}
+            </button>
+          ))}
         </div>
         <button
           onClick={handleConfirmClick}
-          className="bg-red-500 text-white py-2 px-4 w-full rounded-md hover:bg-red-600"
+          className="bg-green-500 text-black py-2 px-4 w-full rounded-md hover:bg-green-600"
         >
           Confirm
         </button>
