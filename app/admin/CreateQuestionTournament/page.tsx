@@ -65,7 +65,8 @@ export default function Homepage() {
         selectedDifficulty,
         page,
         "Tournament",
-        tournament_id
+        tournament_id,
+        true
       );
       setTotalPages(result.totalPages);
       setHasNextPage(result.hasNextPage);

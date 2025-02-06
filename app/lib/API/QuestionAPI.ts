@@ -120,11 +120,11 @@ export const GetQuestions = async (
   page: string | null,
   mode: string,
   tournament_id?: number,
-  isUseUserPath?: boolean
+  isTornamentSelected?: boolean
 ) => {
   const NewPage = page ?? 1;
-  const useUser = isUseUserPath ?? false;
-  let url = isRoleAdmin() && !useUser
+  const useSelected = isTornamentSelected ?? false;
+  let url = isRoleAdmin()
     ? `${ip}/api/questions/admin?page=${NewPage}`
     : `${ip}/api/questions/user?&page=${NewPage}`;
 
@@ -140,8 +140,10 @@ export const GetQuestions = async (
     url += `&difficulty=${selectedDifficulty}`;
   }
 
-  if (tournament_id) {
+  if (tournament_id && !useSelected) {
     url += `&tournament_id=${tournament_id}`;
+  }else if(tournament_id && useSelected){
+    url += `&tournament_selected=${tournament_id}`;
   }
 
   try {

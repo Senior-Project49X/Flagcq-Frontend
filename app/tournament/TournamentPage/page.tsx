@@ -49,12 +49,12 @@ export default function Homepage() {
           selectedDifficulty,
           page,
           "Tournament",
-          Number(tournament_id),
-          true
+          Number(tournament_id)
         );
         setTotalPages(userQuestions.totalPages);
         setHasNextPage(userQuestions.hasNextPage);
         setQuestions(userQuestions.data);
+        setPage(userQuestions.currentPage);
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
