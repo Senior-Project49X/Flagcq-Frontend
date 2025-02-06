@@ -42,6 +42,11 @@ export default function Homepage() {
   }, []);
 
   useEffect(() => {
+    const pageParam = searchParams.get("page") || "1";
+    setPage(pageParam);
+  }, [searchParams]);
+
+  useEffect(() => {
     const fetchUserQuestions = async () => {
       try {
         const userQuestions = await GetQuestions(
@@ -54,14 +59,13 @@ export default function Homepage() {
         setTotalPages(userQuestions.totalPages);
         setHasNextPage(userQuestions.hasNextPage);
         setQuestions(userQuestions.data);
-        setPage(userQuestions.currentPage);
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
     };
 
     fetchUserQuestions();
-  }, [selectedCategory, selectedDifficulty]);
+  }, [selectedCategory, selectedDifficulty, page, tournament_id]);
 
   useEffect(() => {
     const fetchTourData = async () => {

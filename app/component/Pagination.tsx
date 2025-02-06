@@ -10,7 +10,7 @@ type PageNumberProps = {
 
 export default function Pagination({
   pageNumber,
-  pagePath: pageName,
+  pagePath,
   totalPages,
   hasNextPage,
 }: Readonly<PageNumberProps>) {
@@ -61,14 +61,20 @@ export default function Pagination({
     <div className="flex justify-center mt-6">
       <div className="flex gap-2 bg-white rounded-lg px-4 py-2 text-center">
         {currentPage > 1 && (
-          <Link href={`${pageName}${currentPage - 1}`}>{"<<"}</Link>
+          <Link href={`${pagePath}${currentPage - 1}`} scroll={false}>
+            {"<<"}
+          </Link>
         )}
 
         {visiblePages.map((page, index) => (
           <React.Fragment key={page}>
             {index === 0 && page > 1 && (
               <React.Fragment>
-                <Link href={`${pageName}1`} className="flex  text-gray-600 ">
+                <Link
+                  href={`${pagePath}1`}
+                  scroll={false}
+                  className="flex text-gray-600"
+                >
                   1
                 </Link>
 
@@ -77,8 +83,9 @@ export default function Pagination({
             )}
 
             <Link
-              href={`${pageName}${page}`}
-              className={` px-4 py-2 ${
+              href={`${pagePath}${page}`}
+              scroll={false}
+              className={`px-4 py-2 ${
                 page === currentPage
                   ? "bg-blue-600 text-white rounded-full border border-blue-600"
                   : "text-gray-600 border border-sky-500 rounded-full"
@@ -91,7 +98,8 @@ export default function Pagination({
               <React.Fragment>
                 {page < totalPages - 1 && <span>...</span>}
                 <Link
-                  href={`${pageName}${totalPages}`}
+                  href={`${pagePath}${totalPages}`}
+                  scroll={false}
                   className="w-8 h-8 p-0 text-gray-600"
                 >
                   {totalPages}
@@ -102,7 +110,9 @@ export default function Pagination({
         ))}
 
         {hasNextPage && currentPage < totalPages && (
-          <Link href={`${pageName}${currentPage + 1}`}>{">>"}</Link>
+          <Link href={`${pagePath}${currentPage + 1}`} scroll={false}>
+            {">>"}
+          </Link>
         )}
       </div>
     </div>
