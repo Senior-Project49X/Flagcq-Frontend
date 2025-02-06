@@ -6,6 +6,9 @@ export interface questions {
     point: string;
     type: string;
     solved: boolean;
+    is_selected:boolean
+    tournament_id:number
+    submitCount:number
   }
 
   export interface Question {

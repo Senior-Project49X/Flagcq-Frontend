@@ -157,6 +157,7 @@ export default function Homepage() {
             selectedDifficulty={selectedDifficulty}
             selectedCategory={selectedCategory}
             questions={questions}
+            isTable={true}
           />
           <Pagination
             pagePath={`?tournamentId=${tournament_id}&page=`}

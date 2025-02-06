@@ -270,3 +270,14 @@ export const UseHintAPI = async (id: number) => {
     console.error("Error downloading file:", error);
   }
 };
+
+export const DeleteQuestionTournament  = async (questionIds: number,tournamentId: number) => {
+  try {
+    const response = await axios.delete(`${ip}/api/questions/tournament/${tournamentId}/question/${questionIds}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error downloading file:", error);
+  }
+};
