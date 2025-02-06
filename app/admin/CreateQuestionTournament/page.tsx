@@ -133,10 +133,8 @@ export default function Homepage() {
           <select
             id="tournament-dropdown"
             className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={tournament_id}
-            onChange={(e) => {
-              setTournament_id(Number(e.target.value));
-            }}
+            value={tournament_id || ""}
+            onChange={(e) => setTournament_id(Number(e.target.value))}
           >
             <option value="" disabled>
               Select a Tournament
@@ -147,6 +145,7 @@ export default function Homepage() {
               </option>
             ))}
           </select>
+
           <button
             type="submit"
             className="ml-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
