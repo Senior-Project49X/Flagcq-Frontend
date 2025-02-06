@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import Navbar from "@/app/component/Navbar/navbar";
+import { PostAddRole } from "@/app/lib/API/PostAddRole";
 
 export default function Page() {
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<"Admin" | "Student" | null>(
+  const [selectedRole, setSelectedRole] = useState<"Admin" | "User" | null>(
     null
   );
+  const [studentCode, setStudentCode] = useState<string>("");
 
-  const handleRoleToggle = (role: "Admin" | "Student") => {
+  const handleRoleToggle = (role: "Admin" | "User") => {
     setSelectedRole((prevRole) => (prevRole === role ? null : role));
   };
 
@@ -21,9 +23,19 @@ export default function Page() {
     setShowPopup(false);
   };
 
-  const handleFinalConfirm = () => {
+  const handleFinalConfirm = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!studentCode || !selectedRole) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+      await PostAddRole(studentCode, selectedRole); // Pass arguments separately
+      console.log(`Confirmed role: ${selectedRole}, for user: ${studentCode}`);
+    } catch (error) {
+      console.error("Error adding role:", error);
+    }
     setShowPopup(false);
-    console.log(`Confirmed role: ${selectedRole || "None"}`);
   };
 
   return (
@@ -33,11 +45,13 @@ export default function Page() {
         <h1 className="text-2xl font-bold mb-6 text-center">Change Role</h1>
         <div className="mb-4">
           <label htmlFor="student-code" className="block mb-2 text-lg">
-            Student Code
+            Student Code / Email cmu.ac.th
           </label>
           <input
             id="student-code"
             type="text"
+            value={studentCode}
+            onChange={(e) => setStudentCode(e.target.value)}
             className="p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -53,9 +67,9 @@ export default function Page() {
             Admin
           </button>
           <button
-            onClick={() => handleRoleToggle("Student")}
+            onClick={() => handleRoleToggle("User")}
             className={`py-2 px-4 rounded-md ${
-              selectedRole === "Student"
+              selectedRole === "User"
                 ? "bg-red-500 text-white"
                 : "bg-red-300 hover:bg-red-400"
             }`}
@@ -79,11 +93,13 @@ export default function Page() {
               Are you sure?
             </h2>
             <p className="mb-6 text-center">
-              You selected:{" "}
+              You selected role:{" "}
               <span className="font-bold">
                 {selectedRole || "No Role Selected"}
               </span>
-              . Do you want to confirm this action?
+              <br />
+              For user:{" "}
+              <span className="font-bold">{studentCode || "None"}</span>
             </p>
             <div className="flex justify-center space-x-4">
               <button
