@@ -17,8 +17,11 @@ export default function Homepage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const page = searchParams.get("page") ?? "1";
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("All Categories");
+
+  // Change from single to multi-select for categories
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    "All Categories",
+  ]);
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<string>("All Difficulty");
   const [point, setPoint] = useState<string>("0");
@@ -27,8 +30,9 @@ export default function Homepage() {
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [mode, setMode] = useState<string>("");
-  const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
+
+  const handleCategoryChange = (categories: string[]) => {
+    setSelectedCategories(categories);
     router.push("/?page=1");
   };
 
@@ -48,7 +52,7 @@ export default function Homepage() {
   useEffect(() => {
     const fetchUserQuestions = async () => {
       const result = await GetQuestions(
-        selectedCategory,
+        selectedCategories.join(","),
         selectedDifficulty,
         page,
         isRoleAdmin() ? mode : "Practice"
@@ -61,11 +65,11 @@ export default function Homepage() {
     };
 
     fetchUserQuestions();
-  }, [page, selectedCategory, selectedDifficulty, mode]);
+  }, [page, selectedCategories, selectedDifficulty, mode]);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const userData = await GetUserPoints(); // Now correctly awaits the returned value
+      const userData = await GetUserPoints();
       setPoint(userData);
       console.log("a", userData);
     };
@@ -76,24 +80,25 @@ export default function Homepage() {
     <div>
       <Navbar />
       <div className="flex">
-        <Category
-          selectedCategory={selectedCategory}
-          onCategoryClick={handleCategoryClick}
-        />
-
-        <Difficult
-          selectedDifficulty={selectedDifficulty}
-          onDifficultyClick={handleDifficultyClick}
-        />
-
-        {/* Question Box */}
         <div className="flex-1 p-6 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            <Category
+              selectedCategory={selectedCategories}
+              onCategoryChange={handleCategoryChange}
+            />
+
+            <Difficult
+              selectedDifficulty={selectedDifficulty}
+              onDifficultyClick={handleDifficultyClick}
+            />
+          </div>
           {isAdmin ? <ModeFilter setMode={setMode} Mode={mode} /> : ""}
+
           {questions.length !== 0 ? (
             <>
               <Question
                 selectedDifficulty={selectedDifficulty}
-                selectedCategory={selectedCategory}
+                selectedCategory={selectedCategories.join(",")}
                 questions={questions}
               />
 

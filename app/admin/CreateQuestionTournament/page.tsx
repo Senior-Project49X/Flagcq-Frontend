@@ -18,8 +18,9 @@ export default function Homepage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const page = searchParams.get("page") ?? "1";
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("All Categories");
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([
+    "All Categories",
+  ]);
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<string>("All Difficulty");
   const [questions, setQuestions] = useState<questions[]>([]);
@@ -30,8 +31,8 @@ export default function Homepage() {
   const [question_id, setQuestion_id] = useState<number[]>([]);
   const [tournamentList, setTournamentList] = useState<any[]>([]);
 
-  const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
+  const handleCategoryClick = (categories: string[]) => {
+    setSelectedCategory(categories);
     router.push("?page=1");
   };
 
@@ -61,7 +62,7 @@ export default function Homepage() {
   useEffect(() => {
     const fetchQuestions = async () => {
       const result = await GetQuestions(
-        selectedCategory,
+        selectedCategory.join(","),
         selectedDifficulty,
         page,
         "Tournament",
@@ -90,7 +91,7 @@ export default function Homepage() {
       <div className="flex">
         <Category
           selectedCategory={selectedCategory}
-          onCategoryClick={handleCategoryClick}
+          onCategoryChange={handleCategoryClick}
         />
 
         <Difficult
@@ -137,9 +138,9 @@ export default function Homepage() {
               <Question
                 addQuestionTournament={handlePushQuestionID}
                 selectedDifficulty={selectedDifficulty}
-                selectedCategory={selectedCategory}
+                selectedCategory={selectedCategory.join(",")} // Join the array into a single string
                 questions={questions}
-                question_id={question_id} // Add this prop
+                question_id={question_id}
               />
 
               <Pagination
