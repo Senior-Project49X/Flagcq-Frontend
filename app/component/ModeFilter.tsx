@@ -21,7 +21,7 @@ export default function ModeFilter({
             else setMode(displayMode);
           }}
           className={`${
-            Mode === displayMode ? "bg-red-500" : "bg-gray-800"
+            Mode === displayMode ? "bg-gray-900" : "bg-gray-800"
           } text-white py-2 px-4 rounded-lg hover:bg-gray-900 bg-[#0c0332] `}
         >
           {displayMode}
