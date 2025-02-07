@@ -139,71 +139,83 @@ export default function CreateTour() {
             />
           </div>
 
-          {/* Enrollment Start Date */}
-          <div className="mb-4">
-            <label
-              htmlFor="enroll_startDate"
-              className="block font-medium mb-2"
-            >
-              Enroll Start Date
-            </label>
-            <input
-              type="datetime-local"
-              id="enroll_startDate"
-              name="enroll_startDate"
-              value={CreateTourData.enroll_startDate}
-              onChange={handleInputChange}
-              className={getInputClass("enroll_startDate")}
-              required
-            />
+          {/* Enrollment Dates in One Line */}
+          <div className="mb-4 flex items-center space-x-2">
+            <div className="w-1/2">
+              <label
+                htmlFor="enroll_startDate"
+                className="block font-medium mb-2"
+              >
+                Enroll Start Date
+              </label>
+              <input
+                type="datetime-local"
+                id="enroll_startDate"
+                name="enroll_startDate"
+                value={CreateTourData.enroll_startDate}
+                onChange={handleInputChange}
+                className={getInputClass("enroll_startDate")}
+                required
+              />
+            </div>
+
+            <span className="text-xl font-bold text-gray-600 mt-7">→</span>
+
+            <div className="w-1/2">
+              <label
+                htmlFor="enroll_endDate"
+                className="block font-medium mb-2"
+              >
+                Enroll End Date
+              </label>
+              <input
+                type="datetime-local"
+                id="enroll_endDate"
+                name="enroll_endDate"
+                value={CreateTourData.enroll_endDate}
+                onChange={handleInputChange}
+                className={getInputClass("enroll_endDate")}
+                required
+              />
+            </div>
           </div>
 
-          {/* Enrollment End Date */}
-          <div className="mb-4">
-            <label htmlFor="enroll_endDate" className="block font-medium mb-2">
-              Enroll End Date
-            </label>
-            <input
-              type="datetime-local"
-              id="enroll_endDate"
-              name="enroll_endDate"
-              value={CreateTourData.enroll_endDate}
-              onChange={handleInputChange}
-              className={getInputClass("enroll_endDate")}
-              required
-            />
-          </div>
+          {/* Event Dates in One Line */}
+          <div className="mb-4 flex items-center space-x-2">
+            <div className="w-1/2">
+              <label
+                htmlFor="event_startDate"
+                className="block font-medium mb-2"
+              >
+                Event Start Date
+              </label>
+              <input
+                type="datetime-local"
+                id="event_startDate"
+                name="event_startDate"
+                value={CreateTourData.event_startDate}
+                onChange={handleInputChange}
+                className={getInputClass("event_startDate")}
+                required
+              />
+            </div>
 
-          {/* Event Start Date */}
-          <div className="mb-4">
-            <label htmlFor="event_startDate" className="block font-medium mb-2">
-              Event Start Date
-            </label>
-            <input
-              type="datetime-local"
-              id="event_startDate"
-              name="event_startDate"
-              value={CreateTourData.event_startDate}
-              onChange={handleInputChange}
-              className={getInputClass("event_startDate")}
-              required
-            />
-          </div>
+            <span className="text-xl font-bold text-gray-600 mt-7">→</span>
 
-          {/* Event End Date */}
-          <div className="mb-4">
-            <label htmlFor="event_endDate" className="block font-medium mb-2">
-              Event End Date
-            </label>
-            <input
-              type="datetime-local"
-              id="event_endDate"
-              name="event_endDate"
-              value={CreateTourData.event_endDate}
-              onChange={handleInputChange}
-              className={getInputClass("event_endDate")}
-              required
-            />
+            <div className="w-1/2">
+              <label htmlFor="event_endDate" className="block font-medium mb-2">
+                Event End Date
+              </label>
+              <input
+                type="datetime-local"
+                id="event_endDate"
+                name="event_endDate"
+                value={CreateTourData.event_endDate}
+                onChange={handleInputChange}
+                className={getInputClass("event_endDate")}
+                required
+              />
+            </div>
           </div>
 
           {/* Submit Button */}
@@ -213,7 +225,7 @@ export default function CreateTour() {
             className={`w-full p-2 rounded font-bold ${
               isLoading
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-500 hover:bg-red-600 text-white"
+                : "bg-green-500 hover:bg-green-600 text-white"
             }`}
           >
             {isLoading ? "Submitting..." : "Confirm"}
