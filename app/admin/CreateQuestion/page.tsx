@@ -14,6 +14,7 @@ import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
+import RichTestEditor from "@/app/component/RichTextEditor";
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
@@ -323,7 +324,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               ))}
             </div>
             <label>
-              Description{" "}
+              Description <RichTestEditor />
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

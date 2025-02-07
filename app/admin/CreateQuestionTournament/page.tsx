@@ -66,7 +66,8 @@ export default function Homepage() {
         selectedDifficulty,
         page,
         "Tournament",
-        tournament_id
+        tournament_id,
+        true
       );
       setTotalPages(result.totalPages);
       setHasNextPage(result.hasNextPage);
@@ -82,6 +83,24 @@ export default function Homepage() {
     } catch (error) {
       console.error("Error CreateQuestionTournament:", error);
     }
+  };
+
+  const onSelectTournament = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ): Promise<void> => {
+    const TID = Number(e.target.value);
+    setTournament_id(TID);
+    const result = await GetQuestions(
+      selectedCategory,
+      selectedDifficulty,
+      page,
+      "Tournament",
+      TID,
+      true
+    );
+    setTotalPages(result.totalPages);
+    setHasNextPage(result.hasNextPage);
+    setQuestions(result.data);
   };
 
   return (
@@ -115,7 +134,7 @@ export default function Homepage() {
                     id="tournament-dropdown"
                     className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={tournament_id || ""}
-                    onChange={(e) => setTournament_id(Number(e.target.value))}
+                    onChange={onSelectTournament}
                   >
                     <option value="" disabled>
                       Select a Tournament
@@ -140,7 +159,9 @@ export default function Homepage() {
                 selectedDifficulty={selectedDifficulty}
                 selectedCategory={selectedCategory.join(",")} // Join the array into a single string
                 questions={questions}
-                question_id={question_id}
+                question_id={question_id} // Add this prop
+                tournament_id={tournament_id}
+                isTable={false}
               />
 
               <Pagination

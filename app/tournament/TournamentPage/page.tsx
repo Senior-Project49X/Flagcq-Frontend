@@ -42,6 +42,11 @@ export default function Homepage() {
   }, []);
 
   useEffect(() => {
+    const pageParam = searchParams.get("page") || "1";
+    setPage(pageParam);
+  }, [searchParams]);
+
+  useEffect(() => {
     const fetchUserQuestions = async () => {
       try {
         const userQuestions = await GetQuestions(
@@ -49,8 +54,7 @@ export default function Homepage() {
           selectedDifficulty,
           page,
           "Tournament",
-          Number(tournament_id),
-          true
+          Number(tournament_id)
         );
         setTotalPages(userQuestions.totalPages);
         setHasNextPage(userQuestions.hasNextPage);
@@ -61,7 +65,7 @@ export default function Homepage() {
     };
 
     fetchUserQuestions();
-  }, [selectedCategory, selectedDifficulty]);
+  }, [selectedCategory, selectedDifficulty, page, tournament_id]);
 
   useEffect(() => {
     const fetchTourData = async () => {
@@ -153,6 +157,7 @@ export default function Homepage() {
             selectedDifficulty={selectedDifficulty}
             selectedCategory={selectedCategory}
             questions={questions}
+            isTable={true}
           />
           <Pagination
             pagePath={`?tournamentId=${tournament_id}&page=`}

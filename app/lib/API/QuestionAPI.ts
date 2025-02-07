@@ -120,11 +120,11 @@ export const GetQuestions = async (
   page: string | null,
   mode: string,
   tournament_id?: number,
-  isUseUserPath?: boolean
+  isTornamentSelected?: boolean
 ) => {
   const NewPage = page ?? 1;
-  const useUser = isUseUserPath ?? false;
-  let url = isRoleAdmin() && !useUser
+  const useSelected = isTornamentSelected ?? false;
+  let url = isRoleAdmin()
     ? `${ip}/api/questions/admin?page=${NewPage}`
     : `${ip}/api/questions/user?&page=${NewPage}`;
 
@@ -140,8 +140,10 @@ export const GetQuestions = async (
     url += `&difficulty=${selectedDifficulty}`;
   }
 
-  if (tournament_id) {
+  if (tournament_id && !useSelected) {
     url += `&tournament_id=${tournament_id}`;
+  }else if(tournament_id && useSelected){
+    url += `&tournament_selected=${tournament_id}`;
   }
 
   try {
@@ -264,6 +266,17 @@ export const UseHintAPI = async (id: number) => {
       withCredentials: true,
     });
     return response.data.data;
+  } catch (error) {
+    console.error("Error downloading file:", error);
+  }
+};
+
+export const DeleteQuestionTournament  = async (questionIds: number,tournamentId: number) => {
+  try {
+    const response = await axios.delete(`${ip}/api/questions/tournament/${tournamentId}/question/${questionIds}`, {
+      withCredentials: true,
+    });
+    return response.data;
   } catch (error) {
     console.error("Error downloading file:", error);
   }

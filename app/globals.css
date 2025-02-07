@@ -1,3 +1,4 @@
+@import "quill/dist/quill.core.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
