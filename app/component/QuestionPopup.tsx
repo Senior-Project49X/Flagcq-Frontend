@@ -163,10 +163,13 @@ export default function QuestionPopup(Question: Readonly<state>) {
 
               {/*body*/}
 
-              <div className=" p-6 flex-auto">
-                <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
-                  {showQuestion?.description}
-                </p>
+              <div className=" flex-auto">
+                <p
+                  className="text-blueGray-500 text-lg leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: showQuestion?.description ?? "",
+                  }}
+                />
               </div>
               <div className="flex justify-between items-center mx-6 pb-6">
                 {showQuestion?.file_path ? (

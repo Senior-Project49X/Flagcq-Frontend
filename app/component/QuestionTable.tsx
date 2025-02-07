@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import Difficult from "../difficult";
 import Image from "next/image";
+import QuestionPopup from "./QuestionPopup";
 
 type detail = {
   id: number;
@@ -32,6 +33,7 @@ export default function QuestionTable({
   isRoleAdmin,
   isCreateQuestionTournament,
 }: Readonly<detail>) {
+  const [showModal, setShowModal] = useState(false);
   const showLevel = (Level: string) => {
     if (Level == "Easy") {
       return <span className="text-green-500">Easy</span>;
@@ -42,54 +44,68 @@ export default function QuestionTable({
     }
   };
   return (
-    <tr className="even:bg-gray-50 odd:bg-white">
-      {isCreateQuestionTournament && (
-        <td className="border border-gray-300 px-4 py-2 ">
-          <div className="justify-center flex">
-            <input type="checkbox" />
-          </div>
-        </td>
-      )}
-
-      <td className="border border-gray-300 px-4 py-2">{Topic}</td>
-      <td className="border border-gray-300 px-4 py-2 ">{showLevel(Level)}</td>
-      <td className="border border-gray-300 px-4 py-2">{point}</td>
-      <td className="border border-gray-300 px-4 py-2">{submitCount}</td>
-
-      {isRoleAdmin && (
-        <>
+    <>
+      {showModal ? (
+        <QuestionPopup id={id} ClosePopup={setShowModal} Topic={Topic} />
+      ) : null}
+      <tr className="even:bg-gray-50 odd:bg-white">
+        {isCreateQuestionTournament && (
           <td className="border border-gray-300 px-4 py-2 ">
             <div className="justify-center flex">
-              <button
-                className={`p-2 transition rounded-md ${
-                  submitCount !== 0
-                    ? "cursor-not-allowed bg-gray-200"
-                    : "bg-yellow-200 hover:bg-yellow-300"
-                }`}
-                title={
-                  submitCount !== 0
-                    ? "Someone already submitted"
-                    : "Click to Submit"
-                }
-              >
-                <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
-              </button>
+              <input type="checkbox" />
             </div>
           </td>
-          <td className="border border-gray-300 px-4 py-2">
-            <div className="justify-center flex">
-              <button className="p-2 bg-red-300 hover:bg-red-500 transition rounded-md">
-                <Image
-                  src="/delete.svg"
-                  width={15}
-                  height={15}
-                  alt={"Delete"}
-                />
-              </button>
-            </div>
-          </td>
-        </>
-      )}
-    </tr>
+        )}
+
+        <td className="border border-gray-300 px-4 py-2 ">
+          <button
+            onClick={() => setShowModal(true)}
+            className="hover:text-blue-500"
+          >
+            {Topic}
+          </button>
+        </td>
+        <td className="border border-gray-300 px-4 py-2 ">
+          {showLevel(Level)}
+        </td>
+        <td className="border border-gray-300 px-4 py-2">{point}</td>
+        <td className="border border-gray-300 px-4 py-2">{submitCount}</td>
+
+        {isRoleAdmin && (
+          <>
+            <td className="border border-gray-300 px-4 py-2 ">
+              <div className="justify-center flex">
+                <button
+                  className={`p-2 transition rounded-md ${
+                    submitCount !== 0
+                      ? "cursor-not-allowed bg-gray-200"
+                      : "bg-yellow-200 hover:bg-yellow-300"
+                  }`}
+                  title={
+                    submitCount !== 0
+                      ? "Someone already submitted"
+                      : "Click to Submit"
+                  }
+                >
+                  <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
+                </button>
+              </div>
+            </td>
+            <td className="border border-gray-300 px-4 py-2">
+              <div className="justify-center flex">
+                <button className="p-2 bg-red-300 hover:bg-red-500 transition rounded-md">
+                  <Image
+                    src="/delete.svg"
+                    width={15}
+                    height={15}
+                    alt={"Delete"}
+                  />
+                </button>
+              </div>
+            </td>
+          </>
+        )}
+      </tr>
+    </>
   );
 }
