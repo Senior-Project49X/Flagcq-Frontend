@@ -40,7 +40,7 @@ export default function Question({
   }, [pathname]);
   return (
     <div>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mt-6">
         <button
           onClick={() => setIsTable(false)}
           className={`rounded-l-md px-4 py-2 ${
