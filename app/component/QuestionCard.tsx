@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import QuestionPopup from "./QuestionPopup";
 import { usePathname } from "next/navigation";
 import { DeleteQuestionTournament } from "../lib/API/QuestionAPI";
+import PopupDeleteTournamentQUestion from "./QuestionComponent/PopupDeleteTournamentQuestion";
+import AdminTournamentSelected from "./QuestionComponent/admin/AdminTournamentSelected";
 type detail = {
   id: number;
   Topic: string;
@@ -10,6 +12,7 @@ type detail = {
   Solved: boolean;
   point: string;
   addQuestionTournament?: (id: number) => void;
+  submitCount: number;
   question_id?: number[]; // Add this prop
   is_selected?: boolean;
   tournament_id?: number;
@@ -26,6 +29,7 @@ export default function QuestionCard({
   question_id,
   is_selected,
   tournament_id,
+  submitCount,
 }: Readonly<detail>) {
   const pathname = usePathname();
   const [showModal, setShowModal] = useState(false);
@@ -74,49 +78,37 @@ export default function QuestionCard({
         <QuestionPopup id={id} ClosePopup={setShowModal} Topic={Topic} />
       ) : null}
       {showPopupDelTournamentQuestion && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
-          <div className="bg-white rounded-lg p-12 max-w-2xl w-full text-center relative">
-            <button
-              onClick={() => setShowPopupDelTournamentQuestion(false)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
-            >
-              X
-            </button>
-            <h2 className="text-red-500 font-bold text-3xl mb-8">
-              <p className="text-green-400 mb-4 ">{Topic}</p> is already in
-              Tournament Are you sure you want to delete the question in
-              tournament?
-            </h2>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={handleDeleteQuestion}
-                className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl hover:bg-red-600"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
+        <PopupDeleteTournamentQUestion
+          setShowPopupDelTournamentQuestion={setShowPopupDelTournamentQuestion}
+          handleDeleteQuestion={handleDeleteQuestion}
+          Topic={Topic}
+        />
       )}
       <button
         className={`relative ${
-          select || is_selected ? "bg-gray-300" : "bg-gray-800"
-        }  rounded-lg p-6 text-center cursor-pointer`}
+          select || is_selected ? "bg-[#0D1B2A]" : "bg-gray-800"
+        } rounded-lg p-6 text-center cursor-pointer shadow-lg glow-effect`}
         onClick={handleCardClicked}
       >
         {(is_selected || select) && (
-          <div className="absolute inset-x-0 top-0  flex  items-center justify-center z-10">
-            <div className=" rounded-full bg-green-500 object-cover py-2 px-3  flex items-center justify-center text-black text-xl">
-              {is_selected ? "already in Tournament" : "✓"}
-            </div>
-          </div>
+          <AdminTournamentSelected is_selected={is_selected} />
         )}
 
         <div className={`${(Solved || select) && "opacity-60"} text-green-400`}>
-          <h2 className="text-xl font-bold mt-5">{Topic}</h2>
-          <div className="absolute top-2 right-5">{showLevel(Level)}</div>
-          {Solved ? <span>solve</span> : <span>{point}</span>}
-          <p className="text-gray-300 absolute top-2 left-5"> {Category}</p>
+          {/* Category and Difficulty */}
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-gray-300">{Category}</p>
+            {showLevel(Level)}
+          </div>
+
+          {/* Title */}
+          <h2 className="text-xl font-bold mt-2 text-left">{Topic}</h2>
+
+          {/* Solves and Points in Same Row */}
+          <div className="flex justify-between items-center mt-2 ">
+            <p className="text-gray-300">{submitCount} solves</p>
+            <p>{Solved ? "solve" : point}</p>
+          </div>
         </div>
       </button>
     </>

@@ -26,3 +26,10 @@
   white-space: nowrap;
   margin-top: 2px;
 }
+
+.glow-effect {
+  transition: all 0.2s ease-in-out;
+}
+.glow-effect:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 127, 0.8);
+}

@@ -10,9 +10,11 @@ import { Question } from "../lib/types/QuestionType";
 import Image from "next/image";
 import Hint from "./Hint/Hint";
 import { isRoleAdmin, isRoleTa } from "../lib/role";
-import Yay from "./yay";
+import Yay from "./QuestionComponent/yay";
 import { get } from "http";
 import Link from "next/link";
+import DeleteQPuestionPopup from "./QuestionComponent/DeleteQuestionPopup";
+import AdminEditDelQuestion from "./QuestionComponent/admin/AdminEditDelQuestion";
 type state = {
   id: number;
   Topic: string;
@@ -54,6 +56,7 @@ export default function QuestionPopup(Question: Readonly<state>) {
     }
   };
 
+  const handleCorrectAnswer = () => {};
   const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(Question.id);
@@ -98,6 +101,22 @@ export default function QuestionPopup(Question: Readonly<state>) {
           className="select-text cursor-auto relative w-5/12 h-3/6 max-h-5xl max-w-5xl"
           onMouseDown={(e) => e.stopPropagation()}
         >
+          {showPopup && (
+            <DeleteQPuestionPopup
+              handleClosePopup={handleClosePopup}
+              handleConfirmDelete={handleConfirmDelete}
+              name={name}
+              setName={setName}
+              isError={isError}
+            />
+          )}
+          {showCongratPopup && (
+            <Yay
+              handleCorrectAnswer={handleCorrectAnswer}
+              showPopup={showCongratPopup}
+              setShowCongratPopup={setShowCongratPopup}
+            />
+          )}
           {loading ? null : (
             // content
             <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full h-full bg-white outline-none focus:outline-none">
@@ -107,57 +126,10 @@ export default function QuestionPopup(Question: Readonly<state>) {
                   {showQuestion?.title}
                 </h3>
                 {role && (
-                  <div>
-                    <Link
-                      className="text-yellow-500 font-bold mx-5"
-                      href={`/admin/EditQuestion?QuestionID=${Question.id}`}
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      className="text-red-500 font-bold"
-                      onClick={() => setShowPopup(true)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-
-                {showPopup && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
-                      <button
-                        onClick={handleClosePopup}
-                        className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
-                      >
-                        X
-                      </button>
-                      <h2 className="text-red-500 font-bold text-2xl mb-4">
-                        Are you sure you want to delete this question?
-                      </h2>
-                      <p className="mb-4">
-                        Please type the question&#39s name to confirm.
-                      </p>
-                      <input
-                        type="text"
-                        placeholder="Team name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className={`w-full p-2 border rounded-lg mb-4 ${
-                          isError ? "border-red-500" : "border-gray-300"
-                        }`}
-                      />
-                      {isError && (
-                        <p className="text-red-500 text-sm mb-6">Wrong name</p>
-                      )}
-                      <button
-                        onClick={handleConfirmDelete}
-                        className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl w-1/2 hover:bg-red-600"
-                      >
-                        Confirm
-                      </button>
-                    </div>
-                  </div>
+                  <AdminEditDelQuestion
+                    id={Question.id}
+                    setShowPopup={setShowPopup}
+                  />
                 )}
               </div>
 
@@ -243,25 +215,7 @@ export default function QuestionPopup(Question: Readonly<state>) {
           )}
         </button>
       </button>
-      {showCongratPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-            <h2 className="text-2xl font-bold text-green-500 mb-4">
-              Congratulations!
-            </h2>
-            <p>You answered correctly!</p>
-            <button
-              className="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg"
-              onClick={() => {
-                setShowCongratPopup(false);
-                location.reload();
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+
       <button
         className="opacity-40 fixed inset-0 z-40 bg-black cursor-auto"
         onMouseDown={() => Question.ClosePopup(false)}

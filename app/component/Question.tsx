@@ -68,6 +68,7 @@ export default function Question({
               Topic={question.title}
               Level={question.difficultys_id}
               Category={question.categories_name}
+              submitCount={question.submitCount}
               Solved={question.solved}
               point={question.point}
               question_id={question_id} // Pass the prop
