@@ -91,7 +91,7 @@ export default function Homepage() {
     const TID = Number(e.target.value);
     setTournament_id(TID);
     const result = await GetQuestions(
-      selectedCategory,
+      selectedCategory.join(","),
       selectedDifficulty,
       page,
       "Tournament",
@@ -107,76 +107,75 @@ export default function Homepage() {
     <div>
       <Navbar />
 
-      <div className="flex">
-        <Category
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryClick}
-        />
-
-        <Difficult
-          selectedDifficulty={selectedDifficulty}
-          onDifficultyClick={handleDifficultyClick}
-        />
-
-        {/* Question Box */}
-        <div className="flex-1 p-6 rounded-lg">
-          {questions.length !== 0 ? (
-            <>
-              <div className=" text-black mb-4 rounded-lg flex  justify-center">
-                <form onSubmit={handleCreateQT} className="flex items-center">
-                  <label
-                    htmlFor="tournament-dropdown"
-                    className="mr-4 text-lg text-red-400"
-                  >
-                    Tournament Name:
-                  </label>
-                  <select
-                    id="tournament-dropdown"
-                    className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={tournament_id || ""}
-                    onChange={onSelectTournament}
-                  >
-                    <option value="" disabled>
-                      Select a Tournament
+      {/* Question Box */}
+      <div className="flex-1 p-6 rounded-lg">
+        {questions.length !== 0 ? (
+          <>
+            <div className=" text-black mb-4 rounded-lg flex  justify-center">
+              <form onSubmit={handleCreateQT} className="flex items-center">
+                <label
+                  htmlFor="tournament-dropdown"
+                  className="mr-4 text-lg text-red-400"
+                >
+                  Tournament Name:
+                </label>
+                <select
+                  id="tournament-dropdown"
+                  className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={tournament_id || ""}
+                  onChange={onSelectTournament}
+                >
+                  <option value="" disabled>
+                    Select a Tournament
+                  </option>
+                  {tournamentList.map((tournament) => (
+                    <option key={tournament.id} value={tournament.id}>
+                      {tournament.name}
                     </option>
-                    {tournamentList.map((tournament) => (
-                      <option key={tournament.id} value={tournament.id}>
-                        {tournament.name}
-                      </option>
-                    ))}
-                  </select>
+                  ))}
+                </select>
 
-                  <button
-                    type="submit"
-                    className="ml-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                  >
-                    Submit
-                  </button>
-                </form>
-              </div>
-              <Question
-                addQuestionTournament={handlePushQuestionID}
-                selectedDifficulty={selectedDifficulty}
-                selectedCategory={selectedCategory.join(",")} // Join the array into a single string
-                questions={questions}
-                question_id={question_id} // Add this prop
-                tournament_id={tournament_id}
-                isTable={false}
-              />
-
-              <Pagination
-                pagePath={"?page="}
-                pageNumber={page}
-                totalPages={totalPages}
-                hasNextPage={hasNextPage}
-              />
-            </>
-          ) : (
-            <div className="text-center text-2xl font-bold text-red-400">
-              No Question Found
+                <button
+                  type="submit"
+                  className="ml-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                >
+                  Submit
+                </button>
+              </form>
             </div>
-          )}
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              <Category
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleCategoryClick}
+              />
+
+              <Difficult
+                selectedDifficulty={selectedDifficulty}
+                onDifficultyClick={handleDifficultyClick}
+              />
+            </div>
+            <Question
+              addQuestionTournament={handlePushQuestionID}
+              selectedDifficulty={selectedDifficulty}
+              selectedCategory={selectedCategory.join(",")} // Join the array into a single string
+              questions={questions}
+              question_id={question_id} // Add this prop
+              tournament_id={tournament_id}
+              isTable={false}
+            />
+
+            <Pagination
+              pagePath={"?page="}
+              pageNumber={page}
+              totalPages={totalPages}
+              hasNextPage={hasNextPage}
+            />
+          </>
+        ) : (
+          <div className="text-center text-2xl font-bold text-red-400">
+            No Question Found
+          </div>
+        )}
       </div>
     </div>
   );

@@ -59,7 +59,7 @@ export default function Question({
         </button>
       </div>
       {!isTable ? (
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-16 ">
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-16 ">
           {questions.map((question) => (
             <QuestionCard
               addQuestionTournament={addQuestionTournament}

@@ -40,7 +40,7 @@ export default function Difficult({
   }, []);
 
   return (
-    <div className="bg-[#090147] px-10 py-4">
+    <div className="bg-[#090147] px-10">
       <div className="w-full">
         <div className="rounded-lg p-6 h-full">
           <div className="items-center mb-4">
@@ -50,7 +50,7 @@ export default function Difficult({
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
-              className="bg-gray-800 text-white py-2 px-4 rounded-lg w-full text-left h-12 border-green-300 border-2 hover:bg-gray-900"
+              className="bg-gray-900 text-white py-2 px-4 rounded-lg w-full text-left h-12 border-green-300 border-2 hover:bg-gray-800"
             >
               {selectedDifficulty || "Select Difficulty"}
             </button>
