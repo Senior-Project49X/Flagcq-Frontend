@@ -137,7 +137,12 @@ export default function Homepage() {
 
                 <button
                   type="submit"
-                  className="ml-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                  className={`ml-4 py-2 px-4 rounded-md ${
+                    tournament_id === 0 || question_id.length === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600 text-white"
+                  }`}
+                  disabled={tournament_id === 0 || question_id.length === 0}
                 >
                   Submit
                 </button>
