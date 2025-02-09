@@ -110,98 +110,113 @@ export default function QuestionPopup(Question: Readonly<State>) {
           setShowCongratPopup={setShowCongratPopup}
         />
       )}
-      <div className="bg-black bg-opacity-50 fixed inset-0 z-20 flex justify-center items-center">
-        <div
-          ref={popupRef}
-          className="relative w-5/12  h-3/6 max-h-5xl bg-gray-800 shadow-lg rounded-lg"
-        >
-          {loading ? (
-            <div>Loading...</div>
-          ) : (
-            <div className="flex flex-col border-0 rounded-lg shadow-lg relative w-full h-full outline-none focus:outline-none">
-              <div className="flex items-start justify-between p-5 border-b border-gray-500">
-                <h3 className="text-3xl font-semibold text-green-400">
-                  {showQuestion?.title}
-                </h3>
-                {role && (
-                  <AdminEditDelQuestion
-                    ref={popupRef}
-                    id={Question.id}
-                    setShowPopup={setShowPopup}
-                  />
-                )}
-              </div>
-
-              <div className="flex-auto  p-5">
-                <div
-                  className="text-blueGray-500 text-lg leading-relaxed rich-text text-white "
-                  dangerouslySetInnerHTML={{
-                    __html: showQuestion?.description ?? "",
-                  }}
-                />
-              </div>
-
-              <div className="flex justify-between items-center mx-6 pb-6">
-                {showQuestion?.file_path ? (
-                  <button
-                    className="text-black p-2 bg-green-400 rounded-lg flex space-x-2"
-                    onClick={() => DownloadQuestionsByID(Question.id)}
-                  >
-                    <Image
-                      src="/download.svg"
-                      alt="Download"
-                      width={20}
-                      height={20}
+      <div className="fixed inset-0 z-20 overflow-y-auto bg-black bg-opacity-50">
+        <div className="flex min-h-full items-center justify-center p-4">
+          <div
+            ref={popupRef}
+            className="relative w-full max-w-3xl bg-gray-800 rounded-lg shadow-xl"
+          >
+            {loading ? (
+              <div className="p-6 text-white">Loading...</div>
+            ) : (
+              <div className="flex flex-col max-h-[80vh]">
+                {/* Header */}
+                <div className="flex items-start justify-between p-5 border-b border-gray-500">
+                  <h3 className="text-3xl font-semibold text-green-400 break-words">
+                    {showQuestion?.title}
+                  </h3>
+                  {role && (
+                    <AdminEditDelQuestion
+                      ref={popupRef}
+                      id={Question.id}
+                      setShowPopup={setShowPopup}
                     />
-                    <p>{showQuestion.file_path}</p>
-                  </button>
-                ) : (
-                  <div></div>
-                )}
-                <div>
-                  <div className="inline-flex rounded-md shadow-sm ">
-                    {showQuestion?.hints.map((hint, i) => (
-                      <Hint
-                        id={hint.id}
-                        key={hint.id}
-                        index={i}
-                        description={hint.Description}
-                        used={hint.used}
-                        penalty={hint.point}
-                        isLast={i === showQuestion.hints.length - 1}
-                      />
-                    ))}
+                  )}
+                </div>
+
+                {/* Scrollable Content Area */}
+                <div className="flex-1 overflow-y-auto">
+                  {/* Description */}
+                  <div className="p-5">
+                    <div
+                      className="text-white text-lg leading-relaxed break-words rich-text"
+                      dangerouslySetInnerHTML={{
+                        __html: showQuestion?.description ?? "",
+                      }}
+                    />
+                  </div>
+
+                  {/* Download and Hints */}
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-6 pb-6">
+                    {showQuestion?.file_path ? (
+                      <button
+                        className="text-black p-2 bg-green-400 rounded-lg flex items-center space-x-2 hover:bg-green-500 transition-colors"
+                        onClick={() => DownloadQuestionsByID(Question.id)}
+                      >
+                        <Image
+                          src="/download.svg"
+                          alt="Download"
+                          width={20}
+                          height={20}
+                        />
+                        <p className="break-all">{showQuestion.file_path}</p>
+                      </button>
+                    ) : (
+                      <div></div>
+                    )}
+                    <div className="flex-shrink-0">
+                      <div className="inline-flex rounded-md shadow-sm">
+                        {showQuestion?.hints.map((hint, i) => (
+                          <Hint
+                            id={hint.id}
+                            key={hint.id}
+                            index={i}
+                            description={hint.Description}
+                            used={hint.used}
+                            penalty={hint.point}
+                            isLast={i === showQuestion.hints.length - 1}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                {/* Footer with Form */}
+                <form
+                  onSubmit={onCheckAnswer}
+                  className="border-t border-gray-500"
+                >
+                  <div className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <input
+                        name="Answer"
+                        type="search"
+                        className="flex-1 p-4 text-sm border rounded-lg"
+                        placeholder="CTFCQ{...}"
+                        required
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          className="bg-emerald-500 text-white px-6 py-3 rounded hover:bg-emerald-600 transition-colors"
+                          type="submit"
+                        >
+                          Submit
+                        </button>
+                        <button
+                          className="text-red-500 px-6 py-3 hover:text-red-600 transition-colors"
+                          type="button"
+                          onClick={() => Question.ClosePopup(false)}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
-
-              <form onSubmit={onCheckAnswer}>
-                <div className=" lg:flex items-center justify-end p-6 border-t border-gray-500">
-                  <input
-                    name="Answer"
-                    type="search"
-                    className=" w-full p-4 text-sm border rounded-lg"
-                    placeholder="CTFCQ{...}"
-                    required
-                  />
-
-                  <button
-                    className="bg-emerald-500 text-white px-6 py-3 rounded"
-                    type="submit"
-                  >
-                    Submit
-                  </button>
-                  <button
-                    className="text-red-500 px-6 py-2"
-                    type="button"
-                    onClick={() => Question.ClosePopup(false)}
-                  >
-                    Close
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </>
