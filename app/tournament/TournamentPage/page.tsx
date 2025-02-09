@@ -94,11 +94,14 @@ export default function Homepage() {
         return;
       }
 
-      const hours = Math.floor(remaining / (1000 * 60 * 60));
+      const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
       const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
-      setRemainingTime(`${hours}:${minutes}:${seconds}`);
+      setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
     };
 
     const interval = setInterval(calculateRemainingTime, 1000);
@@ -113,25 +116,29 @@ export default function Homepage() {
       <div className="flex">
         <div className="w-80 p-6 bg-darkblue text-white">
           <div className="mb-6">
-            <h2 className="text-xl font-bold">Tournament Name</h2>
+            <h2 className="text-xl font-bold text-green-500">
+              Tournament Name
+            </h2>
             <p className="text-lg">{tourData?.name ?? "Loading..."}</p>
           </div>
           <div className="mb-6">
-            <h2 className="text-xl font-bold">Remaining Time</h2>
+            <h2 className="text-xl font-bold text-green-500">Remaining Time</h2>
             <p className="text-lg">{remainingTime || "Calculating..."}</p>
           </div>
           {!isAdmin && (
             <>
               <div className="mb-6">
-                <h2 className="text-xl font-bold">Team Rank</h2>
+                <h2 className="text-xl font-bold text-green-500">Team Rank</h2>
                 <p className="text-lg">{tourData?.teamRank || "N/A"}</p>
               </div>
               <div className="mb-6">
-                <h2 className="text-xl font-bold">Team Score</h2>
+                <h2 className="text-xl font-bold text-green-500">Team Score</h2>
                 <p className="text-lg">{tourData?.teamScore || 0} Points</p>
               </div>
               <div className="mb-6">
-                <h2 className="text-xl font-bold">Individual Score</h2>
+                <h2 className="text-xl font-bold text-green-500">
+                  Individual Score
+                </h2>
                 <p className="text-lg">
                   {tourData?.individualScore || 0} Points
                 </p>

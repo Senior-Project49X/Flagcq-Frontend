@@ -8,6 +8,7 @@ import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import { PostJoinTeam } from "../lib/API/PostJoinTeam";
 import { useRouter } from "next/navigation";
+import { isRoleAdmin } from "../lib/role";
 
 // Define the type for tournament data
 interface RemainingTime {
@@ -49,6 +50,16 @@ export default function Page() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [inviteCode, setInviteCode] = useState("");
   const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [mode, setMode] = useState<string>("");
+
+  useEffect(() => {
+    const role = isRoleAdmin();
+    setIsAdmin(role);
+    if (!role) {
+      setMode("");
+    }
+  }, []);
 
   const calculateRemainingTime = (endDate: string): RemainingTime => {
     const now = new Date();
@@ -138,32 +149,37 @@ export default function Page() {
     <div>
       <Navbar />
       <div className="relative">
-        {/* Join Team Heading */}
-        <h5 className="text-lg font-semibold text-green-600 mb-4 ml-[1640px]">
-          Join Team
-        </h5>
+        {/* Render Join Team only for non-admin users */}
+        {!isAdmin && (
+          <>
+            {/* Join Team Heading */}
+            <h5 className="text-lg font-semibold text-green-600 mb-4 ml-[1640px]">
+              Join Team
+            </h5>
 
-        {/* Invite Code Form */}
-        <form
-          onSubmit={handleJoinTeam}
-          className="absolute top-10 right-4 w-80 flex items-center space-x-2"
-        >
-          <input
-            type="text"
-            placeholder="Invite Code"
-            className="flex-1 px-3 py-2 border rounded"
-            maxLength={50}
-            value={inviteCode}
-            onChange={(e) => setInviteCode(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-            disabled={isLoadingJoin}
-          >
-            {isLoadingJoin ? "Joining..." : "Join"}
-          </button>
-        </form>
+            {/* Invite Code Form */}
+            <form
+              onSubmit={handleJoinTeam}
+              className="absolute top-10 right-4 w-80 flex items-center space-x-2"
+            >
+              <input
+                type="text"
+                placeholder="Invite Code"
+                className="flex-1 px-3 py-2 border rounded"
+                maxLength={50}
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+                disabled={isLoadingJoin}
+              >
+                {isLoadingJoin ? "Joining..." : "Join"}
+              </button>
+            </form>
+          </>
+        )}
 
         {/* Tournament List */}
         <h5 className="text-center text-2xl font-semibold text-green-600">
