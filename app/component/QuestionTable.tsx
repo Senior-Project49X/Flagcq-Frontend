@@ -50,7 +50,7 @@ export default function QuestionTable({
       ) : null}
       <tr className="even:bg-gray-50 odd:bg-white">
         {isCreateQuestionTournament && (
-          <td className="border border-gray-300 px-4 py-2 ">
+          <td className="border border-gray-300 px-4 py-2">
             <div className="justify-center flex">
               <input type="checkbox" />
             </div>
