@@ -12,6 +12,7 @@ type detail = {
   Solved: boolean;
   point: string;
   addQuestionTournament?: (id: number) => void;
+  submitCount: number;
   question_id?: number[]; // Add this prop
   is_selected?: boolean;
   tournament_id?: number;
@@ -28,6 +29,7 @@ export default function QuestionCard({
   question_id,
   is_selected,
   tournament_id,
+  submitCount,
 }: Readonly<detail>) {
   const pathname = usePathname();
   const [showModal, setShowModal] = useState(false);
@@ -93,10 +95,20 @@ export default function QuestionCard({
         )}
 
         <div className={`${(Solved || select) && "opacity-60"} text-green-400`}>
-          <h2 className="text-xl font-bold mt-5">{Topic}</h2>
-          <div className="absolute top-2 right-5">{showLevel(Level)}</div>
-          {Solved ? <span>solve</span> : <span>{point}</span>}
-          <p className="text-gray-300 absolute top-2 left-5"> {Category}</p>
+          {/* Category and Difficulty */}
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-gray-300">{Category}</p>
+            {showLevel(Level)}
+          </div>
+
+          {/* Title */}
+          <h2 className="text-xl font-bold mt-2 text-left">{Topic}</h2>
+
+          {/* Solves and Points in Same Row */}
+          <div className="flex justify-between items-center mt-2 ">
+            <p className="text-gray-300">{submitCount} solves</p>
+            <p>{Solved ? "solve" : point}</p>
+          </div>
         </div>
       </button>
     </>
