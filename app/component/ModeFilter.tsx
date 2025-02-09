@@ -3,11 +3,13 @@ import React from "react";
 interface ModeFilterProps {
   Mode: string;
   setMode: (mode: string) => void;
+  handleModeChange: () => void;
 }
 
 export default function ModeFilter({
   setMode,
   Mode,
+  handleModeChange,
 }: Readonly<ModeFilterProps>) {
   const mode = ["Practice", "Tournament", "Unpublished"];
 
@@ -18,7 +20,10 @@ export default function ModeFilter({
           key={displayMode}
           onClick={() => {
             if (Mode === displayMode) setMode("");
-            else setMode(displayMode);
+            else {
+              setMode(displayMode);
+              handleModeChange();
+            }
           }}
           className={`${
             Mode === displayMode ? "bg-gray-900" : "bg-gray-800"
