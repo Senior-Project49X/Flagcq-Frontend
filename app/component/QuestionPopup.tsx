@@ -162,10 +162,9 @@ export default function QuestionPopup(Question: Readonly<state>) {
               </div>
 
               {/*body*/}
-
-              <div className=" flex-auto">
-                <p
-                  className="text-blueGray-500 text-lg leading-relaxed"
+              <div className="flex-auto">
+                <div
+                  className="text-blueGray-500 text-lg leading-relaxed rich-text"
                   dangerouslySetInnerHTML={{
                     __html: showQuestion?.description ?? "",
                   }}

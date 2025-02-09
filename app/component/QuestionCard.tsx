@@ -100,7 +100,7 @@ export default function QuestionCard({
       )}
       <button
         className={`relative ${
-          select || is_selected ? "bg-gray-300" : "bg-white"
+          select || is_selected ? "bg-gray-300" : "bg-gray-800"
         }  rounded-lg p-6 text-center cursor-pointer`}
         onClick={handleCardClicked}
       >
@@ -112,11 +112,11 @@ export default function QuestionCard({
           </div>
         )}
 
-        <div className={`${(Solved || select) && "text-black opacity-60"}`}>
+        <div className={`${(Solved || select) && "opacity-60"} text-green-400`}>
           <h2 className="text-xl font-bold mt-5">{Topic}</h2>
           <div className="absolute top-2 right-5">{showLevel(Level)}</div>
           {Solved ? <span>solve</span> : <span>{point}</span>}
-          <p className="text-gray-500 absolute top-2 left-5"> {Category}</p>
+          <p className="text-gray-300 absolute top-2 left-5"> {Category}</p>
         </div>
       </button>
     </>
