@@ -79,23 +79,20 @@ export default function Question({
         </div>
       ) : (
         <table className="table-auto w-full">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-900 text-green">
             <tr>
               {isAdmin && isCreateQuestionTournament && (
-                <th className="border border-gray-300 px-4 py-2"></th>
+                <th className=" px-4 py-2">Select</th>
               )}
 
-              <th className="border border-gray-300 px-4 py-2">
-                Question name
-              </th>
-              <th className="border border-gray-300 px-4 py-2">Difficulty</th>
-              <th className="border border-gray-300 px-4 py-2">Point</th>
-              <th className="border border-gray-300 px-4 py-2">Solver</th>
+              <th className="px-4 py-2 text-green-400">Question name</th>
+              <th className=" px-4 py-2 text-green-400">Difficulty</th>
+              <th className=" px-4 py-2 text-green-400">Point</th>
+              <th className=" px-4 py-2 text-green-400">Solver</th>
               {isAdmin && (
                 <>
-                  {" "}
-                  <th className="border border-gray-300 px-4 py-2">Edit</th>
-                  <th className="border border-gray-300 px-4 py-2">Delete</th>
+                  <th className=" px-4 py-2 text-green-400">Edit</th>
+                  <th className=" px-4 py-2 text-green-400">Delete</th>
                 </>
               )}
             </tr>

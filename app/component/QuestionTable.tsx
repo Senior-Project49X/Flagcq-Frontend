@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Difficult from "../difficult";
 import Image from "next/image";
 import QuestionPopup from "./QuestionPopup";
-
 type detail = {
   id: number;
   Topic: string;
@@ -45,35 +44,45 @@ export default function QuestionTable({
   };
   return (
     <>
-      {showModal ? (
-        <QuestionPopup id={id} ClosePopup={setShowModal} Topic={Topic} />
-      ) : null}
-      <tr className="even:bg-gray-50 odd:bg-white">
+      <tr>
+        <td>
+          <div>
+            {showModal && (
+              <div>
+                <QuestionPopup
+                  id={id}
+                  ClosePopup={setShowModal}
+                  Topic={Topic}
+                />
+              </div>
+            )}
+          </div>
+        </td>
+      </tr>
+      <tr className="even:bg-[#0D1B2A] odd:bg-gray-800 text-white">
         {isCreateQuestionTournament && (
-          <td className="border border-gray-300 px-4 py-2">
+          <td className=" px-4 py-2">
             <div className="justify-center flex">
               <input type="checkbox" />
             </div>
           </td>
         )}
 
-        <td className="border border-gray-300 px-4 py-2 ">
+        <td className=" px-4 py-2 ">
           <button
             onClick={() => setShowModal(true)}
-            className="hover:text-blue-500"
+            className="hover:text-blue-500 underline"
           >
             {Topic}
           </button>
         </td>
-        <td className="border border-gray-300 px-4 py-2 ">
-          {showLevel(Level)}
-        </td>
-        <td className="border border-gray-300 px-4 py-2">{point}</td>
-        <td className="border border-gray-300 px-4 py-2">{submitCount}</td>
+        <td className=" px-4 py-2 ">{showLevel(Level)}</td>
+        <td className="px-4 py-2">{point}</td>
+        <td className=" px-4 py-2">{submitCount}</td>
 
         {isRoleAdmin && (
           <>
-            <td className="border border-gray-300 px-4 py-2 ">
+            <td className=" px-4 py-2 ">
               <div className="justify-center flex">
                 <button
                   className={`p-2 transition rounded-md ${
@@ -87,19 +96,28 @@ export default function QuestionTable({
                       : "Click to Submit"
                   }
                 >
-                  <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
+                  <div className="flex items-center justify-center">
+                    <Image
+                      src="/edit.svg"
+                      width={15}
+                      height={15}
+                      alt={"Edit"}
+                    />
+                  </div>
                 </button>
               </div>
             </td>
-            <td className="border border-gray-300 px-4 py-2">
+            <td className=" px-4 py-2">
               <div className="justify-center flex">
                 <button className="p-2 bg-red-300 hover:bg-red-500 transition rounded-md">
-                  <Image
-                    src="/delete.svg"
-                    width={15}
-                    height={15}
-                    alt={"Delete"}
-                  />
+                  <div className="flex items-center justify-center">
+                    <Image
+                      src="/delete.svg"
+                      width={15}
+                      height={15}
+                      alt={"Delete"}
+                    />
+                  </div>
                 </button>
               </div>
             </td>
