@@ -14,7 +14,7 @@ import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
-import RichTestEditor from "@/app/component/RichTextEditor";
+import RichTextEditor from "@/app/component/RichTextEditor";
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
@@ -107,6 +107,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
 
     formData.append("Practice", modeSelection.Practice.toString());
     formData.append("Tournament", modeSelection.Tournament.toString());
+    formData.append("Description", description);
     formData.append(
       "isFileEdited",
       typeof file === "string" ? "false" : "true"
@@ -324,14 +325,15 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               ))}
             </div>
             <label>
-              Description <RichTestEditor />
-              <textarea
+              Description
+              {/* <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 name="Description"
                 className="w-full p-2 border-2 border-gray-300 rounded"
-              />
+              /> */}
             </label>
+            <RichTextEditor value={description} onChange={setDescription} />
             <br />
             <p>Hint</p>
             <div>
@@ -437,7 +439,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               className={`w-full p-2 rounded font-bold ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-red-500 hover:bg-red-600 text-white"
               }`}
             >
               Confirm
