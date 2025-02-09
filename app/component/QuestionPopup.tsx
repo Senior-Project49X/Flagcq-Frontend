@@ -60,7 +60,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
 
   const handleClickOutside = (event: MouseEvent) => {
     if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-      handleClosePopup();
+      Question.ClosePopup(false);
     }
   };
 
