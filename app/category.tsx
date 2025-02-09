@@ -68,7 +68,7 @@ export default function Category({
     <div className="bg-[#090147] px-10">
       <div className="w-full">
         <div className="rounded-lg p-6 h-full">
-          <div className="items-center mb-4">
+          <div className="items-center mb-2">
             <h1 className="text-red-400 text-xl font-bold">Category</h1>
           </div>
 

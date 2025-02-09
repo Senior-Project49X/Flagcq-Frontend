@@ -33,7 +33,7 @@ export default function Navbar() {
     fetchUserPoints();
   }, []);
   return (
-    <nav className="bg-[#090147] py-4 px-8 sticky top-0 w-full z-20">
+    <nav className="bg-[#090147] py-1 px-8 sticky top-0 w-full z-20">
       <div className="flex justify-between items-center">
         {/* Left side: Logo */}
         <div>
