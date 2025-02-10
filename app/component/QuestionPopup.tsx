@@ -34,24 +34,27 @@ export default function QuestionPopup(Question: Readonly<State>) {
     setRole(isRoleAdmin() || isRoleTa());
   }, []);
   const handleCorrectAnswer = () => {};
-  const onCheckAnswer = (event: FormEvent<HTMLFormElement>) => {
+  const onCheckAnswer = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(Question.id);
     const formData = new FormData(event.currentTarget);
-    const answer = formData.get("Answer"); // Extract the value from FormData
+    const answer = formData.get("Answer") as string;
 
-    if (typeof answer === "string") {
-      const fetchQuestion = async () => {
-        const isCorrect = await CheckQuestionsByID(Question.id, answer);
-        if (isCorrect) {
-          setShowCongratPopup(true);
-        }
-      };
-      fetchQuestion();
-    } else {
-      console.error("Answer is not a string"); // Handle unexpected cases
+    if (!answer) return;
+
+    try {
+      const isCorrect = await CheckQuestionsByID(Question.id, answer);
+      if (isCorrect) {
+        setShowCongratPopup(true);
+        setIsError(false); // Reset error when correct
+      } else {
+        setIsError(true); // Set error when incorrect
+      }
+    } catch (error) {
+      console.error("Error checking answer:", error);
+      setIsError(true);
     }
   };
+
   const handleClosePopup = () => {
     setShowPopup(false);
     setIsError(false);
@@ -189,13 +192,28 @@ export default function QuestionPopup(Question: Readonly<State>) {
                 >
                   <div className="p-4 sm:p-6">
                     <div className="flex flex-col sm:flex-row gap-4">
-                      <input
-                        name="Answer"
-                        type="search"
-                        className="flex-1 p-4 text-sm border rounded-lg"
-                        placeholder="CTFCQ{...}"
-                        required
-                      />
+                      <div className="w-full">
+                        <input
+                          name="Answer"
+                          type="search"
+                          className={`w-full p-4 text-sm border-4 rounded-lg 
+            ${
+              isError
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            }
+          `}
+                          placeholder="CTFCQ{...}"
+                          required
+                        />
+                        {/* Error Message */}
+                        {isError && (
+                          <p className="mt-2 text-sm text-red-500">
+                            ❌ Answer is incorrect
+                          </p>
+                        )}
+                      </div>
+
                       <div className="flex gap-2">
                         <button
                           className="bg-emerald-500 text-white px-6 py-3 rounded hover:bg-emerald-600 transition-colors"
