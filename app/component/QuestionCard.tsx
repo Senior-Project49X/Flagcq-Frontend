@@ -115,7 +115,7 @@ export default function QuestionCard({
 
           {/* Solves and Points in Same Row */}
           <div className="flex justify-between items-center mt-2 ">
-            <p className="text-gray-300">{submitCount} solves</p>
+            <p className="text-gray-300">{submitCount} Solved</p>
             <p>{Solved ? "solve" : point}</p>
           </div>
         </div>
