@@ -4,6 +4,7 @@ import { useState } from "react";
 import Navbar from "../../component/Navbar/navbar";
 import { formatDynamicAPIAccesses } from "next/dist/server/app-render/dynamic-rendering";
 import { useRouter } from "next/navigation";
+import RichTextEditor from "@/app/component/RichTextEditor";
 
 interface CreateTourState {
   topic: string;
@@ -12,6 +13,9 @@ interface CreateTourState {
   enroll_endDate: string;
   event_startDate: string;
   event_endDate: string;
+  mode: string;
+  teamSizeLimit: number;
+  limit: number;
 }
 
 export default function CreateTour() {
@@ -22,6 +26,9 @@ export default function CreateTour() {
     enroll_endDate: "",
     event_startDate: "",
     event_endDate: "",
+    mode: "",
+    teamSizeLimit: 0,
+    limit: 0,
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -95,12 +102,26 @@ export default function CreateTour() {
         : "border-2 border-gray-300"
     }`;
 
+  const handleDescriptionChange = (value: string) => {
+    setCreateTourData((prevData) => ({ ...prevData, description: value }));
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCreateTourData((prevData) => ({ ...prevData, [name]: Number(value) }));
+    setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: false })); // Clear error on change
+  };
+
+  const handleIChange = (mode: string) => {
+    setCreateTourData((prev) => ({ ...prev, mode }));
+  };
+
   return (
     <div className="min-h-screen bg-[#090147] text-white">
       <Navbar />
 
       <div className="max-w-3xl mx-auto p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center">
+        <h1 className="text-3xl font-bold mb-4 text-center">
           Create Tournament
         </h1>
         <form
@@ -128,18 +149,73 @@ export default function CreateTour() {
             <label htmlFor="description" className="block font-medium mb-2">
               Description
             </label>
-            <input
-              type="text"
-              id="description"
-              name="description"
+            <RichTextEditor
               value={CreateTourData.description}
-              onChange={handleInputChange}
-              className={getInputClass("description")}
-              required
+              onChange={handleDescriptionChange}
             />
           </div>
 
-          {/* Enrollment Dates in One Line */}
+          {/* Mode */}
+          <div className="mb-4">
+            <label className="block font-medium mb-2">Mode</label>
+            <div className="flex space-x-4">
+              {["Public", "Private"].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => handleIChange(option)}
+                  className={`px-4 py-2 rounded-md text-white font-medium ${
+                    CreateTourData.mode === option
+                      ? "bg-green-500"
+                      : "bg-gray-500 hover:bg-gray-600"
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-4 flex items-center space-x-2">
+            {/* Team Size Limit */}
+            <div className="w-1/2">
+              <label htmlFor="teamSizeLimit" className="block font-medium mb-2">
+                Team Size
+              </label>
+              <select
+                id="teamSizeLimit"
+                name="teamSizeLimit"
+                value={CreateTourData.teamSizeLimit}
+                onChange={handleNumberChange}
+                className={getInputClass("teamSizeLimit")}
+                required
+              >
+                {[1, 2, 3, 4].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Team Limit */}
+            <div className="w-1/2">
+              <label htmlFor="limit" className="block font-medium mb-2">
+                Team Limit
+              </label>
+              <input
+                type="number"
+                id="limit"
+                name="limit"
+                value={CreateTourData.limit}
+                onChange={handleInputChange}
+                className={getInputClass("limit")}
+                min="1"
+                max="120"
+                required
+              />
+            </div>
+          </div>
+
           <div className="mb-4 flex items-center space-x-2">
             <div className="w-1/2">
               <label
@@ -180,7 +256,6 @@ export default function CreateTour() {
             </div>
           </div>
 
-          {/* Event Dates in One Line */}
           <div className="mb-4 flex items-center space-x-2">
             <div className="w-1/2">
               <label

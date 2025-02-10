@@ -327,9 +327,9 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                 className="w-full p-2 border-2 border-gray-300 rounded"
               /> */}
             </label>
-            {description && (
-              <RichTextEditor value={description} onChange={setDescription} />
-            )}
+
+            <RichTextEditor value={description} onChange={setDescription} />
+
             <br />
             <p>Hint</p>
             <div>

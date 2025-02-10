@@ -9,12 +9,15 @@ export interface TournamentData {
   enroll_endDate: string;
   event_startDate: string;
   event_endDate: string;
+  mode: string;
+  teamSizeLimit: number;
+  limit: number;
 }
 
 export const PostCreateTour = async (data: TournamentData) => {
   try {
     const resp = await axios.post(
-      `${ip}/api/createtournament`,
+      `${ip}/api/createTournament`,
       {
         name: data.topic, // Map topic to name
         description: data.description,
@@ -22,6 +25,9 @@ export const PostCreateTour = async (data: TournamentData) => {
         enroll_endDate: data.enroll_endDate,
         event_startDate: data.event_startDate,
         event_endDate: data.event_endDate,
+        mode: data.mode,
+        teamSizeLimit: data.teamSizeLimit,
+        limit: data.limit,
       },
       {
         withCredentials: true, // Ensure cookies are sent if required by backend
