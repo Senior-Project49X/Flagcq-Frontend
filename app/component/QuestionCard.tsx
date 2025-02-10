@@ -14,7 +14,7 @@ type detail = {
   addQuestionTournament?: (id: number) => void;
   submitCount: number;
   question_id?: number[]; // Add this prop
-  is_selected?: boolean;
+  is_selected: boolean;
   tournament_id?: number;
 };
 
@@ -37,12 +37,13 @@ export default function QuestionCard({
   const [select, setSelect] = useState(false);
   const [showPopupDelTournamentQuestion, setShowPopupDelTournamentQuestion] =
     useState(false);
+  const isCanEdit = !is_selected && submitCount === 0;
   // Add useEffect to update selected state when question_id changes
   useEffect(() => {
     if (question_id && !is_selected) {
       setSelect(question_id.includes(id));
     }
-  }, [question_id, id]);
+  }, [question_id, id, is_selected]);
 
   const showLevel = (Level: string) => {
     if (Level == "Easy") {
@@ -76,7 +77,12 @@ export default function QuestionCard({
   return (
     <>
       {showModal ? (
-        <QuestionPopup id={id} ClosePopup={setShowModal} Topic={Topic} />
+        <QuestionPopup
+          id={id}
+          ClosePopup={setShowModal}
+          Topic={Topic}
+          isCanEdit={isCanEdit}
+        />
       ) : null}
       {showPopupDelTournamentQuestion && (
         <PopupDeleteTournamentQUestion

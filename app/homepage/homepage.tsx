@@ -57,7 +57,6 @@ export default function Homepage() {
         page,
         isRoleAdmin() ? mode : "Practice"
       );
-
       console.log("b", result.data);
       setTotalPages(result.totalPages);
       setHasNextPage(result.hasNextPage);

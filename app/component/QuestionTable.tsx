@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import QuestionPopup from "./QuestionPopup";
+import Link from "next/link";
 type detail = {
   id: number;
   Topic: string;
@@ -31,6 +32,7 @@ export default function QuestionTable({
   isRoleAdmin,
   isCreateQuestionTournament,
 }: Readonly<detail>) {
+  const isCanEdit = !is_selected && submitCount === 0;
   const [showModal, setShowModal] = useState(false);
   const showLevel = (Level: string) => {
     if (Level == "Easy") {
@@ -54,7 +56,12 @@ export default function QuestionTable({
       <td className=" px-4 py-2 ">
         {showModal && (
           <div>
-            <QuestionPopup id={id} ClosePopup={setShowModal} Topic={Topic} />
+            <QuestionPopup
+              isCanEdit={isCanEdit}
+              id={id}
+              ClosePopup={setShowModal}
+              Topic={Topic}
+            />
           </div>
         )}
         <button
@@ -72,22 +79,21 @@ export default function QuestionTable({
         <>
           <td className=" px-4 py-2 ">
             <div className="justify-center flex">
-              <button
+              <Link
+                href={`/admin/EditQuestion?QuestionID=${id}`}
                 className={`p-2 transition rounded-md ${
-                  submitCount !== 0
-                    ? "cursor-not-allowed bg-gray-200"
-                    : "bg-yellow-200 hover:bg-yellow-300"
+                  isCanEdit
+                    ? "bg-yellow-200 hover:bg-yellow-300"
+                    : "cursor-not-allowed bg-gray-200"
                 }`}
                 title={
-                  submitCount !== 0
-                    ? "Someone already submitted"
-                    : "Click to Submit"
+                  isCanEdit ? "Click to Submit" : "Someone already submitted"
                 }
               >
                 <div className="flex items-center justify-center">
                   <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
                 </div>
-              </button>
+              </Link>
             </div>
           </td>
           <td className=" px-4 py-2">

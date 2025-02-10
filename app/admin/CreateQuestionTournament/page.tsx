@@ -73,7 +73,7 @@ export default function Homepage() {
       setQuestions(result.data);
     };
     fetchQuestions();
-  }, [page, selectedCategory, selectedDifficulty]);
+  }, [page, selectedCategory, selectedDifficulty, tournament_id]);
 
   const handleCreateQT = async (e: FormEvent) => {
     e.preventDefault();

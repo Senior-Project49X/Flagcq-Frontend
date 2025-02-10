@@ -36,8 +36,8 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
             "strike",
             "link",
             "formula",
-            "blockquote",
-            "code-block",
+            // "blockquote",
+            // "code-block",
           ],
         });
 

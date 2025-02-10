@@ -16,20 +16,20 @@ export default function DeleteQPuestionPopup({
   DeleteRef,
 }: Readonly<DeleteQuestionProps>) {
   useEffect(() => {
-    const handleYayOutsideClick = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         DeleteRef.current &&
         !DeleteRef.current.contains(event.target as Node)
       ) {
-        // Do nothing (keep the Yay popup open)
+        handleClosePopup(); // Close the delete popup only
       }
     };
 
-    document.addEventListener("mousedown", handleYayOutsideClick);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleYayOutsideClick);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [DeleteRef, handleClosePopup]);
 
   return (
     <div ref={DeleteRef}>
