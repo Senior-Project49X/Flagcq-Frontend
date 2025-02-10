@@ -7,13 +7,13 @@ export default function AdminTournamentSelected({
 }: Readonly<AdminTournamentSelectedProps>) {
   return (
     <div>
-      <div className="absolute inset-x-0 -top-6 flex  items-center justify-center z-10">
+      <div className="absolute inset-x-0 -top-6 flex  items-center justify-center z-0">
         <div
           className={`rounded-lg ${
             is_selected ? "bg-red-400" : "bg-green-400"
           }  py-1 px-3  flex  text-black text-xl `}
         >
-          {is_selected ? "Already in Tournament" : "✓"}
+          {is_selected ? "In Tournament" : "✓"}
         </div>
       </div>
     </div>

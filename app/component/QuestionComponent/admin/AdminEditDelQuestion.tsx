@@ -4,14 +4,16 @@ import React from "react";
 interface Question {
   setShowPopup: (arg0: boolean) => void;
   id: number;
+  AdminEditref: React.RefObject<HTMLDivElement>;
 }
 
 export default function AdminEditDelQuestion({
   id,
   setShowPopup,
+  AdminEditref,
 }: Readonly<Question>) {
   return (
-    <div>
+    <div ref={AdminEditref}>
       <Link
         className="text-yellow-500 font-bold mx-5"
         href={`/admin/EditQuestion?QuestionID=${id}`}

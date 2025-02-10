@@ -26,7 +26,6 @@ export default function Homepage() {
   const [questions, setQuestions] = useState<questions[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-  const [mode, setMode] = useState<string>("");
   const [tournament_id, setTournament_id] = useState<number>(0);
   const [question_id, setQuestion_id] = useState<number[]>([]);
   const [tournamentList, setTournamentList] = useState<any[]>([]);
@@ -74,7 +73,7 @@ export default function Homepage() {
       setQuestions(result.data);
     };
     fetchQuestions();
-  }, [page, selectedCategory, selectedDifficulty, mode]);
+  }, [page, selectedCategory, selectedDifficulty]);
 
   const handleCreateQT = async (e: FormEvent) => {
     e.preventDefault();
@@ -89,6 +88,7 @@ export default function Homepage() {
     e: React.ChangeEvent<HTMLSelectElement>
   ): Promise<void> => {
     const TID = Number(e.target.value);
+    setQuestion_id([]);
     setTournament_id(TID);
     const result = await GetQuestions(
       selectedCategory.join(","),
@@ -106,59 +106,58 @@ export default function Homepage() {
   return (
     <div>
       <Navbar />
+      <div className="pt-6 text-black mb-4 rounded-lg flex  justify-center">
+        <form onSubmit={handleCreateQT} className="flex items-center">
+          <label
+            htmlFor="tournament-dropdown"
+            className="mr-4 text-lg text-red-400"
+          >
+            Tournament Name:
+          </label>
+          <select
+            id="tournament-dropdown"
+            className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={tournament_id || ""}
+            onChange={onSelectTournament}
+          >
+            <option value="" disabled>
+              Select a Tournament
+            </option>
+            {tournamentList.map((tournament) => (
+              <option key={tournament.id} value={tournament.id}>
+                {tournament.name}
+              </option>
+            ))}
+          </select>
 
+          <button
+            type="submit"
+            className={`ml-4 py-2 px-4 rounded-md ${
+              tournament_id === 0 || question_id.length === 0
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600 text-white"
+            }`}
+            disabled={tournament_id === 0 || question_id.length === 0}
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+        <Category
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryClick}
+        />
+
+        <Difficult
+          selectedDifficulty={selectedDifficulty}
+          onDifficultyClick={handleDifficultyClick}
+        />
+      </div>
       {/* Question Box */}
       <div className="flex-1 p-6 rounded-lg">
         {questions.length !== 0 ? (
           <>
-            <div className=" text-black mb-4 rounded-lg flex  justify-center">
-              <form onSubmit={handleCreateQT} className="flex items-center">
-                <label
-                  htmlFor="tournament-dropdown"
-                  className="mr-4 text-lg text-red-400"
-                >
-                  Tournament Name:
-                </label>
-                <select
-                  id="tournament-dropdown"
-                  className="w-64 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={tournament_id || ""}
-                  onChange={onSelectTournament}
-                >
-                  <option value="" disabled>
-                    Select a Tournament
-                  </option>
-                  {tournamentList.map((tournament) => (
-                    <option key={tournament.id} value={tournament.id}>
-                      {tournament.name}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="submit"
-                  className={`ml-4 py-2 px-4 rounded-md ${
-                    tournament_id === 0 || question_id.length === 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600 text-white"
-                  }`}
-                  disabled={tournament_id === 0 || question_id.length === 0}
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-              <Category
-                selectedCategory={selectedCategory}
-                onCategoryChange={handleCategoryClick}
-              />
-
-              <Difficult
-                selectedDifficulty={selectedDifficulty}
-                onDifficultyClick={handleDifficultyClick}
-              />
-            </div>
             <Question
               addQuestionTournament={handlePushQuestionID}
               selectedDifficulty={selectedDifficulty}

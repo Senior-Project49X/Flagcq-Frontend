@@ -32,6 +32,7 @@ export default function QuestionCard({
   submitCount,
 }: Readonly<detail>) {
   const pathname = usePathname();
+  const isPathTournament = pathname === "/admin/CreateQuestionTournament";
   const [showModal, setShowModal] = useState(false);
   const [select, setSelect] = useState(false);
   const [showPopupDelTournamentQuestion, setShowPopupDelTournamentQuestion] =
@@ -54,8 +55,9 @@ export default function QuestionCard({
   };
 
   const handleCardClicked = () => {
+    console.log("is_selected", tournament_id);
     if (pathname == "/admin/CreateQuestionTournament") {
-      if (is_selected && tournament_id) {
+      if (is_selected && tournament_id !== 0) {
         setShowPopupDelTournamentQuestion(true);
       } else {
         select ? setSelect(false) : setSelect(true);
@@ -69,7 +71,6 @@ export default function QuestionCard({
   const handleDeleteQuestion = async () => {
     if (tournament_id) {
       await DeleteQuestionTournament(id, tournament_id);
-      // if (addQuestionTournament !== undefined) addQuestionTournament(id);
     }
   };
   return (
@@ -86,11 +87,13 @@ export default function QuestionCard({
       )}
       <button
         className={`relative ${
-          select || is_selected ? "bg-[#0D1B2A]" : "bg-gray-800"
+          (is_selected || select) && isPathTournament && tournament_id !== 0
+            ? "bg-[#0D1B2A]"
+            : "bg-gray-800"
         } rounded-lg p-6 text-center cursor-pointer shadow-lg glow-effect`}
         onClick={handleCardClicked}
       >
-        {(is_selected || select) && (
+        {(is_selected || select) && isPathTournament && tournament_id !== 0 && (
           <AdminTournamentSelected is_selected={is_selected} />
         )}
 

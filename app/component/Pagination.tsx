@@ -59,9 +59,13 @@ export default function Pagination({
 
   return (
     <div className="flex justify-center mt-6">
-      <div className="flex gap-2 bg-white rounded-lg px-4 py-2 text-center">
+      <div className="flex gap-2 rounded-lg text-center">
         {currentPage > 1 && (
-          <Link href={`${pagePath}${currentPage - 1}`} scroll={false}>
+          <Link
+            href={`${pagePath}${currentPage - 1}`}
+            scroll={false}
+            className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
+          >
             {"<<"}
           </Link>
         )}
@@ -73,7 +77,7 @@ export default function Pagination({
                 <Link
                   href={`${pagePath}1`}
                   scroll={false}
-                  className="flex text-gray-600"
+                  className="flex bg-gray-800 "
                 >
                   1
                 </Link>
@@ -85,10 +89,10 @@ export default function Pagination({
             <Link
               href={`${pagePath}${page}`}
               scroll={false}
-              className={`px-4 py-2 ${
+              className={`px-4 py-2 text-green-400 hover:bg-gray-800 transition-colors ${
                 page === currentPage
-                  ? "bg-blue-600 text-white rounded-full border border-blue-600"
-                  : "text-gray-600 border border-sky-500 rounded-full"
+                  ? "bg-gray-800  rounded-md text-xl"
+                  : " bg-[#0D1B2A] rounded-md"
               }`}
             >
               {page}
@@ -100,7 +104,7 @@ export default function Pagination({
                 <Link
                   href={`${pagePath}${totalPages}`}
                   scroll={false}
-                  className="w-8 h-8 p-0 text-gray-600"
+                  className="w-8 h-8 p-0 text-gray-600 "
                 >
                   {totalPages}
                 </Link>
@@ -110,7 +114,11 @@ export default function Pagination({
         ))}
 
         {hasNextPage && currentPage < totalPages && (
-          <Link href={`${pagePath}${currentPage + 1}`} scroll={false}>
+          <Link
+            href={`${pagePath}${currentPage + 1}`}
+            scroll={false}
+            className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
+          >
             {">>"}
           </Link>
         )}

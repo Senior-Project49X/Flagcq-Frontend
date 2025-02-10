@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 interface DeleteQuestionProps {
   handleClosePopup: () => void;
   handleConfirmDelete: () => void;
   name: string;
   setName: (name: string) => void;
   isError: boolean;
+  DeleteRef: React.RefObject<HTMLDivElement>;
 }
 export default function DeleteQPuestionPopup({
   handleClosePopup,
@@ -12,10 +13,27 @@ export default function DeleteQPuestionPopup({
   name,
   setName,
   isError,
+  DeleteRef,
 }: Readonly<DeleteQuestionProps>) {
+  useEffect(() => {
+    const handleYayOutsideClick = (event: MouseEvent) => {
+      if (
+        DeleteRef.current &&
+        !DeleteRef.current.contains(event.target as Node)
+      ) {
+        // Do nothing (keep the Yay popup open)
+      }
+    };
+
+    document.addEventListener("mousedown", handleYayOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleYayOutsideClick);
+    };
+  }, []);
+
   return (
-    <div>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+    <div ref={DeleteRef}>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
         <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
           <button
             onClick={handleClosePopup}

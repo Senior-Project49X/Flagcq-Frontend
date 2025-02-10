@@ -75,7 +75,9 @@ export default function Homepage() {
     };
     fetchUserData();
   }, [point]);
-
+  const handleModeChange = () => {
+    router.push("?page=1");
+  };
   return (
     <div>
       <Navbar />
@@ -92,7 +94,15 @@ export default function Homepage() {
               onDifficultyClick={handleDifficultyClick}
             />
           </div>
-          {isAdmin ? <ModeFilter setMode={setMode} Mode={mode} /> : ""}
+          {isAdmin ? (
+            <ModeFilter
+              setMode={setMode}
+              Mode={mode}
+              handleModeChange={handleModeChange}
+            />
+          ) : (
+            ""
+          )}
 
           {questions.length !== 0 ? (
             <>
