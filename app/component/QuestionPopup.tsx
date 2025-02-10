@@ -112,14 +112,14 @@ export default function QuestionPopup(Question: Readonly<State>) {
       )}
       <div className="fixed inset-0 z-20 overflow-y-auto bg-black bg-opacity-50">
         <div className="flex min-h-full items-center justify-center p-4">
-          <div
-            ref={popupRef}
-            className="relative w-full max-w-3xl bg-gray-800 rounded-lg shadow-xl"
-          >
+          <div className="relative w-full max-w-3xl bg-gray-800 rounded-lg shadow-xl">
             {loading ? (
               <div className="p-6 text-white">Loading...</div>
             ) : (
-              <div className="flex flex-col max-h-[80vh]">
+              <div
+                ref={popupRef}
+                className="flex flex-col max-h-[80vh] min-h-[60vh]"
+              >
                 {/* Header */}
                 <div className="flex items-start justify-between p-5 border-b border-gray-500">
                   <h3 className="text-3xl font-semibold text-green-400 break-words">
@@ -127,7 +127,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                   </h3>
                   {role && (
                     <AdminEditDelQuestion
-                      ref={popupRef}
+                      AdminEditref={popupRef}
                       id={Question.id}
                       setShowPopup={setShowPopup}
                     />
@@ -165,7 +165,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                       <div></div>
                     )}
                     <div className="flex-shrink-0">
-                      <div className="inline-flex rounded-md shadow-sm">
+                      <div className="inline-flex rounded-md shadow-sm ">
                         {showQuestion?.hints.map((hint, i) => (
                           <Hint
                             id={hint.id}

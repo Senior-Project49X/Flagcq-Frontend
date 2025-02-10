@@ -26,7 +26,6 @@ export default function Homepage() {
   const [questions, setQuestions] = useState<questions[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-  const [mode, setMode] = useState<string>("");
   const [tournament_id, setTournament_id] = useState<number>(0);
   const [question_id, setQuestion_id] = useState<number[]>([]);
   const [tournamentList, setTournamentList] = useState<any[]>([]);
@@ -74,7 +73,7 @@ export default function Homepage() {
       setQuestions(result.data);
     };
     fetchQuestions();
-  }, [page, selectedCategory, selectedDifficulty, mode]);
+  }, [page, selectedCategory, selectedDifficulty]);
 
   const handleCreateQT = async (e: FormEvent) => {
     e.preventDefault();

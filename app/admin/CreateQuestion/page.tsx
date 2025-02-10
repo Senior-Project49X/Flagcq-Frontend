@@ -1,6 +1,5 @@
 "use client";
 import React, { FormEvent, useEffect, useState } from "react";
-import Image from "next/image";
 import Navbar from "../../component/Navbar/navbar";
 import {
   CreateQuestionAPI,
@@ -43,12 +42,10 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     Tournament: false,
     UnPublic: true,
   });
-  const [role, setRole] = useState<boolean | undefined | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [selectedTournament, setSelectedTournament] = useState<string[]>([]);
   const [categories, setCategories] = useState<Category[]>(
     [] as unknown as Category[]
   );
@@ -68,14 +65,11 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   const [file, setFile] = useState<File | null>(null);
   useEffect(() => {
     if (id !== null && id !== undefined) {
-      console.log("Edit question with ID:", id);
       const fetchQuestion = async () => {
         const getQuestion = await GetQuestionsByID(id);
-
         setTopic(getQuestion.title);
         setPoint(getQuestion.point);
         setSelectedCategory(getQuestion.categories_id);
-
         setDifficultysID(getQuestion.difficultys_id);
         setHints(
           getQuestion.hints.map((hint: any) => ({
@@ -86,8 +80,8 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
         );
         setAnswer(getQuestion.answer);
         handleToggle(getQuestion.mode);
-        setDescription(getQuestion.description);
-        setFile(getQuestion.file_path); // Update to handle file path string
+        setDescription(getQuestion.description); // Ensure a valid description
+        setFile(getQuestion.file_path);
       };
       fetchQuestion();
     }
@@ -253,7 +247,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
           CreateQuestion
         </h1>
 
-        <div className="max-w-3xl mx-auto p-8 bg-gray-100 p-6 rounded-lg shadow-md text-black">
+        <div className="max-w-3xl mx-auto bg-gray-100 p-6 rounded-lg shadow-md text-black">
           <form onSubmit={onCreateQuestion}>
             <label className="mr-2">
               Topic{" "}
@@ -333,7 +327,9 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                 className="w-full p-2 border-2 border-gray-300 rounded"
               /> */}
             </label>
-            <RichTextEditor value={description} onChange={setDescription} />
+            {description && (
+              <RichTextEditor value={description} onChange={setDescription} />
+            )}
             <br />
             <p>Hint</p>
             <div>

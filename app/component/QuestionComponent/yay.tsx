@@ -14,8 +14,6 @@ export default function Yay({
   setShowCongratPopup,
   yayRef,
 }: Readonly<YayProps>) {
-  if (!showPopup) return null;
-
   useEffect(() => {
     const handleYayOutsideClick = (event: MouseEvent) => {
       if (yayRef.current && !yayRef.current.contains(event.target as Node)) {
@@ -30,7 +28,7 @@ export default function Yay({
       };
     }
   }, [showPopup]);
-
+  if (!showPopup) return null;
   // Use yayRef for the Yay popup div
   return (
     <div

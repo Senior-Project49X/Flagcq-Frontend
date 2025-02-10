@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useRef } from "react";
-import type Quill from "quill"; // Only type import, no runtime code.
-import "quill/dist/quill.snow.css"; // CSS import is safe if handled in client bundles.
+import { useEffect, useRef, useState } from "react";
+import type Quill from "quill";
+import "quill/dist/quill.snow.css";
 
 interface RichTextEditorProps {
   value: string;
@@ -11,10 +11,10 @@ interface RichTextEditorProps {
 const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
+  const [isSettingContent, setIsSettingContent] = useState(false);
 
   useEffect(() => {
     if (editorRef.current && !quillRef.current) {
-      // Dynamically import Quill to avoid SSR issues.
       import("quill").then(({ default: Quill }) => {
         quillRef.current = new Quill(editorRef.current!, {
           theme: "snow",
@@ -22,7 +22,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
             toolbar: [
               [{ size: ["small", false, "large", "huge"] }],
               ["bold", "italic", "underline", "strike"],
-              ["blockquote", "code-block"],
+              // ["blockquote", "code-block"],
               [{ list: "ordered" }, { list: "bullet" }],
               ["clean"],
               ["link"],
@@ -40,29 +40,26 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
             "code-block",
           ],
         });
-        // Set initial content using prop value.
+
         quillRef.current.root.innerHTML = value;
         quillRef.current.on("text-change", () => {
-          onChange(quillRef.current?.root.innerHTML ?? "");
+          if (!isSettingContent) {
+            onChange(quillRef.current?.root.innerHTML ?? "");
+          }
         });
       });
     }
-  }, []); // run only on mount
+  }, [isSettingContent, onChange, value]);
 
-  // Update editor content when external value changes.
   useEffect(() => {
     if (quillRef.current && quillRef.current.root.innerHTML !== value) {
+      setIsSettingContent(true);
       quillRef.current.root.innerHTML = value;
+      setTimeout(() => setIsSettingContent(false), 0);
     }
   }, [value]);
 
-  return (
-    <div>
-      <div>
-        <div ref={editorRef} className="bg-white" />
-      </div>
-    </div>
-  );
+  return <div ref={editorRef} className="bg-white" />;
 };
 
 export default RichTextEditor;

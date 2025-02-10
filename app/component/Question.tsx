@@ -1,6 +1,5 @@
 import QuestionCard from "./QuestionCard";
 import { questions } from "../lib/types/QuestionType";
-import ModeFilter from "./ModeFilter";
 import QuestionTable from "./QuestionTable";
 import { useEffect, useState } from "react";
 import { isRoleAdmin } from "../lib/role";

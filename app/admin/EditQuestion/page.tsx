@@ -9,7 +9,7 @@ export default function Page() {
 
   return (
     <div>
-      <CreateQuestion id={id} />
+      <CreateQuestion id={Number(id)} />
     </div>
   );
 }
