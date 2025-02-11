@@ -71,9 +71,9 @@ export default function QuestionTable({
           {Topic}
         </button>
       </td>
-      <td className=" px-4 py-2 ">{showLevel(Level)}</td>
-      <td className="px-4 py-2">{point}</td>
-      <td className=" px-4 py-2">{submitCount}</td>
+      <td className="px-4 py-2 ">{showLevel(Level)}</td>
+      <td className="px-4 py-2 ">{point}</td>
+      <td className="px-4 py-2 ">{submitCount}</td>
 
       {isRoleAdmin && (
         <>

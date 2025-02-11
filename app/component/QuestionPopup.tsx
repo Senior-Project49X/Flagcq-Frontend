@@ -31,6 +31,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
   const [showCongratPopup, setShowCongratPopup] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const delRef = useRef<HTMLDivElement>(null);
+  const yayRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setRole(isRoleAdmin() || isRoleTa());
   }, []);
@@ -61,25 +62,17 @@ export default function QuestionPopup(Question: Readonly<State>) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      console.log("popupRef", popupRef.current);
-      console.log("delRef", delRef.current);
-      if (
-        popupRef.current &&
-        !popupRef.current.contains(event.target as Node)
-      ) {
-        console.log(
-          "popupRef.current",
-          !popupRef.current.contains(event.target as Node)
-        );
-        if (
-          !(delRef.current && !delRef.current.contains(event.target as Node))
-        ) {
-          console.log(
-            "delRef.current",
-            !delRef.current.contains(event.target as Node)
-          );
-          Question.ClosePopup(false);
-        }
+      const isOutsideQuestion =
+        popupRef.current && !popupRef.current.contains(event.target as Node);
+      const isOutsideDelete =
+        delRef.current && !delRef.current.contains(event.target as Node);
+      const isOutsideYay =
+        yayRef.current && !yayRef.current.contains(event.target as Node);
+      if (isOutsideDelete === null && isOutsideYay === null) {
+        if (isOutsideQuestion) Question.ClosePopup(false);
+      } else {
+        if (isOutsideDelete) setShowDeletePopup(false);
+        if (isOutsideYay) location.reload();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -121,7 +114,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
       )}
       {showCongratPopup && (
         <Yay
-          yayRef={popupRef}
+          yayRef={yayRef}
           handleCorrectAnswer={handleCorrectAnswer}
           showPopup={showCongratPopup}
           setShowCongratPopup={setShowCongratPopup}

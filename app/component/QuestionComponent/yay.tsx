@@ -14,28 +14,14 @@ export default function Yay({
   setShowCongratPopup,
   yayRef,
 }: Readonly<YayProps>) {
-  useEffect(() => {
-    const handleYayOutsideClick = (event: MouseEvent) => {
-      if (yayRef.current && !yayRef.current.contains(event.target as Node)) {
-        // Do nothing (keep the Yay popup open)
-      }
-    };
-
-    if (showPopup) {
-      document.addEventListener("mousedown", handleYayOutsideClick);
-      return () => {
-        document.removeEventListener("mousedown", handleYayOutsideClick);
-      };
-    }
-  }, [showPopup]);
   if (!showPopup) return null;
   // Use yayRef for the Yay popup div
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
-      ref={yayRef}
-    >
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
+      <div
+        ref={yayRef}
+        className="bg-white p-6 rounded-lg shadow-lg text-center"
+      >
         <h2 className="text-2xl font-bold text-green-500 mb-4">
           Congratulations!
         </h2>
