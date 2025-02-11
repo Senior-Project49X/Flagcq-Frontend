@@ -44,7 +44,7 @@ export default function Question({
   }, [pathname]);
   return (
     <div>
-      <div className="flex justify-end mt-4">
+      <div className="flex justify-end mt-4 mr-16">
         <button
           onClick={() => {
             setCookie("view", "false");
@@ -88,7 +88,7 @@ export default function Question({
           ))}
         </div>
       ) : (
-        <table className="table-auto w-full">
+        <table className="table-auto w-full ">
           <thead className="bg-gray-900 text-green">
             <tr>
               {isAdmin && isCreateQuestionTournament && (
@@ -98,7 +98,7 @@ export default function Question({
               <th className="px-4 py-2 text-green-400">Question name</th>
               <th className=" px-4 py-2 text-green-400">Difficulty</th>
               <th className=" px-4 py-2 text-green-400">Point</th>
-              <th className=" px-4 py-2 text-green-400">Solver</th>
+              <th className=" px-4 py-2 text-green-400">Solved</th>
               {isAdmin && (
                 <>
                   <th className=" px-4 py-2 text-green-400">Edit</th>
