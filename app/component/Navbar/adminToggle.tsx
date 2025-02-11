@@ -43,20 +43,18 @@ export default function AdminTogglePage({
         onClick={() => {
           setOpen(!open);
         }}
-        className={
-          pathname.startsWith("/admin")
-            ? "text-green-400 h-fit mt-3 "
-            : "hover:text-white h-fit mt-3"
-        }
+        className={`  h-fit mt-3 
+          ${pathname.startsWith("/admin") && "text-green-400"}
+            `}
       >
         Admin Config ▾
         {open && (
-          <div className="absolute  mt-2 w-50 bg-gray-100 rounded-md shadow-lg z-20 ">
+          <div className="absolute mt-2 w-50 bg-gray-100 rounded-md shadow-lg z-20 ">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-200"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-200 text-left"
               >
                 {link.label}
               </Link>

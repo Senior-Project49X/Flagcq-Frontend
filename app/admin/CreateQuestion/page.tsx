@@ -13,8 +13,11 @@ import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
-import RichTextEditor from "@/app/component/RichTextEditor";
-
+import dynamic from "next/dynamic";
+const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
