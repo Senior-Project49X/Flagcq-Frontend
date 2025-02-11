@@ -16,6 +16,8 @@ type TournamentDetail = {
   hasJoined: boolean;
   teamId: number;
   teamCount: number;
+  mode: string;
+  teamLimit: number;
 };
 
 export default function TournamentCard({
@@ -31,6 +33,8 @@ export default function TournamentCard({
   hasJoined,
   teamId,
   teamCount,
+  mode,
+  teamLimit,
 }: TournamentDetail) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -74,6 +78,7 @@ export default function TournamentCard({
             </div>
           </div>
         </div>
+
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Image
@@ -83,8 +88,14 @@ export default function TournamentCard({
               height={40}
               className="object-contain"
             />
-            <span className="text-xl font-bold">{teamCount}/50</span>
+            <span className="text-xl font-bold">
+              {teamCount}/{teamLimit}
+            </span>
           </div>
+
+          {/* Show mode selection only if the user is an admin */}
+          {isAdmin && <div className="flex items-center gap-2">{mode}</div>}
+
           <button
             className={`px-10 py-2 rounded-lg ${
               status === "open"

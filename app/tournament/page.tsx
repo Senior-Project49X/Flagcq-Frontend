@@ -28,6 +28,8 @@ interface Tournament {
   eventRemaining?: RemainingTime;
   teamId: number;
   teamCount: number;
+  mode: string;
+  teamLimit: number;
 }
 
 // Utility function to format date
@@ -204,6 +206,8 @@ export default function Page() {
                 hasJoined={true}
                 teamId={tournament.teamId}
                 teamCount={tournament.teamCount}
+                mode={tournament.mode}
+                teamLimit={tournament.teamLimit}
               />
             ))
           ) : (
