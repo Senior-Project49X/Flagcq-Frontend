@@ -61,6 +61,9 @@ export default function QuestionCard({
       if (is_selected && tournament_id !== 0) {
         setShowPopupDelTournamentQuestion(true);
       } else {
+        if (tournament_id === 0) {
+          return;
+        }
         select ? setSelect(false) : setSelect(true);
       }
       if (addQuestionTournament !== undefined) addQuestionTournament(id);
