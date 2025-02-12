@@ -14,7 +14,7 @@ export default function ModeFilter({
   const mode = ["Practice", "Tournament", "Unpublished"];
 
   return (
-    <div className="grid grid-cols-3 gap-6 px-8 text-center">
+    <div className="grid grid-cols-3 gap-6 px-8 text-center  mx-8">
       {mode.map((displayMode) => (
         <button
           key={displayMode}

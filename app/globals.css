@@ -1,18 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "quill/dist/quill.snow.css";
 :root {
   background-color: #090147;
   overflow-y: scroll;
 }
+code{
+  @apply px-2 py-1 rounded-sm text-sm;
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255)
+}
+
+.is-active{
+  @apply  bg-blue-500  rounded-sm transition-all duration-200 ease-in-out ;
+}
 
 .rich-text a {
+  height: 100%;
   color: blue;
+  cursor: pointer;
   text-decoration: underline;
   position: relative;
 }
-
+.ProseMirror {
+  min-height: 100px;
+  height: 100%;
+}
 .rich-text a:hover::after {
   content: attr(href);
   position: absolute;

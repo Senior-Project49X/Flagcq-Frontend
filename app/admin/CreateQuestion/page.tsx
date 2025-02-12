@@ -13,7 +13,11 @@ import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
-import RichTextEditor from "@/app/component/RichTextEditor";
+import dynamic from "next/dynamic";
+const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 interface CreateNewQuestion {
   CategoriesId: string | null;
   Title: string;
@@ -49,13 +53,13 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   const [categories, setCategories] = useState<Category[]>(
     [] as unknown as Category[]
   );
-  const [newCategory, setNewCategory] = useState<boolean>(false);
+  const newCategory = false;
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [hints, setHints] = useState<
     { id: string | number | null; detail: string; penalty: number }[]
   >([]);
-  const [category, setCategory] = useState<string>("");
+  const category = "";
   const [difficultysID, setDifficultysID] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [point, setPoint] = useState("");
@@ -215,7 +219,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     if (isRoleUser()) {
       router.push("/unauthorized");
     }
-  }, []);
+  }, [router]);
 
   return (
     <>
@@ -354,7 +358,6 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                   removeHint={removeHint}
                 />
               ))}
-
             <br />
             <label>{`Answer: CTFCQ{ `}</label>
             <input

@@ -18,10 +18,11 @@ type State = {
   id: number;
   Topic: string;
   ClosePopup: Function;
+  isCanEdit: boolean;
 };
 
 export default function QuestionPopup(Question: Readonly<State>) {
-  const [showPopup, setShowPopup] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -29,7 +30,8 @@ export default function QuestionPopup(Question: Readonly<State>) {
   const [role, setRole] = useState<boolean | null>(null);
   const [showCongratPopup, setShowCongratPopup] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
-
+  const delRef = useRef<HTMLDivElement>(null);
+  const yayRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setRole(isRoleAdmin() || isRoleTa());
   }, []);
@@ -56,23 +58,31 @@ export default function QuestionPopup(Question: Readonly<State>) {
   };
 
   const handleClosePopup = () => {
-    setShowPopup(false);
+    setShowDeletePopup(false);
     setIsError(false);
     setName("");
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-      Question.ClosePopup(false);
-    }
-  };
-
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const isOutsideQuestion =
+        popupRef.current && !popupRef.current.contains(event.target as Node);
+      const isOutsideDelete =
+        delRef.current && !delRef.current.contains(event.target as Node);
+      const isOutsideYay =
+        yayRef.current && !yayRef.current.contains(event.target as Node);
+      if (isOutsideDelete === null && isOutsideYay === null) {
+        if (isOutsideQuestion) Question.ClosePopup(false);
+      } else {
+        if (isOutsideDelete) setShowDeletePopup(false);
+        if (isOutsideYay) location.reload();
+      }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [Question]);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -95,9 +105,9 @@ export default function QuestionPopup(Question: Readonly<State>) {
 
   return (
     <>
-      {showPopup && (
+      {showDeletePopup && (
         <DeleteQPuestionPopup
-          DeleteRef={popupRef}
+          DeleteRef={delRef}
           handleClosePopup={handleClosePopup}
           handleConfirmDelete={handleConfirmDelete}
           name={name}
@@ -107,7 +117,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
       )}
       {showCongratPopup && (
         <Yay
-          yayRef={popupRef}
+          yayRef={yayRef}
           handleCorrectAnswer={handleCorrectAnswer}
           showPopup={showCongratPopup}
           setShowCongratPopup={setShowCongratPopup}
@@ -130,9 +140,10 @@ export default function QuestionPopup(Question: Readonly<State>) {
                   </h3>
                   {role && (
                     <AdminEditDelQuestion
+                      isCanEdit={Question.isCanEdit}
                       AdminEditref={popupRef}
                       id={Question.id}
-                      setShowPopup={setShowPopup}
+                      setShowPopup={setShowDeletePopup}
                     />
                   )}
                 </div>

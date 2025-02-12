@@ -15,26 +15,13 @@ export default function DeleteQPuestionPopup({
   isError,
   DeleteRef,
 }: Readonly<DeleteQuestionProps>) {
-  useEffect(() => {
-    const handleYayOutsideClick = (event: MouseEvent) => {
-      if (
-        DeleteRef.current &&
-        !DeleteRef.current.contains(event.target as Node)
-      ) {
-        // Do nothing (keep the Yay popup open)
-      }
-    };
-
-    document.addEventListener("mousedown", handleYayOutsideClick);
-    return () => {
-      document.removeEventListener("mousedown", handleYayOutsideClick);
-    };
-  }, []);
-
   return (
-    <div ref={DeleteRef}>
+    <div>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
-        <div className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative">
+        <div
+          ref={DeleteRef}
+          className="bg-white rounded-lg p-12 max-w-4xl w-full text-center relative"
+        >
           <button
             onClick={handleClosePopup}
             className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
