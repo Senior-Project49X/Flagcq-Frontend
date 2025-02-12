@@ -9,6 +9,7 @@ type ModalDetail = {
   Topic: string;
   Detail: string;
   tournament_id: number;
+  joinCode: string;
 };
 
 export default function EnrollModal({
@@ -16,6 +17,7 @@ export default function EnrollModal({
   Topic,
   Detail,
   tournament_id,
+  joinCode,
 }: ModalDetail) {
   const [teamName, setTeamName] = useState("");
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
@@ -24,6 +26,7 @@ export default function EnrollModal({
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const router = useRouter();
+  const [isCodeVisible, setIsCodeVisible] = useState(false);
 
   // Check if the user is an admin
   useEffect(() => {
@@ -134,6 +137,13 @@ export default function EnrollModal({
                     {isLoadingCreate ? "Creating..." : "Create"}
                   </button>
                 </form>
+              </div>
+            )}
+
+            {joinCode && (
+              <div className="flex flex-col items-center font-semibold">
+                <br />
+                Code: {joinCode}
               </div>
             )}
           </div>

@@ -14,10 +14,10 @@ type TournamentDetail = {
   eventtime: string;
   event_endDate: string;
   hasJoined: boolean;
-  teamId: number;
   teamCount: number;
   mode: string;
   teamLimit: number;
+  joinCode: string;
 };
 
 export default function TournamentCard({
@@ -31,10 +31,10 @@ export default function TournamentCard({
   eventtime,
   event_endDate,
   hasJoined,
-  teamId,
   teamCount,
   mode,
   teamLimit,
+  joinCode,
 }: TournamentDetail) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -61,6 +61,7 @@ export default function TournamentCard({
           Topic={topic}
           Detail={detail}
           tournament_id={id}
+          joinCode={joinCode}
         />
       )}
       <div className="flex justify-between items-center">

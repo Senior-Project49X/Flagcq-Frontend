@@ -16,6 +16,7 @@ interface CreateTourState {
   mode: string;
   teamSizeLimit: number;
   limit: number;
+  joinCode: string;
 }
 
 export default function CreateTour() {
@@ -29,6 +30,7 @@ export default function CreateTour() {
     mode: "",
     teamSizeLimit: 0,
     limit: 0,
+    joinCode: "",
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -163,6 +165,7 @@ export default function CreateTour() {
                 <button
                   key={option}
                   type="button"
+                  value={CreateTourData.mode}
                   onClick={() => handleIChange(option)}
                   className={`px-4 py-2 rounded-md text-white font-medium ${
                     CreateTourData.mode === option
@@ -180,37 +183,42 @@ export default function CreateTour() {
             {/* Team Size Limit */}
             <div className="w-1/2">
               <label htmlFor="teamSizeLimit" className="block font-medium mb-2">
-                Team Size
+                Number of partcipants per team
               </label>
               <select
                 id="teamSizeLimit"
                 name="teamSizeLimit"
-                value={CreateTourData.teamSizeLimit}
+                value={CreateTourData.teamSizeLimit || ""}
                 onChange={handleNumberChange}
-                className={getInputClass("teamSizeLimit")}
+                className={`${getInputClass("teamSizeLimit")} text-gray-400`} // Ensures the text color matches
                 required
               >
+                <option value="" disabled className="text-gray-400">
+                  Select number between 1-4
+                </option>
                 {[1, 2, 3, 4].map((size) => (
-                  <option key={size} value={size}>
+                  <option key={size} value={size} className="text-black">
                     {size}
                   </option>
                 ))}
               </select>
             </div>
+
             {/* Team Limit */}
             <div className="w-1/2">
               <label htmlFor="limit" className="block font-medium mb-2">
-                Team Limit
+                Total teams in tournament (max 120)
               </label>
               <input
                 type="number"
                 id="limit"
                 name="limit"
-                value={CreateTourData.limit}
+                value={CreateTourData.limit || ""} // Ensures the placeholder is shown first
                 onChange={handleInputChange}
-                className={getInputClass("limit")}
+                className={`${getInputClass("limit")} placeholder-gray-400`} // Placeholder color
                 min="1"
                 max="120"
+                placeholder="Select number between 1-120"
                 required
               />
             </div>
