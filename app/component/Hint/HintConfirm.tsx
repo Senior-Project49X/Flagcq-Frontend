@@ -39,9 +39,12 @@ export default function HintConfirm({
           X
         </button>
         {isUsed ? (
-          <h2 className="text-red-500 font-bold text-2xl mb-4">
-            {description}
-          </h2>
+          <div
+            className="text-red-500 font-bold text-2xl mb-4 leading-relaxed break-words rich-text overflow-y-auto"
+            dangerouslySetInnerHTML={{
+              __html: description,
+            }}
+          />
         ) : (
           <>
             {" "}

@@ -317,10 +317,8 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                 <button
                   key={buttonKey}
                   type="button"
-                  className={`px-4 py-2 font-bold rounded transition ${
-                    modeSelection[buttonKey]
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
+                  className={`button_select unSelect ${
+                    modeSelection[buttonKey] && "selected"
                   }`}
                   onClick={() => handleToggle(buttonKey)}
                 >
