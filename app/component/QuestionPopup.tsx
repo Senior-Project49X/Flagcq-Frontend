@@ -67,12 +67,6 @@ export default function QuestionPopup(Question: Readonly<State>) {
     }
   };
 
-  const handleClosePopup = () => {
-    setShowDeletePopup(false);
-    setIsError(false);
-    setName("");
-  };
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const isOutsideQuestion =
@@ -103,14 +97,10 @@ export default function QuestionPopup(Question: Readonly<State>) {
     fetchQuestion();
   }, [Question.id]);
   const handleConfirmDelete = () => {
-    if (name === showQuestion?.title) {
-      DeleteQuestionsByID(Question.id);
-      handleClosePopup();
-      Question.ClosePopup(false);
-      location.reload();
-    } else {
-      setIsError(true);
-    }
+    DeleteQuestionsByID(Question.id);
+    setShowDeletePopup(false);
+    Question.ClosePopup(false);
+    location.reload();
   };
 
   return (
@@ -118,11 +108,8 @@ export default function QuestionPopup(Question: Readonly<State>) {
       {showDeletePopup && (
         <DeleteQPuestionPopup
           DeleteRef={delRef}
-          handleClosePopup={handleClosePopup}
+          handleClosePopup={() => setShowDeletePopup(false)}
           handleConfirmDelete={handleConfirmDelete}
-          name={name}
-          setName={setName}
-          isError={isError}
         />
       )}
       {showCongratPopup && (
