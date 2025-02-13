@@ -247,22 +247,26 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
       )}
       <Navbar />
       <div className="p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white ">
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">
           CreateQuestion
         </h1>
 
         <div className="max-w-3xl mx-auto bg-gray-100 p-6 rounded-lg shadow-md text-black">
           <form onSubmit={onCreateQuestion}>
-            <label className="mr-2">
-              Topic{" "}
-              <input
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                type="text"
-                name="title"
-                className="w-full p-2 border-2 border-gray-300 rounded"
-              />
+            <label htmlFor="topic" className="mr-2">
+              Topic
             </label>
+            <input
+              id="topic"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              type="text"
+              name="title"
+              className="w-full p-2 border-2 border-gray-300 rounded"
+              required
+              maxLength={50}
+            />
+
             <br />
             <label>
               Category{" "}
@@ -271,6 +275,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                 className="w-full p-2 border-2 border-gray-300 rounded"
                 value={selectedCategory}
                 onChange={handleCategoryChange}
+                required
               >
                 <option value={category}>---please select category---</option>
                 {categories.map((category: Category) => (
@@ -297,6 +302,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                 name="difficultys_id"
                 className="w-full p-2 border-2 border-gray-300 rounded"
                 onChange={(e) => setDifficultysID(e.target.value)}
+                required
               >
                 <option value={""}>---please select Difficulty---</option>
                 <option value={"Easy"}>Easy</option>
@@ -359,15 +365,26 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                 />
               ))}
             <br />
-            <label>{`Answer: CTFCQ{ `}</label>
+            <span>Answer: </span>
+            {modeSelection["Practice"] && <label>{`CTFCQ{ `}</label>}
+
             <input
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               name="Answer"
               type="text"
               className=" p-2 border-2 border-gray-300 rounded"
+              required
             />
-            <span>{` }`}</span>
+            {modeSelection["Practice"] && (
+              <>
+                <label>{` }`}</label>
+                <div className="text-red-500 font-bold">
+                  Warning in practice mode your answer will be warpped by CTFCQ
+                  {`{Youranswer} `}
+                </div>
+              </>
+            )}
             <br />
             <label>
               Point{}
@@ -377,6 +394,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                 min="0"
                 max="10000000"
                 className="p-2 border-2 border-gray-300 rounded"
+                required
                 onKeyDown={(e) => {
                   if (
                     e.key === "e" ||

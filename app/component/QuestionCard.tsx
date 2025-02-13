@@ -109,12 +109,14 @@ export default function QuestionCard({
         <div className={`${(Solved || select) && "opacity-60"} text-green-400`}>
           {/* Category and Difficulty */}
           <div className="flex justify-between items-center mb-2">
-            <p className="text-gray-300">{Category}</p>
+            <p className="text-black px-2 rounded-full bg-red-400">
+              {Category}
+            </p>
             {showLevel(Level)}
           </div>
 
           {/* Title */}
-          <h2 className="text-xl font-bold mt-2 text-left">{Topic}</h2>
+          <h2 className="text-xl font-bold mt-2 text-left truncate">{Topic}</h2>
 
           {/* Solves and Points in Same Row */}
           <div className="flex justify-between items-center mt-2 ">

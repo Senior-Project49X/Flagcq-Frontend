@@ -105,8 +105,12 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
           <FormatListNumberedRoundedIcon />
         </button>
         <button
-          onClick={preventDefault(() => editor.chain().focus().setCode().run())}
-          disabled={editor.isActive("code")}
+          onClick={preventDefault(() => {
+            editor.isActive("code")
+              ? editor.chain().focus().unsetAllMarks().run()
+              : editor.chain().focus().setCode().run();
+          })}
+          // disabled={editor.isActive("code")}
           className={`${editor.isActive("code") && "is-active"} `}
         >
           <CodeRoundedIcon />

@@ -135,7 +135,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
               >
                 {/* Header */}
                 <div className="flex items-start justify-between p-5 border-b border-gray-500">
-                  <h3 className="text-3xl font-semibold text-green-400 break-words">
+                  <h3 className="text-3xl font-semibold text-green-400 break-words w-10/12 ">
                     {showQuestion?.title}
                   </h3>
                   {role && (
@@ -159,39 +159,42 @@ export default function QuestionPopup(Question: Readonly<State>) {
                       }}
                     />
                   </div>
+                </div>
+                {/* Download and Hints */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-6 pb-6">
+                  {showQuestion?.file_path ? (
+                    <button
+                      className="text-black p-2 bg-green-400 rounded-lg flex items-center space-x-2 hover:bg-green-500 transition-colors"
+                      onClick={() => DownloadQuestionsByID(Question.id)}
+                    >
+                      <Image
+                        src="/download.svg"
+                        alt="Download"
+                        width={20}
+                        height={20}
+                      />
+                      <p className="break-all">{showQuestion.file_path}</p>
+                    </button>
+                  ) : (
+                    <div></div>
+                  )}
+                  <div className="flex-shrink-0">
+                    <div className="inline-flex rounded-md shadow-sm ">
+                      {showQuestion?.hints && (
+                        <p className="mr-2 text-lg py-2 text-green-400">Hint</p>
+                      )}
 
-                  {/* Download and Hints */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-6 pb-6">
-                    {showQuestion?.file_path ? (
-                      <button
-                        className="text-black p-2 bg-green-400 rounded-lg flex items-center space-x-2 hover:bg-green-500 transition-colors"
-                        onClick={() => DownloadQuestionsByID(Question.id)}
-                      >
-                        <Image
-                          src="/download.svg"
-                          alt="Download"
-                          width={20}
-                          height={20}
+                      {showQuestion?.hints.map((hint, i) => (
+                        <Hint
+                          id={hint.id}
+                          key={hint.id}
+                          index={i}
+                          description={hint.Description}
+                          used={hint.used}
+                          penalty={hint.point}
+                          isLast={i === showQuestion.hints.length - 1}
                         />
-                        <p className="break-all">{showQuestion.file_path}</p>
-                      </button>
-                    ) : (
-                      <div></div>
-                    )}
-                    <div className="flex-shrink-0">
-                      <div className="inline-flex rounded-md shadow-sm ">
-                        {showQuestion?.hints.map((hint, i) => (
-                          <Hint
-                            id={hint.id}
-                            key={hint.id}
-                            index={i}
-                            description={hint.Description}
-                            used={hint.used}
-                            penalty={hint.point}
-                            isLast={i === showQuestion.hints.length - 1}
-                          />
-                        ))}
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
