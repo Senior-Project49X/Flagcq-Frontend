@@ -26,10 +26,10 @@ interface Tournament {
   event_endDate: string;
   enrollRemaining?: RemainingTime;
   eventRemaining?: RemainingTime;
-  teamId: number;
   teamCount: number;
   mode: string;
   teamLimit: number;
+  joinCode: string;
 }
 
 // Utility function to format date
@@ -204,10 +204,10 @@ export default function Page() {
                 eventtime={tournament.eventRemaining?.time || "Time Ended"}
                 event_endDate={formatDate(tournament.event_endDate)}
                 hasJoined={true}
-                teamId={tournament.teamId}
                 teamCount={tournament.teamCount}
                 mode={tournament.mode}
                 teamLimit={tournament.teamLimit}
+                joinCode={tournament.joinCode}
               />
             ))
           ) : (

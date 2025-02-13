@@ -19,7 +19,7 @@ export const PostCreateTour = async (data: TournamentData) => {
     const resp = await axios.post(
       `${ip}/api/createTournament`,
       {
-        name: data.topic, // Map topic to name
+        name: data.topic,
         description: data.description,
         enroll_startDate: data.enroll_startDate,
         enroll_endDate: data.enroll_endDate,

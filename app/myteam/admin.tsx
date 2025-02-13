@@ -5,7 +5,6 @@ import Navbar from "../component/Navbar/navbar";
 import { GetTourList } from "../lib/API/GetTourListAPI";
 import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
-import { PostJoinTeam } from "../lib/API/PostJoinTeam";
 import { useRouter } from "next/navigation";
 import MyteamCard from "../component/MyteamCard";
 
