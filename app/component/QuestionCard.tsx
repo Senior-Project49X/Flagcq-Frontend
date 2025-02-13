@@ -56,17 +56,16 @@ export default function QuestionCard({
   };
 
   const handleCardClicked = () => {
-    console.log("is_selected", tournament_id);
     if (pathname == "/admin/CreateQuestionTournament") {
-      if (is_selected && tournament_id !== 0) {
+      if (is_selected && tournament_id) {
         setShowPopupDelTournamentQuestion(true);
       } else {
         if (tournament_id === 0) {
           return;
         }
         select ? setSelect(false) : setSelect(true);
+        if (addQuestionTournament !== undefined) addQuestionTournament(id);
       }
-      if (addQuestionTournament !== undefined) addQuestionTournament(id);
     } else {
       setShowModal(true);
     }
