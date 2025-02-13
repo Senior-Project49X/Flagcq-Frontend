@@ -79,21 +79,23 @@ export default function QuestionTable({
         <>
           <td className=" px-4 py-2 ">
             <div className="justify-center flex">
-              <Link
-                href={`/admin/EditQuestion?QuestionID=${id}`}
-                className={`p-2 transition rounded-md ${
+              <button
+                disabled={!isCanEdit}
+                className={`p-2 transition rounded-md flex items-center justify-center ${
                   isCanEdit
                     ? "bg-yellow-200 hover:bg-yellow-300"
                     : "cursor-not-allowed bg-gray-200"
                 }`}
-                title={
-                  isCanEdit ? "Click to Submit" : "Someone already submitted"
-                }
               >
-                <div className="flex items-center justify-center">
+                <Link
+                  href={`/admin/EditQuestion?QuestionID=${id}`}
+                  title={
+                    isCanEdit ? "Click to Submit" : "Someone already submitted"
+                  }
+                >
                   <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
-                </div>
-              </Link>
+                </Link>
+              </button>
             </div>
           </td>
           <td className=" px-4 py-2">

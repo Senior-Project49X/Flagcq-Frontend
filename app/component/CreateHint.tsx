@@ -24,6 +24,7 @@ export default function CreateHint({
             className="w-full p-2 border border-gray-300 rounded"
             value={detail}
             onChange={(e) => handleHintChange(index, "detail", e.target.value)}
+            required
           />
         </label>
         <br />
@@ -35,6 +36,7 @@ export default function CreateHint({
             max="10000000"
             className="w-full p-2 border border-gray-300 rounded"
             value={penalty}
+            required
             onChange={(e) => handleHintChange(index, "penalty", e.target.value)}
             onKeyDown={(e) => {
               if (
