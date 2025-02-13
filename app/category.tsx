@@ -22,12 +22,7 @@ export default function Category({
 
   useEffect(() => {
     if (selectedCategory.includes("All Categories")) {
-      onCategoryChange([
-        "General Skill",
-        "Cryptography",
-        "Network",
-        "Forensics",
-      ]);
+      onCategoryChange([]);
     }
   }, [selectedCategory, onCategoryChange]);
 
