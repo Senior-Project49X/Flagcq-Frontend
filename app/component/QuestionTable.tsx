@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import QuestionPopup from "./QuestionPopup";
 import Link from "next/link";
+import { DeleteQuestionsByID } from "../lib/API/QuestionAPI";
+import DeleteQPuestionPopup from "./QuestionComponent/DeleteQuestionPopup";
 type detail = {
   id: number;
   Topic: string;
@@ -33,6 +35,7 @@ export default function QuestionTable({
   isCreateQuestionTournament,
 }: Readonly<detail>) {
   const isCanEdit = !is_selected && submitCount === 0;
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const showLevel = (Level: string) => {
     if (Level == "Easy") {
@@ -42,6 +45,13 @@ export default function QuestionTable({
     } else {
       return <span className="text-red-500">Hard</span>;
     }
+  };
+
+  const handleConfirmDelete = () => {
+    DeleteQuestionsByID(id);
+    setShowDeletePopup(false);
+
+    location.reload();
   };
   return (
     <tr className="even:bg-[#0D1B2A] odd:bg-gray-800 text-white">
@@ -54,6 +64,13 @@ export default function QuestionTable({
       )}
 
       <td className=" px-4 py-2 ">
+        {showDeletePopup && (
+          <DeleteQPuestionPopup
+            // DeleteRef={null}
+            handleClosePopup={() => setShowDeletePopup(false)}
+            handleConfirmDelete={handleConfirmDelete}
+          />
+        )}
         {showModal && (
           <div>
             <QuestionPopup
@@ -100,7 +117,12 @@ export default function QuestionTable({
           </td>
           <td className=" px-4 py-2">
             <div className="justify-center flex">
-              <button className="p-2 bg-red-300 hover:bg-red-500 transition rounded-md">
+              <button
+                className="p-2 bg-red-300 hover:bg-red-500 transition rounded-md"
+                onClick={() => {
+                  setShowDeletePopup(true);
+                }}
+              >
                 <div className="flex items-center justify-center">
                   <Image
                     src="/delete.svg"

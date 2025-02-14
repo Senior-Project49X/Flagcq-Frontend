@@ -22,12 +22,7 @@ export default function Category({
 
   useEffect(() => {
     if (selectedCategory.includes("All Categories")) {
-      onCategoryChange([
-        "General Skill",
-        "Cryptography",
-        "Network",
-        "Forensics",
-      ]);
+      onCategoryChange([]);
     }
   }, [selectedCategory, onCategoryChange]);
 
@@ -86,12 +81,13 @@ export default function Category({
             </button>
 
             {isOpen && (
-              <ul className="absolute mt-2 bg-gray-700 border rounded-lg shadow-lg w-full z-10 cursor-pointer">
-                <li
+              <div className="absolute mt-2 bg-gray-700 border rounded-lg shadow-lg w-full z-10 cursor-pointer">
+                <button
                   key="all-categories"
-                  className="px-4 py-2 hover:bg-gray-500"
+                  className="px-4 py-2 hover:bg-gray-500 w-full"
+                  onClick={() => handleCategoryClick("All Categories")}
                 >
-                  <label className="flex items-center space-x-2 cursor-pointer text-white">
+                  <div className="flex items-center space-x-2 cursor-pointer text-white">
                     <input
                       type="checkbox"
                       checked={
@@ -101,12 +97,16 @@ export default function Category({
                       className="w-4 h-4 text-green-500 bg-green-500 border-green-500 rounded-full accent-green-400/25"
                     />
                     <span>All Categories</span>
-                  </label>
-                </li>
+                  </div>
+                </button>
 
                 {CATEGORY_OPTIONS.map((category) => (
-                  <li key={category} className="px-4 py-2 hover:bg-gray-500">
-                    <label className="flex items-center space-x-2 cursor-pointer text-white">
+                  <button
+                    key={category}
+                    className="px-4 py-2 hover:bg-gray-500 w-full"
+                    onClick={() => handleCategoryClick(category)}
+                  >
+                    <div className="flex items-center space-x-2 cursor-pointer text-white  ">
                       <input
                         type="checkbox"
                         checked={selectedCategory.includes(category)}
@@ -114,10 +114,10 @@ export default function Category({
                         className="w-4 h-4 text-green-500 bg-green-500 border-green-500 rounded-full accent-green-400/25"
                       />
                       <span>{category}</span>
-                    </label>
-                  </li>
+                    </div>
+                  </button>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </div>

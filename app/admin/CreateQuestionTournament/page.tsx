@@ -78,7 +78,10 @@ export default function Homepage() {
   const handleCreateQT = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      if (question_id.length === 0)
+        return alert("Please select at least one question");
       await CreateQuestionTournamentAPI(question_id, tournament_id);
+      router.push("/tournament/TournamentPage?tournamentId=" + tournament_id);
     } catch (error) {
       console.error("Error CreateQuestionTournament:", error);
     }

@@ -196,6 +196,24 @@ export const CheckQuestionsByID = async (
   }
 };
 
+export const CheckQuestionsTournamentByID = async (
+  id: number,
+  Answer: string,
+  tournament_id: number
+): Promise<boolean> => {
+  try {
+    const resp = await axios.post(
+      `${ip}/api/question/tournament/check-answer`,
+      { question_id: id, Answer: Answer ,tournament_id:tournament_id },
+      { withCredentials: true }
+    );
+    return resp.data.solve;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
 export const DownloadQuestionsByID = async (id: number) => {
   try {
     const response = await axios.get(`${ip}/api/question/download/${id}`, {

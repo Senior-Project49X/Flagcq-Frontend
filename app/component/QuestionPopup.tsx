@@ -2,6 +2,7 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import {
   CheckQuestionsByID,
+  CheckQuestionsTournamentByID,
   DeleteQuestionsByID,
   DownloadQuestionsByID,
   GetQuestionsByID,
@@ -13,6 +14,7 @@ import { isRoleAdmin, isRoleTa } from "../lib/role";
 import Yay from "./QuestionComponent/yay";
 import DeleteQPuestionPopup from "./QuestionComponent/DeleteQuestionPopup";
 import AdminEditDelQuestion from "./QuestionComponent/admin/AdminEditDelQuestion";
+import { useSearchParams } from "next/navigation";
 
 type State = {
   id: number;
@@ -22,6 +24,7 @@ type State = {
 };
 
 export default function QuestionPopup(Question: Readonly<State>) {
+  const tournamentId = useSearchParams().get("tournamentId") ?? null;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +47,14 @@ export default function QuestionPopup(Question: Readonly<State>) {
     if (!answer) return;
 
     try {
-      const isCorrect = await CheckQuestionsByID(Question.id, answer);
+      let isCorrect = null;
+      if (tournamentId !== null) {
+        isCorrect = await CheckQuestionsTournamentByID(
+          Question.id,
+          answer,
+          parseInt(tournamentId)
+        );
+      } else isCorrect = await CheckQuestionsByID(Question.id, answer);
       if (isCorrect) {
         setShowCongratPopup(true);
         setIsError(false); // Reset error when correct
@@ -55,12 +65,6 @@ export default function QuestionPopup(Question: Readonly<State>) {
       console.error("Error checking answer:", error);
       setIsError(true);
     }
-  };
-
-  const handleClosePopup = () => {
-    setShowDeletePopup(false);
-    setIsError(false);
-    setName("");
   };
 
   useEffect(() => {
@@ -93,14 +97,10 @@ export default function QuestionPopup(Question: Readonly<State>) {
     fetchQuestion();
   }, [Question.id]);
   const handleConfirmDelete = () => {
-    if (name === showQuestion?.title) {
-      DeleteQuestionsByID(Question.id);
-      handleClosePopup();
-      Question.ClosePopup(false);
-      location.reload();
-    } else {
-      setIsError(true);
-    }
+    DeleteQuestionsByID(Question.id);
+    setShowDeletePopup(false);
+    Question.ClosePopup(false);
+    location.reload();
   };
 
   return (
@@ -108,11 +108,8 @@ export default function QuestionPopup(Question: Readonly<State>) {
       {showDeletePopup && (
         <DeleteQPuestionPopup
           DeleteRef={delRef}
-          handleClosePopup={handleClosePopup}
+          handleClosePopup={() => setShowDeletePopup(false)}
           handleConfirmDelete={handleConfirmDelete}
-          name={name}
-          setName={setName}
-          isError={isError}
         />
       )}
       {showCongratPopup && (
@@ -180,7 +177,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                   )}
                   <div className="flex-shrink-0">
                     <div className="inline-flex rounded-md shadow-sm ">
-                      {showQuestion?.hints && (
+                      {showQuestion?.hints.length !== 0 && (
                         <p className="mr-2 text-lg py-2 text-green-400">Hint</p>
                       )}
 

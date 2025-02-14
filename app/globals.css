@@ -21,6 +21,14 @@ code{
   background-color: #f5f5f5;
 }
 
+.button_select{
+  @apply px-4 py-2 font-bold rounded transition duration-200 text-white  bg-gray-500 hover:bg-gray-600
+}
+
+.button_select.selected{
+  @apply bg-green-500
+}
+
 .rich-text a {
   height: 100%;
   color: blue;
