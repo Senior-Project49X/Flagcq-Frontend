@@ -60,12 +60,11 @@ export default function TeamLeaderboardAdmin() {
         </button>
       </div>
 
-      {/* Tournament Leaderboard */}
-      <div className="max-w-3xl mx-auto p-8">
+      <div className="max-w-5xl mx-auto p-8">
         <h1 className="text-2xl font-bold mb-8 text-center">
           Tournament Leaderboard
         </h1>
-        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
+        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md w-full">
           <div className="flex justify-between mb-4">
             <span className="font-bold">Rank</span>
             <span className="font-bold">Team Name</span>
@@ -93,23 +92,24 @@ export default function TeamLeaderboardAdmin() {
       </div>
 
       {/* Our Team Leaderboard */}
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto p-8">
         <h1 className="text-2xl font-bold mb-8 text-center">
           Our Team Leaderboard
         </h1>
-        <div className="bg-white text-black rounded-lg shadow-md px-4 py-6 mb-6 max-w-[400px] mx-auto">
+        <div className="bg-white text-black rounded-lg shadow-md p-6 mb-6 w-full">
+          <div className="flex justify-between mb-4">
+            <span className="font-bold">Rank</span>
+            <span className="font-bold">Team Name</span>
+            <span className="font-bold">Total Points</span>
+          </div>
+          <hr className="border-t-2 mb-4" />
+
           {teamLeaderboardData.length > 0 ? (
-            <>
-              <h2 className="text-xl sm:text-2xl font-bold text-center mb-4">
-                Team {teamLeaderboardData[0]?.teamName || "N/A"}
-              </h2>
-              <div className="text-center text-base sm:text-lg mb-4">
-                Rank: {teamLeaderboardData.length > 0 ? 1 : "N/A"}
-              </div>
-              <div className="text-center text-lg sm:text-xl font-semibold text-green-600">
-                Total Points: {teamLeaderboardData[0]?.totalPoints || "0"}
-              </div>
-            </>
+            <div className="flex justify-between items-center text-lg mb-2">
+              <span>1</span>
+              <span>{teamLeaderboardData[0]?.teamName || "N/A"}</span>
+              <span>{teamLeaderboardData[0]?.totalPoints || "0"}</span>
+            </div>
           ) : (
             <div className="text-center text-gray-500">
               No team data available.
@@ -118,7 +118,7 @@ export default function TeamLeaderboardAdmin() {
         </div>
 
         {/* Members List */}
-        <div className="bg-white text-black rounded-lg shadow-md p-6">
+        <div className="bg-white text-black rounded-lg shadow-md p-6 w-full">
           <div className="flex justify-between font-bold text-lg mb-4">
             <span className="text-green-600">Member</span>
             <span className="text-red-500">Score</span>

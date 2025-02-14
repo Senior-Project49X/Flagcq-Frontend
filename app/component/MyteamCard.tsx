@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { isRoleAdmin } from "../lib/role";
+import Image from "next/image";
 
 type TournamentDetail = {
   id: number;
@@ -15,6 +16,8 @@ type TournamentDetail = {
   hasJoined: boolean;
   teamId: number;
   teamCount: number;
+  mode: string;
+  teamLimit: number;
 };
 
 export default function MyteamCard({
@@ -29,7 +32,9 @@ export default function MyteamCard({
   event_endDate,
   hasJoined,
   teamId,
+  mode,
   teamCount,
+  teamLimit,
 }: TournamentDetail) {
   const router = useRouter();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -37,16 +42,6 @@ export default function MyteamCard({
   useEffect(() => {
     setIsAdmin(isRoleAdmin());
   }, []);
-
-  const handleButtonClick = () => {
-    if (isAdmin) {
-      router.push(`/tournament/TournamentPage?tournamentId=${id}`);
-    } else {
-      router.push(
-        `/tournament/Tourteam_member?tournamentId=${id}&teamId=${teamId}`
-      );
-    }
-  };
 
   return (
     <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
@@ -66,13 +61,34 @@ export default function MyteamCard({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xl font-bold">{teamCount}</span>
-          <button
-            className="px-10 py-2 rounded-lg bg-customGreen hover:bg-green-500 ease-out duration-300"
-            onClick={handleButtonClick}
-          >
-            {isAdmin ? "Manage" : "Joined"}
-          </button>
+          <div className="flex items-center gap-2">
+            <Image
+              src="/people.svg"
+              alt="Category logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
+            <span className="text-xl font-bold">
+              {teamCount}/{teamLimit}
+            </span>
+          </div>
+
+          {/* Show mode selection only if the user is an admin */}
+          <div className="flex items-center gap-2">{mode}</div>
+          <div className="flex flex-col gap-2">
+            {/* Button for everyone to view their team */}
+            <button
+              className="px-6 py-2 bg-customGreen hover:bg-green-500 text-black rounded-lg"
+              onClick={() =>
+                router.push(
+                  `/tournament/Tourteam_member?tournamentId=${id}&teamId=${teamId}`
+                )
+              }
+            >
+              View Team
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ const ip = process.env.NEXT_PUBLIC_IP_URL;
 
 export interface JoinTeamData {
   invite_code: string;
+  teamName: string;
 }
 
 export const PostJoinTeam = async (data: JoinTeamData) => {
@@ -12,6 +13,7 @@ export const PostJoinTeam = async (data: JoinTeamData) => {
       `${ip}/teams/join`,
       {
         invite_code: data.invite_code,
+        teamName: data.teamName,
       },
       {
         withCredentials: true,

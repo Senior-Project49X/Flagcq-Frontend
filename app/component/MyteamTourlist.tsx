@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import EnrollModal from "./EnrollModal";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { isRoleAdmin } from "../lib/role";
+import { colCount } from "@tiptap/pm/tables";
 
 type TournamentDetail = {
   id: number;
@@ -14,13 +14,13 @@ type TournamentDetail = {
   eventtime: string;
   event_endDate: string;
   hasJoined: boolean;
+  teamId: number;
   teamCount: number;
   mode: string;
   teamLimit: number;
-  joinCode: string;
 };
 
-export default function TournamentCard({
+export default function MyteamTourlist({
   id,
   topic,
   detail,
@@ -31,41 +31,22 @@ export default function TournamentCard({
   eventtime,
   event_endDate,
   hasJoined,
-  teamCount,
+  teamId,
   mode,
+  teamCount,
   teamLimit,
-  joinCode,
 }: TournamentDetail) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const router = useRouter();
+  const [isEventStarted, setIsEventStarted] = useState<boolean>(false);
 
   useEffect(() => {
-    const role = isRoleAdmin();
-    setIsAdmin(role);
-  }, []);
-
-  // Determine event start and end statuses
-
-  // Determine status; closed if the current time is past enrollment end
-  const effectiveStatus = Date() < enrolltime ? "closed" : status;
-
-  const handleOpenModal = () => {
-    if (effectiveStatus === "open" || isAdmin) {
-      setIsModalOpen(true);
+    if (eventtime <= Date() && enrolltime >= eventtime) {
+      setIsEventStarted(true);
     }
-  };
+  }, [eventtime]);
 
   return (
     <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
-      {isModalOpen && (
-        <EnrollModal
-          ClosePopup={() => setIsModalOpen(false)}
-          Topic={topic}
-          Detail={detail}
-          tournament_id={id}
-          joinCode={joinCode}
-        />
-      )}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold mb-1">{topic}</h2>
@@ -81,7 +62,6 @@ export default function TournamentCard({
             </div>
           </div>
         </div>
-
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Image
@@ -96,24 +76,23 @@ export default function TournamentCard({
             </span>
           </div>
 
-          {/* Show mode selection only if the user is an admin */}
-          {isAdmin && <div className="flex items-center gap-2">{mode}</div>}
-
-          <button
-            className={`px-6 py-2 rounded-lg text-black ${
-              effectiveStatus === "open" || isAdmin
-                ? "bg-customGreen hover:bg-green-500 ease-out duration-300"
-                : "bg-customGrey cursor-not-allowed"
-            }`}
-            onClick={handleOpenModal}
-            disabled={effectiveStatus !== "open" && !isAdmin}
-          >
-            {isAdmin
-              ? "Manage"
-              : effectiveStatus === "open"
-              ? "Enroll"
-              : "Closed"}
-          </button>
+          <div className="flex items-center gap-2">{mode}</div>
+          <div className="flex flex-col gap-2">
+            <button
+              className={`px-6 py-2 rounded-lg text-black ${
+                isEventStarted
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-customGrey cursor-not-allowed"
+              }`}
+              onClick={() =>
+                isEventStarted &&
+                router.push(`/tournament/TournamentPage?tournamentId=${id}`)
+              }
+              disabled={!isEventStarted}
+            >
+              Play tournament
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -86,13 +86,21 @@ export default function EnrollModal({
           <div className="flex items-center justify-between px-6 py-4 border-b">
             <h3 className="text-lg font-semibold">{Topic}</h3>
             <button className="text-black text-2xl" onClick={ClosePopup}>
-              x
+              &times;
             </button>
           </div>
 
           <div className="px-6 py-6">
             <h4 className="text-center text-lg font-semibold mb-6">Detail</h4>
-            <div className="text-center mb-6">{Detail}</div>
+            <div className="text-center mb-6">
+              {" "}
+              <div
+                className="text-white text-lg leading-relaxed break-words rich-text"
+                dangerouslySetInnerHTML={{
+                  __html: Detail ?? "",
+                }}
+              />
+            </div>
 
             {isAdmin ? (
               <div className="grid grid-cols-2 gap-4">
