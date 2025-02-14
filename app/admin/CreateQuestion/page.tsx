@@ -116,13 +116,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     console.log(id);
 
     if (id !== null && id !== undefined) {
-      if (id) {
-        EditQuestionAPI(
-          formData,
-          { setIsFailed, setMessage, setIsSuccess },
-          id
-        );
-      }
+      EditQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess }, id);
     } else {
       CreateQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess });
     }

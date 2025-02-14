@@ -1,11 +1,16 @@
 "use client";
 import { PostCreateTour } from "../../lib/API/PostCreateTour";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../component/Navbar/navbar";
 import { formatDynamicAPIAccesses } from "next/dist/server/app-render/dynamic-rendering";
 import { useRouter } from "next/navigation";
-import RichTextEditor from "@/app/component/RichTextEditor";
 
+import { EditTourAPI, GetTournamentByID } from "@/app/lib/API/EditTour";
+import dynamic from "next/dynamic";
+const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 interface CreateTourState {
   topic: string;
   description: string;
@@ -17,9 +22,16 @@ interface CreateTourState {
   teamSizeLimit: number;
   limit: number;
   joinCode: string;
+  tournament_id: number | null | undefined;
 }
 
-export default function CreateTour() {
+interface CreateTourProps {
+  tournament_id: number | null | undefined;
+}
+
+export default function CreateTour({
+  tournament_id,
+}: Readonly<CreateTourProps>) {
   const [CreateTourData, setCreateTourData] = useState<CreateTourState>({
     topic: "",
     description: "",
@@ -31,6 +43,7 @@ export default function CreateTour() {
     teamSizeLimit: 0,
     limit: 0,
     joinCode: "",
+    tournament_id,
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -86,8 +99,12 @@ export default function CreateTour() {
 
     try {
       setIsLoading(true);
-      await PostCreateTour(formattedData);
-      setSuccessMessage("Tournament created successfully!");
+      if (tournament_id !== null && tournament_id !== undefined) {
+        EditTourAPI(formattedData);
+      } else {
+        PostCreateTour(formattedData);
+      }
+      setSuccessMessage("Tournament Editted successfully!");
       router.push("/tournament");
     } catch (error) {
       console.error("Error creating tournament:", error);
@@ -96,6 +113,43 @@ export default function CreateTour() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!tournament_id) return;
+    const fetchTournamentData = async () => {
+      try {
+        const getTournament = await GetTournamentByID(tournament_id);
+        if (!getTournament) return;
+        console.log("getTournament", getTournament);
+        setCreateTourData((prevData) => ({
+          ...prevData,
+          topic: getTournament.name,
+          description: getTournament.description,
+          enroll_startDate: getTournament.enroll_startDate
+            ? new Date(getTournament.enroll_startDate)
+                .toISOString()
+                .slice(0, 16)
+            : "",
+          enroll_endDate: getTournament.enroll_endDate
+            ? new Date(getTournament.enroll_endDate).toISOString().slice(0, 16)
+            : "",
+          event_startDate: getTournament.event_startDate
+            ? new Date(getTournament.event_startDate).toISOString().slice(0, 16)
+            : "",
+          event_endDate: getTournament.event_endDate
+            ? new Date(getTournament.event_endDate).toISOString().slice(0, 16)
+            : "",
+          mode: getTournament.mode,
+          teamSizeLimit: getTournament.teamSizeLimit,
+          limit: getTournament.teamLimit,
+        }));
+      } catch (error) {
+        console.error("Error fetching tournament data:", error);
+      }
+    };
+
+    fetchTournamentData();
+  }, [tournament_id]);
 
   const getInputClass = (field: string) =>
     `w-full p-2 rounded ${

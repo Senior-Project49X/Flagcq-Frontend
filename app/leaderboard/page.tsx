@@ -59,9 +59,9 @@ export default function Leaderboard() {
 
   const getRankColor1 = (rank: number): string => {
     if (rank === 1) return "text-yellow-600";
-    if (rank === 2) return "text-gray-500";
+    if (rank === 2) return "text-gray-400";
     if (rank === 3) return "text-orange-500";
-    return "text-black"; // Default color for other ranks
+    return "text-white"; // Default color for other ranks
   };
 
   const getOrdinalSuffix = (rank: number): string => {
@@ -81,12 +81,14 @@ export default function Leaderboard() {
 
       {/* Main Leaderboard */}
       <div className="max-w-3xl mx-auto p-8">
-        <h1 className="text-2xl font-bold mb-8 text-center">Leaderboard</h1>
-        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
+        <h1 className="text-2xl font-bold mb-8 text-center text-green-600">
+          Leaderboard
+        </h1>
+        <div className="bg-gray-800 rounded-lg p-6 text-green-500 shadow-md">
           <div className="flex justify-between mb-4">
-            <span className="font-bold">Rank</span>
-            <span className="font-bold">Username</span>
-            <span className="font-bold">Score</span>
+            <span className="font-bold text-green-500">Rank</span>
+            <span className="font-bold text-green-500">Username</span>
+            <span className="font-bold text-green-500">Score</span>
           </div>
           <hr className="border-t-2 mb-4" />
 
@@ -120,7 +122,7 @@ export default function Leaderboard() {
       {/* My Leaderboard */}
       <h2 className="text-xl font-bold text-center mt-8">My Rank</h2>
       <div className="max-w-3xl mx-auto p-8">
-        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md">
+        <div className="bg-gray-800 rounded-lg p-6 text-green-500 shadow-md">
           {!isLoadingUser && data ? (
             <div className="flex justify-between items-center text-lg mb-2">
               <span className={`font-semibold ${getRankColor1(data.rank)}`}>

@@ -51,6 +51,12 @@ export default function ProfileToggle() {
           >
             Profile
           </Link>
+          <Link
+            href="/aboutus"
+            className="block px-4 py-2 text-gray-700 hover:bg-gray-200"
+          >
+            About Us
+          </Link>
 
           {/* Hide "My Team" if admin */}
           {!isAdmin && (
