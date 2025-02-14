@@ -56,7 +56,10 @@ export default function TournamentCard({
   };
 
   return (
-    <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
+    <div
+      className="py-6 px-5 bg-gray-800 rounded-lg shadow-lg cursor-pointer 
+      glow-effect transition duration-300 hover:shadow-green-400 hover:shadow-lg"
+    >
       {isModalOpen && (
         <EnrollModal
           ClosePopup={() => setIsModalOpen(false)}
@@ -68,8 +71,8 @@ export default function TournamentCard({
       )}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold mb-1">{topic}</h2>
-          <div className="text-gray-600 text-sm">
+          <h2 className="text-2xl font-bold mb-1 text-green-400">{topic}</h2>
+          <div className="text-green-400 text-sm">
             <div>
               Event Start: {eventStart}{" "}
               <span className="text-red-500">({eventtime})</span>
@@ -91,7 +94,7 @@ export default function TournamentCard({
               height={40}
               className="object-contain"
             />
-            <span className="text-xl font-bold">
+            <span className="text-xl font-bold text-blue-500">
               {teamCount}/{teamLimit}
             </span>
           </div>
@@ -101,15 +104,21 @@ export default function TournamentCard({
 
           <button
             className={`px-6 py-2 rounded-lg text-black ${
-              effectiveStatus === "open" || isAdmin
+              teamCount >= teamLimit && !isAdmin
+                ? "bg-gray-500 cursor-not-allowed" // Non-admins see a disabled grey button when full
+                : effectiveStatus === "open" || isAdmin
                 ? "bg-customGreen hover:bg-green-500 ease-out duration-300"
                 : "bg-customGrey cursor-not-allowed"
             }`}
             onClick={handleOpenModal}
-            disabled={effectiveStatus !== "open" && !isAdmin}
+            disabled={
+              !isAdmin && (teamCount >= teamLimit || effectiveStatus !== "open")
+            }
           >
             {isAdmin
               ? "Manage"
+              : teamCount >= teamLimit
+              ? "Full"
               : effectiveStatus === "open"
               ? "Enroll"
               : "Closed"}

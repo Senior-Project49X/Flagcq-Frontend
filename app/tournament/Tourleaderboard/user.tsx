@@ -61,10 +61,10 @@ export default function TeamLeaderboardAdmin() {
       </div>
 
       <div className="max-w-5xl mx-auto p-8">
-        <h1 className="text-2xl font-bold mb-8 text-center">
+        <h1 className="text-2xl font-bold mb-8 text-center text-green-500">
           Tournament Leaderboard
         </h1>
-        <div className="bg-gray-100 rounded-lg p-6 text-black shadow-md w-full">
+        <div className="bg-gray-800 text-green-500 rounded-lg shadow-md p-6 w-full">
           <div className="flex justify-between mb-4">
             <span className="font-bold">Rank</span>
             <span className="font-bold">Team Name</span>
@@ -96,11 +96,11 @@ export default function TeamLeaderboardAdmin() {
         <h1 className="text-2xl font-bold mb-8 text-center">
           Our Team Leaderboard
         </h1>
-        <div className="bg-white text-black rounded-lg shadow-md p-6 mb-6 w-full">
+        <div className="bg-gray-800 text-white rounded-lg shadow-md p-6 mb-6 w-full">
           <div className="flex justify-between mb-4">
-            <span className="font-bold">Rank</span>
-            <span className="font-bold">Team Name</span>
-            <span className="font-bold">Total Points</span>
+            <span className="font-bold text-green-500">Rank</span>
+            <span className="font-bold text-green-500">Team Name</span>
+            <span className="font-bold text-green-500">Total Points</span>
           </div>
           <hr className="border-t-2 mb-4" />
 
@@ -118,8 +118,8 @@ export default function TeamLeaderboardAdmin() {
         </div>
 
         {/* Members List */}
-        <div className="bg-white text-black rounded-lg shadow-md p-6 w-full">
-          <div className="flex justify-between font-bold text-lg mb-4">
+        <div className="bg-gray-800 text-green-500 rounded-lg shadow-md p-6 w-full">
+          <div className="flex justify-between font-bold text-lg mb-4 text-green-500">
             <span className="text-green-600">Member</span>
             <span className="text-red-500">Score</span>
           </div>

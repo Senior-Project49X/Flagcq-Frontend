@@ -44,11 +44,14 @@ export default function MyteamCard({
   }, []);
 
   return (
-    <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
+    <div
+      className="py-6 px-5 bg-gray-800 rounded-lg shadow-lg cursor-pointer 
+      glow-effect transition duration-300 hover:shadow-green-400 hover:shadow-lg"
+    >
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold mb-1">{topic}</h2>
-          <div className="text-gray-600 text-sm">
+          <h2 className="text-2xl font-bold mb-1 text-green-400">{topic}</h2>
+          <div className="text-green-400 text-sm">
             <div>
               Event Start: {eventStart}{" "}
               <span className="text-red-500">({eventtime})</span>
@@ -69,13 +72,13 @@ export default function MyteamCard({
               height={40}
               className="object-contain"
             />
-            <span className="text-xl font-bold">
+            <span className="text-xl font-bold text-blue-500">
               {teamCount}/{teamLimit}
             </span>
           </div>
 
           {/* Show mode selection only if the user is an admin */}
-          <div className="flex items-center gap-2">{mode}</div>
+          <div className="flex items-center gap-2 text-blue-400">{mode}</div>
           <div className="flex flex-col gap-2">
             {/* Button for everyone to view their team */}
             <button

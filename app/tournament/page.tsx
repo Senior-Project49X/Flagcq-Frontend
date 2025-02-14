@@ -83,70 +83,33 @@ export default function Page() {
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const router = useRouter();
 
-  // Fetch Unjoined Tournaments
   useEffect(() => {
-    const fetchUnjoinedTournaments = async () => {
+    const fetchTournaments = async () => {
       try {
         const response = await GetTourList(page);
         setTotalPages(response.totalPages);
         setHasNextPage(response.hasNextPage);
-        console.log("Unjoined Tournaments:", response.data);
+        console.log("Tournaments:", response.data);
 
         if (Array.isArray(response.data)) {
-          const filteredData = response.data
-            .filter((tournament: Tournament) => !tournament.hasJoined)
-            .map((tournament: Tournament) => ({
-              ...tournament,
-              enrollRemaining: calculateRemainingTime(
-                tournament.enroll_endDate
-              ),
-              eventRemaining: calculateRemainingTime(tournament.event_endDate),
-            }));
+          const formattedData = response.data.map((tournament: Tournament) => ({
+            ...tournament,
+            enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
+            eventRemaining: calculateRemainingTime(tournament.event_endDate),
+          }));
 
-          setUnjoinedTournaments(filteredData);
+          setUnjoinedTournaments(formattedData);
         }
       } catch (error) {
-        console.error("Error fetching unjoined tournaments:", error);
+        console.error("Error fetching tournaments:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUnjoinedTournaments();
+    fetchTournaments();
   }, [page]);
 
-  // Fetch Joined Tournaments
-  useEffect(() => {
-    const fetchJoinedTournaments = async () => {
-      try {
-        setIsLoading(true);
-        const response = await JoinTeam(page);
-        console.log("Joined Tournaments:", response.data);
-
-        if (Array.isArray(response.data)) {
-          const filteredData = response.data
-            .filter((tournament: Tournament) => tournament.hasJoined)
-            .map((tournament: Tournament) => ({
-              ...tournament,
-              enrollRemaining: calculateRemainingTime(
-                tournament.enroll_endDate
-              ),
-              eventRemaining: calculateRemainingTime(tournament.event_endDate),
-            }));
-
-          setJoinedTournaments(filteredData);
-        }
-      } catch (error) {
-        console.error("Error fetching joined tournaments:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchJoinedTournaments();
-  }, [page]);
-
-  // Update Countdown Every Second
   useEffect(() => {
     const interval = setInterval(() => {
       setUnjoinedTournaments((prevData) =>
@@ -322,58 +285,51 @@ export default function Page() {
         <h5 className="text-center text-2xl font-semibold text-green-600 mt-10">
           Tournament List
         </h5>
-        <div className="space-y-4 max-w-3xl mx-auto mt-8">
-          {isLoading ? (
-            <div className="text-center text-gray-600">Loading...</div>
-          ) : joinedTournaments.length > 0 ? (
-            joinedTournaments.map((tournament, i) => (
-              <MyteamTourlist
-                key={i}
-                id={tournament.id}
-                topic={tournament.name}
-                detail={tournament.description}
-                eventStart={formatDate(tournament.event_startDate)}
-                enrollEnd={formatDate(tournament.enroll_endDate)}
-                status={tournament.eventRemaining?.status || "closed"}
-                enrolltime={tournament.enrollRemaining?.time || "Time Ended"}
-                eventtime={tournament.eventRemaining?.time || "Time Ended"}
-                event_endDate={formatDate(tournament.event_endDate)}
-                teamId={tournament.teamId}
-                teamCount={tournament.teamCount}
-                mode={tournament.mode}
-                hasJoined={tournament.hasJoined}
-                teamLimit={tournament.teamLimit}
-              />
-            ))
-          ) : isAdmin ? (
-            <div className="text-center text-gray-600">No teams joined.</div>
-          ) : null}
-        </div>
 
-        {/* Unjoined Tournaments */}
         <div className="space-y-4 max-w-3xl mx-auto mt-4">
           {isLoading ? (
             <div className="text-center text-gray-600">Loading...</div>
           ) : unjoinedTournaments.length > 0 ? (
-            unjoinedTournaments.map((tournament, i) => (
-              <TournamentCard
-                key={i}
-                id={tournament.id}
-                topic={tournament.name}
-                detail={tournament.description}
-                eventStart={formatDate(tournament.event_startDate)}
-                enrollEnd={formatDate(tournament.enroll_endDate)}
-                status={tournament.eventRemaining?.status || "closed"}
-                enrolltime={tournament.enrollRemaining?.time || "Time Ended"}
-                eventtime={tournament.eventRemaining?.time || "Time Ended"}
-                event_endDate={formatDate(tournament.event_endDate)}
-                hasJoined={tournament.hasJoined}
-                teamCount={tournament.teamCount}
-                mode={tournament.mode}
-                teamLimit={tournament.teamLimit}
-                joinCode={tournament.joinCode}
-              />
-            ))
+            unjoinedTournaments.map((tournament, i) =>
+              tournament.hasJoined ? (
+                <MyteamTourlist
+                  key={i}
+                  id={tournament.id}
+                  topic={tournament.name}
+                  detail={tournament.description}
+                  eventStart={formatDate(tournament.event_startDate)}
+                  enrollEnd={formatDate(tournament.enroll_endDate)}
+                  status={tournament.eventRemaining?.status || "closed"}
+                  enrolltime={tournament.enrollRemaining?.time || "Time Ended"}
+                  eventtime={tournament.eventRemaining?.time || "Time Ended"}
+                  event_endDate={formatDate(tournament.event_endDate)}
+                  hasJoined={tournament.hasJoined}
+                  teamCount={tournament.teamCount}
+                  mode={tournament.mode}
+                  teamLimit={tournament.teamLimit}
+                  joinCode={tournament.joinCode}
+                  teamId={tournament.teamId}
+                />
+              ) : (
+                <TournamentCard
+                  key={i}
+                  id={tournament.id}
+                  topic={tournament.name}
+                  detail={tournament.description}
+                  eventStart={formatDate(tournament.event_startDate)}
+                  enrollEnd={formatDate(tournament.enroll_endDate)}
+                  status={tournament.eventRemaining?.status || "closed"}
+                  enrolltime={tournament.enrollRemaining?.time || "Time Ended"}
+                  eventtime={tournament.eventRemaining?.time || "Time Ended"}
+                  event_endDate={formatDate(tournament.event_endDate)}
+                  hasJoined={tournament.hasJoined}
+                  teamCount={tournament.teamCount}
+                  mode={tournament.mode}
+                  teamLimit={tournament.teamLimit}
+                  joinCode={tournament.joinCode}
+                />
+              )
+            )
           ) : (
             <div className="text-center text-gray-600">
               No tournaments available.

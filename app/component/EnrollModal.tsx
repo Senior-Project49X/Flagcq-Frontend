@@ -1,5 +1,8 @@
+"use client";
+
 import React, { FormEvent, useState, useEffect } from "react";
 import { PostCreateTeam } from "../lib/API/GetCreateTeam";
+import { EditTourAPI } from "../lib/API/EditTour";
 import { isRoleAdmin } from "../lib/role";
 import { DeleteTour } from "../lib/API/DelTourAPI";
 import { useRouter } from "next/navigation";
@@ -26,7 +29,6 @@ export default function EnrollModal({
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const router = useRouter();
-  const [isCodeVisible, setIsCodeVisible] = useState(false);
 
   // Check if the user is an admin
   useEffect(() => {
@@ -51,9 +53,13 @@ export default function EnrollModal({
     }
   };
 
-  // Admin-specific navigation
   const handleAdminRoute = () => {
     router.push(`/tournament/TournamentPage?tournamentId=${tournament_id}`);
+  };
+
+  const handleEditTour = () => {
+    console.log("Navigating to /admin/EditTournament");
+    router.push(`/admin/EditTournament?TournamentID=${tournament_id}`);
   };
 
   // Delete the tournament
@@ -122,6 +128,15 @@ export default function EnrollModal({
                     className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
                   >
                     Go
+                  </button>
+                </div>
+                <div className="flex flex-col items-center">
+                  <h5 className="text-sm font-bold mb-2">Edit Tournament</h5>
+                  <button
+                    onClick={handleEditTour}
+                    className="w-full bg-yellow-400 text-black py-2 rounded hover:bg-yellow-600 transition duration-300"
+                  >
+                    Edit
                   </button>
                 </div>
               </div>

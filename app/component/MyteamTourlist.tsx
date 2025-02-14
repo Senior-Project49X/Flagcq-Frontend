@@ -18,6 +18,7 @@ type TournamentDetail = {
   teamCount: number;
   mode: string;
   teamLimit: number;
+  joinCode: string;
 };
 
 export default function MyteamTourlist({
@@ -35,6 +36,7 @@ export default function MyteamTourlist({
   mode,
   teamCount,
   teamLimit,
+  joinCode,
 }: TournamentDetail) {
   const router = useRouter();
   const [isEventStarted, setIsEventStarted] = useState<boolean>(false);
@@ -46,11 +48,14 @@ export default function MyteamTourlist({
   }, [eventtime]);
 
   return (
-    <div className="py-6 px-5 bg-white rounded-lg shadow-lg">
+    <div
+      className="py-6 px-5 bg-gray-800 rounded-lg shadow-lg cursor-pointer 
+         glow-effect transition duration-300 hover:shadow-green-400 hover:shadow-lg"
+    >
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold mb-1">{topic}</h2>
-          <div className="text-gray-600 text-sm">
+          <h2 className="text-2xl font-bold mb-1 text-green-400">{topic}</h2>
+          <div className="text-green-400 text-sm">
             <div>
               Event Start: {eventStart}{" "}
               <span className="text-red-500">({eventtime})</span>
@@ -71,15 +76,16 @@ export default function MyteamTourlist({
               height={40}
               className="object-contain"
             />
-            <span className="text-xl font-bold">
+            <span className="text-xl font-bold text-blue-500">
               {teamCount}/{teamLimit}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">{mode}</div>
+          {/* Show mode selection only if the user is an admin */}
+          <div className="flex items-center gap-2 text-blue-400">{mode}</div>
           <div className="flex flex-col gap-2">
             <button
-              className={`px-6 py-2 rounded-lg text-black ${
+              className={`px-6 py-2 rounded-lg text-gray-300 ${
                 isEventStarted
                   ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-customGrey cursor-not-allowed"
