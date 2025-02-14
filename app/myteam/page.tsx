@@ -2,14 +2,11 @@
 
 import React, { FormEvent, useState, useEffect } from "react";
 import Navbar from "../component/Navbar/navbar";
-import { GetTourList } from "../lib/API/GetTourListAPI";
+import { JoinTeam } from "../lib/API/GetTourListAPI";
 import Pagination from "../component/Pagination";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import MyteamCard from "../component/MyteamCard";
-import Myadminpage from "./admin";
-import Myuserpage from "./user";
-import { isRoleAdmin } from "../lib/role";
 
 // Define the type for tournament data
 interface RemainingTime {
@@ -30,30 +27,74 @@ interface Tournament {
   teamId: number;
   teamCount: number;
   hasJoined: boolean;
+  mode: string;
+  teamLimit: number;
 }
 
-// Component Function
-export default function MyPage() {
+// Utility function to format date
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // January is 0!
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+export default function myuserpage() {
   const [tourData, setTourData] = useState<Tournament[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const page = searchParams.get("page") || "1";
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [mode, setMode] = useState<string>("");
 
   const router = useRouter();
 
+  const calculateRemainingTime = (endDate: string): RemainingTime => {
+    const now = new Date();
+    const targetDate = new Date(endDate);
+    const remaining = targetDate.getTime() - now.getTime();
+
+    if (remaining <= 0) {
+      return { time: "Time Ended", status: "closed" };
+    }
+
+    const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    return {
+      time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+      status: "open",
+    };
+  };
+
   useEffect(() => {
-    const fetchTourListData = async () => {
+    const fetchTourListJoinedData = async () => {
       try {
-        const response = await GetTourList(page);
-        const Tournaments = response.data;
+        const response = await JoinTeam(page);
+        const Tournaments1 = response.data;
         setTotalPages(response.totalPages);
         setHasNextPage(response.hasNextPage);
-        setTourData(Tournaments); // Correctly setting tournament data
-        console.log("Tour list data:", Tournaments);
+        console.log("Tour list data:", Tournaments1);
+
+        if (Array.isArray(Tournaments1)) {
+          const initializedData = Tournaments1.map(
+            (tournament1: Tournament) => ({
+              ...tournament1,
+              enrollRemaining: calculateRemainingTime(
+                tournament1.enroll_endDate
+              ),
+              eventRemaining: calculateRemainingTime(tournament1.event_endDate),
+            })
+          );
+          setTourData(initializedData);
+        } else {
+          console.error("Unexpected API response format:", Tournaments1);
+        }
       } catch (error) {
         console.error("Error fetching tour list data:", error);
       } finally {
@@ -61,16 +102,75 @@ export default function MyPage() {
       }
     };
 
-    fetchTourListData();
+    fetchTourListJoinedData();
   }, [page]);
 
+  // This effect sets up the countdown timer, updating every second
   useEffect(() => {
-    const role = isRoleAdmin();
-    setIsAdmin(role);
-    if (!role) {
-      setMode("");
-    }
+    const interval = setInterval(() => {
+      setTourData((prevData) =>
+        prevData.map((tournament) => ({
+          ...tournament,
+          enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
+          eventRemaining: calculateRemainingTime(tournament.event_endDate),
+        }))
+      );
+    }, 1000);
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
 
-  return <div>{isAdmin ? <Myadminpage /> : <Myuserpage />}</div>;
+  // Join a team
+
+  return (
+    <div>
+      <Navbar />
+      <div className="relative">
+        {/* Tournament List */}
+        <h5 className="text-center text-2xl font-semibold text-green-600">
+          Tournament Joined
+        </h5>
+        <div className="space-y-4 max-w-3xl mx-auto mt-8">
+          {isLoading ? (
+            <div className="text-center text-gray-600">Loading...</div>
+          ) : tourData.filter((tournament1) => tournament1.hasJoined).length >
+            0 ? (
+            tourData
+              .filter((tournament1) => tournament1.hasJoined) // Filter tournaments where hasJoined is true
+              .map((tournament1, i) => (
+                <MyteamCard
+                  key={i}
+                  id={tournament1.id}
+                  topic={tournament1.name}
+                  detail={tournament1.description}
+                  eventStart={formatDate(tournament1.event_startDate)}
+                  enrollEnd={formatDate(tournament1.enroll_endDate)}
+                  status={tournament1.eventRemaining?.status || "closed"}
+                  enrolltime={tournament1.enrollRemaining?.time || "Time Ended"}
+                  eventtime={tournament1.eventRemaining?.time || "Time Ended"}
+                  event_endDate={formatDate(tournament1.event_endDate)}
+                  hasJoined={tournament1.hasJoined}
+                  teamId={tournament1.teamId}
+                  teamCount={tournament1.teamCount} // Add this line
+                  mode={tournament1.mode}
+                  teamLimit={tournament1.teamLimit}
+                />
+              ))
+          ) : (
+            <div className="text-center text-gray-600">
+              No tournaments found.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Pagination */}
+      <Pagination
+        pagePath={"/myteam?page="}
+        pageNumber={page}
+        totalPages={totalPages}
+        hasNextPage={hasNextPage}
+      />
+    </div>
+  );
 }

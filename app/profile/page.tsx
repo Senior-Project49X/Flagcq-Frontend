@@ -20,7 +20,7 @@ export default function Profile() {
   return (
     <div>
       <Navbar />
-      <div className="  flex justify-center items-center">
+      <div className="  flex justify-center items-center mt-10">
         <div className="bg-white rounded-lg p-8 w-full max-w-4xl shadow-lg">
           <div className="flex mt-8">
             <div className="w-48 h-48 rounded-lg">

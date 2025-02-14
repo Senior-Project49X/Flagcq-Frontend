@@ -78,18 +78,6 @@ export default function Tourteam_member() {
     <div className="min-h-screen bg-[#090147] text-white">
       {role === "leader" && <Leader />}
       {role === "member" && <Member />}
-      <div className=" flex justify-center">
-        <button
-          onClick={() =>
-            router.push(
-              `/tournament/TournamentPage?tournamentId=${tournamentId}`
-            )
-          }
-          className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-lg font-medium"
-        >
-          Go to Tournament Page
-        </button>
-      </div>
     </div>
   );
 }

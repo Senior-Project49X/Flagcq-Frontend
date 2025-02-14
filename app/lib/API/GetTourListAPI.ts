@@ -27,3 +27,16 @@ export const GetAllTourList = async () => {
     return {};
   }
 };
+
+export const JoinTeam = async (page: string | null) => {
+  const NewPage = page ?? "1";
+  try {
+    const resp = await axios.get(`${ip}/api/joinedTournament?page=${NewPage}`, {
+      withCredentials: true,
+    });
+    return resp.data;
+  } catch (e) {
+    console.error("Error fetching data:", e);
+    return {};
+  }
+};
