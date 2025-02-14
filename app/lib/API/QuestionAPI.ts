@@ -299,3 +299,25 @@ export const DeleteQuestionTournament  = async (questionIds: number,tournamentId
     console.error("Error downloading file:", error);
   }
 };
+
+export const EditCategoryAPI = async (
+  name: string,
+  id: number
+): Promise<any> => {
+  return axios
+    .put(`${ip}/api/categories/${id}`, {name}, {
+      withCredentials: true,
+      
+    })
+    .then((resp) => {
+      console.log(resp);
+      if (resp.status === 200) {
+        return resp.data;
+      }
+    })
+    .catch((e) => {
+      console.log("e", e.response.data.message);
+
+      return e;
+    });
+};

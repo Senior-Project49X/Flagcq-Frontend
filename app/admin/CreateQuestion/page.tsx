@@ -14,6 +14,8 @@ import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import ModeEditOutlineRoundedIcon from "@mui/icons-material/ModeEditOutlineRounded";
+import EditCategories from "../component/EditCategories";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
@@ -61,7 +63,8 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   >([]);
   const category = "";
   const [difficultysID, setDifficultysID] = useState<string>("");
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isCreateCategory, setIsCreateCategory] = useState<boolean>(false);
+  const [isEditCategory, setIsEditCategory] = useState<boolean>(false);
   const [point, setPoint] = useState("");
   const [answer, setAnswer] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -197,9 +200,9 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     const value = event.target.value;
     setSelectedCategory(value);
     if (value === "New Category") {
-      setIsModalVisible(true);
+      setIsCreateCategory(true);
     } else {
-      setIsModalVisible(false);
+      setIsCreateCategory(false);
     }
   };
 
@@ -231,10 +234,10 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
           Message={message}
         />
       )}
-      {isModalVisible && (
+      {isCreateCategory && (
         <CreateCategories
           onClose={async (Category: string) => {
-            setIsModalVisible(false);
+            setIsCreateCategory(false);
             setCategories(await GetCategories());
             setSelectedCategory(Category);
             console.log("CIDC,", Category);
@@ -245,6 +248,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
           {/* Add form or other content for creating a new category */}
         </CreateCategories>
       )}
+      {isEditCategory && <EditCategories id={selectedCategory} />}
       <Navbar />
       <div className="p-8">
         <h1 className="text-3xl font-bold mb-6 text-center text-white">
@@ -268,23 +272,36 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
             />
 
             <br />
-            <label>
+            <div>
               Category{" "}
-              <select
-                name="categories_id"
-                className="w-full p-2 border-2 border-gray-300 rounded"
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                required
-              >
-                <option value={category}>---please select category---</option>
-                {categories.map((category: Category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-                <option value={"New Category"}>[New Category]</option>
-              </select>
+              <div className="flex">
+                <select
+                  name="categories_id"
+                  className="flex w-full p-2 border-2 border-gray-300 rounded"
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                  required
+                >
+                  <option value={category}>---please select category---</option>
+                  {categories.map((category: Category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                  <option value={"New Category"}>[New Category]</option>
+                </select>
+                {selectedCategory !== "" && (
+                  <button
+                    className="bg-gray-300 ml-2 p-2 rounded-md hover:bg-slate-600 transition duration-100"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsEditCategory(true);
+                    }}
+                  >
+                    <ModeEditOutlineRoundedIcon />
+                  </button>
+                )}
+              </div>
               {newCategory && (
                 <input
                   type="text"
@@ -293,7 +310,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
                   className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
                 />
               )}
-            </label>
+            </div>
             <br />
             <label>
               Difficulty{" "}
