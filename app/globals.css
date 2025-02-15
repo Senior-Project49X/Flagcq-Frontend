@@ -29,6 +29,12 @@ code{
   @apply bg-green-500
 }
 
+.buttonSubmit{
+  @apply px-4 py-2 font-bold rounded transition duration-200 text-white  bg-green-500 hover:bg-green-600
+}
+.buttonWarning{
+  @apply px-4 py-2 font-bold rounded transition duration-200 text-white  bg-red-500 hover:bg-red-600
+}
 .rich-text a {
   height: 100%;
   color: blue;

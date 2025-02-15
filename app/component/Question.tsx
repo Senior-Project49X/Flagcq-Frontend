@@ -4,7 +4,6 @@ import QuestionTable from "./QuestionTable";
 import { useEffect, useState } from "react";
 import { isRoleAdmin } from "../lib/role";
 import { usePathname } from "next/navigation";
-import { getCookie, isHasCookie, setCookie } from "../lib/cookies";
 interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
@@ -25,7 +24,7 @@ export default function Question({
   const pathname = usePathname();
   const [isCreateQuestionTournament, setIsCreateQuestionTournament] =
     useState<boolean>(false);
-  const [isTable, setIsTable] = useState(getCookie("view") === "true");
+  const [isTable, setIsTable] = useState(isTableProp);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   useEffect(() => {
     const fetchRole = async () => {
@@ -34,22 +33,15 @@ export default function Question({
     fetchRole();
   }, []);
   useEffect(() => {
-    if (!isHasCookie("view")) setCookie("view", "false");
-  }, []);
-
-  useEffect(() => {
     setIsCreateQuestionTournament(
       pathname === "/admin/CreateQuestionTournament"
     );
   }, [pathname]);
   return (
     <div>
-      <div className="flex justify-end mt-4 mr-16">
+      <div className="flex justify-end mt-4">
         <button
-          onClick={() => {
-            setCookie("view", "false");
-            setIsTable(false);
-          }}
+          onClick={() => setIsTable(false)}
           className={`rounded-l-md px-4 py-2 ${
             !isTable ? "bg-gray-300" : "bg-white"
           } transition`}
@@ -57,10 +49,7 @@ export default function Question({
           Card view
         </button>
         <button
-          onClick={() => {
-            setCookie("view", "true");
-            setIsTable(true);
-          }}
+          onClick={() => setIsTable(true)}
           className={`px-4 py-2 rounded-r-md ${
             isTable ? "bg-gray-300" : "bg-white"
           } transition`}
@@ -88,7 +77,7 @@ export default function Question({
           ))}
         </div>
       ) : (
-        <table className="table-auto w-full ">
+        <table className="table-auto w-full">
           <thead className="bg-gray-900 text-green">
             <tr>
               {isAdmin && isCreateQuestionTournament && (
@@ -98,7 +87,7 @@ export default function Question({
               <th className="px-4 py-2 text-green-400">Question name</th>
               <th className=" px-4 py-2 text-green-400">Difficulty</th>
               <th className=" px-4 py-2 text-green-400">Point</th>
-              <th className=" px-4 py-2 text-green-400">Solved</th>
+              <th className=" px-4 py-2 text-green-400">Solver</th>
               {isAdmin && (
                 <>
                   <th className=" px-4 py-2 text-green-400">Edit</th>

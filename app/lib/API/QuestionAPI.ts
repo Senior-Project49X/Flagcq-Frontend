@@ -312,6 +312,26 @@ export const EditCategoryAPI = async (
     .then((resp) => {
       console.log(resp);
       if (resp.status === 200) {
+        return resp.data.id;
+      }
+    })
+    .catch((e) => {
+      console.log("e", e.response.data.message);
+
+      return e;
+    });
+};
+export const DeleteCategoryAPI = async (
+  id: number
+): Promise<any> => {
+  return axios
+    .delete(`${ip}/api/categories/${id}`, {
+      withCredentials: true,
+      
+    })
+    .then((resp) => {
+      console.log(resp);
+      if (resp.status === 200) {
         return resp.data;
       }
     })
