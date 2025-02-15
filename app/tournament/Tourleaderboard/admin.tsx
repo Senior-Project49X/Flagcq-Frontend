@@ -69,7 +69,7 @@ export default function TeamLeaderboardAdmin() {
 
       {/* Tournament Leaderboard */}
       <div className="max-w-5xl mx-auto p-8">
-        <h1 className="text-2xl font-bold mb-8 text-center">
+        <h1 className="text-2xl font-bold mb-8 text-center text-green-600">
           Tournament Admin Leaderboard
         </h1>
 
@@ -89,7 +89,7 @@ export default function TeamLeaderboardAdmin() {
             teamLeaderboardData.map((team, index) => (
               <div key={team.teamID}>
                 <div
-                  className="cursor-pointer bg-gray-200 rounded-lg p-6 text-black shadow-md flex justify-between items-center hover:bg-gray-300"
+                  className="cursor-pointer bg-gray-900 rounded-lg p-6 text-green-500 shadow-md flex justify-between items-center hover:bg-gray-700 border-green-500 border-2"
                   onClick={() => handleTeamClick(team, index)}
                 >
                   <div className="flex-1 font-bold text-left">{index + 1}</div>
@@ -104,7 +104,7 @@ export default function TeamLeaderboardAdmin() {
 
                 {/* Our Team Leaderboard appears here if this card is selected */}
                 {selectedIndex === index && selectedTeam && (
-                  <div className="bg-white text-black rounded-lg shadow-md p-6 mt-4">
+                  <div className="bg-gray-800 text-black rounded-lg shadow-md p-6 mt-4 border-white-500 border-1">
                     <h2 className="text-xl font-bold mb-4 text-center text-green-600">
                       Our Team Leaderboard
                     </h2>
@@ -119,7 +119,7 @@ export default function TeamLeaderboardAdmin() {
                           key={member.userId}
                           className="flex justify-between items-center text-lg mb-2"
                         >
-                          <span>
+                          <span className="text-green-600">
                             {memberIndex + 1}. {member.firstName}{" "}
                             {member.lastName}
                           </span>

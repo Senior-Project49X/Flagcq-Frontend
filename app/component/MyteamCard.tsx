@@ -43,10 +43,17 @@ export default function MyteamCard({
     setIsAdmin(isRoleAdmin());
   }, []);
 
+  const handleClick = () => {
+    router.push(
+      `/tournament/Tourteam_member?tournamentId=${id}&teamId=${teamId}`
+    );
+  };
+
   return (
     <div
       className="py-6 px-5 bg-gray-800 rounded-lg shadow-lg cursor-pointer 
-      glow-effect transition duration-300 hover:shadow-green-400 hover:shadow-lg"
+         glow-effect transition duration-300 hover:shadow-green-400 hover:shadow-lg"
+      onClick={handleClick} // Card is now clickable
     >
       <div className="flex justify-between items-center">
         <div>
@@ -79,19 +86,6 @@ export default function MyteamCard({
 
           {/* Show mode selection only if the user is an admin */}
           <div className="flex items-center gap-2 text-blue-400">{mode}</div>
-          <div className="flex flex-col gap-2">
-            {/* Button for everyone to view their team */}
-            <button
-              className="px-6 py-2 bg-customGreen hover:bg-green-500 text-black rounded-lg"
-              onClick={() =>
-                router.push(
-                  `/tournament/Tourteam_member?tournamentId=${id}&teamId=${teamId}`
-                )
-              }
-            >
-              View Team
-            </button>
-          </div>
         </div>
       </div>
     </div>

@@ -65,7 +65,6 @@ export default function Page() {
   const [joinedTournaments, setJoinedTournaments] = useState<Tournament[]>([]);
 
   const [teamName, setTeamName] = useState("");
-  const [tourData, setTourData] = useState<Tournament[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const page = searchParams.get("page") || "1";
@@ -78,10 +77,18 @@ export default function Page() {
   const [errorMessage, setErrorMessage] = useState("");
   const [errorMessagePrivate, setErrorMessagePrivate] = useState("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [mode, setMode] = useState<string>("");
   const [showPopup, setShowPopup] = useState(false);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+
   const router = useRouter();
+
+  useEffect(() => {
+    const role = isRoleAdmin();
+    setIsAdmin(role);
+    if (!role) {
+      console.log("Not an admin");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchTournaments = async () => {
@@ -184,108 +191,116 @@ export default function Page() {
     <div>
       <Navbar />
       <div className="relative">
-        {!isAdmin && (
-          <div className="absolute top-10 right-4 w-80 flex flex-col items-center space-y-4 mb-10">
-            {/* Join Team Heading */}
-            <h5 className="text-lg font-semibold text-green-600">Join Team</h5>
+        <div className="max-w-5xl mx-auto flex items-center justify-between mb-10 mr-14">
+          {/* Tournament List Heading, centered using flex */}
+          <div className="flex-1 flex justify-center mr-96">
+            <h5 className="text-2xl font-semibold text-green-600 mt-10 ">
+              Tournament List
+            </h5>
+          </div>
 
-            {/* Invite Code Form */}
-            <form
-              onSubmit={handleJoinTeam}
-              className="w-full flex items-center space-x-2"
-            >
-              <input
-                type="text"
-                placeholder="Invite Code"
-                className="flex-1 px-3 py-2 border rounded"
-                maxLength={50}
-                value={inviteCode}
-                onChange={(e) => setInviteCode(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-                disabled={isLoadingJoin}
-              >
-                {isLoadingJoin ? "Joining..." : "Join"}
-              </button>
-            </form>
-            {errorMessage && (
-              <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
-            )}
-
-            {/* Join Private Tournament Button */}
-            <div className="w-full flex flex-col items-center">
+          {!isAdmin && (
+            <div className="w-80 flex flex-col items-center space-y-4 ml-auto">
+              {/* Join Team Heading */}
               <h5 className="text-lg font-semibold text-green-600">
-                Join Private Tournament
+                Join Team
               </h5>
-              <button
-                onClick={() => setShowPopup(true)}
-                className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+
+              {/* Invite Code Form */}
+              <form
+                onSubmit={handleJoinTeam}
+                className="w-full flex items-center space-x-2"
               >
-                Join Private
-              </button>
-            </div>
+                <input
+                  type="text"
+                  placeholder="Invite Code"
+                  className="flex-1 px-3 py-2 border rounded"
+                  maxLength={50}
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+                  disabled={isLoadingJoin}
+                >
+                  {isLoadingJoin ? "Joining..." : "Join"}
+                </button>
+              </form>
+              {errorMessage && (
+                <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+              )}
 
-            {showPopup && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-w-full relative z-25">
-                  <button
-                    className="absolute top-2 right-4 text-black text-2xl "
-                    onClick={() => setShowPopup(false)}
-                  >
-                    &times;
-                  </button>
-                  <br />
-                  <h5 className="text-sm font-bold mb-2 text-center">
-                    Create New Team
-                  </h5>
+              {/* Join Private Tournament Button */}
+              <div className="w-full flex flex-col items-center">
+                <h5 className="text-lg font-semibold text-green-600">
+                  Join Private Tournament
+                </h5>
+                <button
+                  onClick={() => setShowPopup(true)}
+                  className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                >
+                  Join Private
+                </button>
+              </div>
 
-                  <form onSubmit={handleJoinTeamPrivate} className="w-full">
-                    <input
-                      type="text"
-                      placeholder="Team Name"
-                      className="w-full px-3 py-2 border rounded mb-4"
-                      maxLength={50}
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
-                    />
-
+              {showPopup && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-w-full relative z-25">
+                    <button
+                      className="absolute top-2 right-4 text-black text-2xl"
+                      onClick={() => setShowPopup(false)}
+                    >
+                      &times;
+                    </button>
+                    <br />
                     <h5 className="text-sm font-bold mb-2 text-center">
-                      Code from Private Tournament
+                      Create New Team
                     </h5>
 
-                    <input
-                      type="text"
-                      placeholder="Invite Code"
-                      className="w-full px-3 py-2 border rounded mb-4"
-                      value={inviteCodePrivate}
-                      onChange={(e) => setInviteCodePrivate(e.target.value)}
-                    />
+                    <form onSubmit={handleJoinTeamPrivate} className="w-full">
+                      <input
+                        type="text"
+                        placeholder="Team Name"
+                        className="w-full px-3 py-2 border rounded mb-4"
+                        maxLength={50}
+                        value={teamName}
+                        onChange={(e) => setTeamName(e.target.value)}
+                      />
 
-                    <button
-                      type="submit"
-                      className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
-                      disabled={isLoadingCreate}
-                    >
-                      {isLoadingCreate ? "Creating..." : "Create"}
-                    </button>
-                  </form>
-                  {errorMessagePrivate && (
-                    <p className="text-red-500 text-sm mt-2">
-                      {errorMessagePrivate}
-                    </p>
-                  )}
+                      <h5 className="text-sm font-bold mb-2 text-center">
+                        Code from Private Tournament
+                      </h5>
+
+                      <input
+                        type="text"
+                        placeholder="Invite Code"
+                        className="w-full px-3 py-2 border rounded mb-4"
+                        value={inviteCodePrivate}
+                        onChange={(e) => setInviteCodePrivate(e.target.value)}
+                      />
+
+                      <button
+                        type="submit"
+                        className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+                        disabled={isLoadingCreate}
+                      >
+                        {isLoadingCreate ? "Creating..." : "Create"}
+                      </button>
+                    </form>
+                    {errorMessagePrivate && (
+                      <p className="text-red-500 text-sm mt-2">
+                        {errorMessagePrivate}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-        {/* Joined Tournaments */}
-        <h5 className="text-center text-2xl font-semibold text-green-600 mt-10">
-          Tournament List
-        </h5>
+              )}
+            </div>
+          )}
+        </div>
 
+        {/* Joined Tournaments */}
         <div className="space-y-4 max-w-3xl mx-auto mt-4">
           {isLoading ? (
             <div className="text-center text-gray-600">Loading...</div>
