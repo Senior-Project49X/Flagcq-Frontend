@@ -17,6 +17,10 @@ export default function Homepage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const page = searchParams.get("page") ?? "1";
+  const [sort, setSort] = useState<{ name: string; order: string }>({
+    name: "",
+    order: "acs",
+  });
 
   // Change from single to multi-select for categories
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
@@ -48,6 +52,32 @@ export default function Homepage() {
       setMode("Practice");
     }
   }, []);
+
+  const handleOnSort = (sortName: string) => {
+    let order = "asc";
+    if (sort.name === sortName) {
+      order = sort.order === "asc" ? "desc" : "asc";
+      setSort({ name: sortName, order: order });
+    } else {
+      setSort({ name: sortName, order: "asc" });
+    }
+
+    const fetchUserQuestions = async () => {
+      const result = await GetQuestions(
+        selectedCategories.join(","),
+        selectedDifficulty,
+        page,
+        isRoleAdmin() ? mode : "Practice",
+        undefined,
+        undefined,
+        { name: sortName, order: order }
+      );
+      setTotalPages(result.totalPages);
+      setHasNextPage(result.hasNextPage);
+      setQuestions(result.data);
+    };
+    fetchUserQuestions();
+  };
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
@@ -109,6 +139,7 @@ export default function Homepage() {
                 selectedDifficulty={selectedDifficulty}
                 selectedCategory={selectedCategories.join(",")}
                 questions={questions}
+                setSort={handleOnSort}
               />
 
               <Pagination

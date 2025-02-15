@@ -12,6 +12,7 @@ interface CryptographyProps {
   question_id?: number[]; // Add this prop
   tournament_id?: number;
   isTable?: boolean;
+  setSort: (sort: string) => void;
 }
 
 export default function Question({
@@ -20,6 +21,7 @@ export default function Question({
   question_id,
   tournament_id,
   isTable: isTableProp,
+  setSort,
 }: Readonly<CryptographyProps>) {
   const pathname = usePathname();
   const [isCreateQuestionTournament, setIsCreateQuestionTournament] =
@@ -86,18 +88,37 @@ export default function Question({
 
               <th
                 className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
-                onClick={() => {}}
+                onClick={() => {
+                  setSort("QuestionName");
+                }}
               >
                 Question name
               </th>
-              <th className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700">
+              <th
+                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+                onClick={() => {
+                  setSort("Difficulty");
+                }}
+              >
                 Difficulty
               </th>
-              <th className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700">
+              <th
+                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700
+              
+              "
+                onClick={() => {
+                  setSort("Point");
+                }}
+              >
                 Point
               </th>
-              <th className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700">
-                Solver
+              <th
+                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+                onClick={() => {
+                  setSort("Solved");
+                }}
+              >
+                Solved
               </th>
               {isAdmin && (
                 <>

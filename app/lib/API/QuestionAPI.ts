@@ -86,33 +86,6 @@ export const CreateQuestionTournamentAPI = async (
   }
 };
 
-// export const GetQuestions = async (
-//   selectedCategory: string,
-//   selectedDifficulty: string,
-//   page: string | null
-// ) => {
-//   const NewPage = page ?? 1;
-
-//   try {
-
-//     const resp = await axios.get(
-//       `${ip}/api/questions/practice?mode=Practice${
-//         selectedCategory === "All Categories"
-//           ? ""
-//           : `&category=${selectedCategory}`
-//       }${
-//         selectedDifficulty === "All Difficulty"
-//           ? ""
-//           : `&Difficulty=${selectedDifficulty}`
-//       }&page=${NewPage}`,
-//       { withCredentials: true }
-//     );
-//     return resp.data;
-//   } catch (e) {
-//     console.error("Error fetching questions:", e);
-//   }
-//   // console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
-// };
 
 export const GetQuestions = async (
   selectedCategory: string,
@@ -120,7 +93,8 @@ export const GetQuestions = async (
   page: string | null,
   mode: string,
   tournament_id?: number,
-  isTornamentSelected?: boolean
+  isTornamentSelected?: boolean,
+  sort?: { name: string; order: string },
 ) => {
   const NewPage = page ?? 1;
   const useSelected = isTornamentSelected ?? false;
@@ -139,7 +113,8 @@ export const GetQuestions = async (
   if (selectedDifficulty !== "All Difficulty") {
     url += `&difficulty=${selectedDifficulty}`;
   }
-
+  if(sort?.name !== '') url += `&sort=${sort?.name}`;
+  if(sort?.order !== '') url += `&sort_order=${sort?.order}`;
   if (tournament_id && !useSelected) {
     url += `&tournament_id=${tournament_id}`;
   }else if(tournament_id && useSelected){
