@@ -24,6 +24,7 @@ export default function Tourteam_member() {
     teamName: string;
     invitedCode: string;
     memberCount: number;
+    memberLimit: number;
     members: {
       userId: number;
       isLeader: boolean;

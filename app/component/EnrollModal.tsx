@@ -109,36 +109,34 @@ export default function EnrollModal({
             </div>
 
             {isAdmin ? (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col items-center border-r pr-4">
-                  <h5 className="text-sm font-bold mb-2">
-                    Delete this Tournament
-                  </h5>
-                  <button
-                    onClick={() => setShowConfirmDelete(true)}
-                    className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300"
-                  >
-                    Delete
-                  </button>
+              <div className="flex flex-col gap-4">
+                {/* Grid for Delete & Edit */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col items-center border-r pr-4">
+                    <button
+                      onClick={() => setShowConfirmDelete(true)}
+                      className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={handleEditTour}
+                      className="w-full bg-yellow-400 text-black py-2 rounded hover:bg-yellow-600 transition duration-300"
+                    >
+                      Edit
+                    </button>
+                  </div>
                 </div>
-                <div className="flex flex-col items-center">
-                  <h5 className="text-sm font-bold mb-2">View Tournament</h5>
-                  <button
-                    onClick={handleAdminRoute}
-                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
-                  >
-                    Go
-                  </button>
-                </div>
-                <div className="flex flex-col items-center">
-                  <h5 className="text-sm font-bold mb-2">Edit Tournament</h5>
-                  <button
-                    onClick={handleEditTour}
-                    className="w-full bg-yellow-400 text-black py-2 rounded hover:bg-yellow-600 transition duration-300"
-                  >
-                    Edit
-                  </button>
-                </div>
+
+                {/* Full-width "View Tournament" Button */}
+                <button
+                  onClick={handleAdminRoute}
+                  className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                >
+                  View Tournament
+                </button>
               </div>
             ) : (
               <div className="flex flex-col items-center">

@@ -14,6 +14,7 @@ type TourMemData = {
   teamName: string;
   invitedCode: string;
   memberCount: number;
+  memberLimit: number;
   members: {
     userId: string;
     isLeader: boolean;
@@ -116,7 +117,9 @@ export default function Leader() {
         </p>
         <p className="text-md">Team: {TourMemData?.teamName}</p>
         <p className="text-md">Invite Code: {TourMemData?.invitedCode}</p>
-        <p className="text-lg font-bold mt-4">{memberCount}/4</p>
+        <p className="text-lg font-bold mt-4">
+          {TourMemData?.memberCount}/{TourMemData?.memberLimit}
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mt-8 px-8">
