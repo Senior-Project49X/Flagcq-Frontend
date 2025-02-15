@@ -12,7 +12,7 @@ export default function DeleteCategories({
   const onDeleteCategories = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const categoryId = await DeleteCategoryAPI(parseInt(id));
+    await DeleteCategoryAPI(parseInt(id));
     onClose("");
   };
 
@@ -40,6 +40,10 @@ export default function DeleteCategories({
             <p className="text-2xl font-bold">Delete Category</p>
             <p className="text-lg font-bold text-red-500">
               are you sure to delete this category?
+              <p className="text-lg font-bold text-red-500">
+                This action will permanently delete the category and its
+                associated questions.
+              </p>
             </p>
             <form
               onSubmit={onDeleteCategories}

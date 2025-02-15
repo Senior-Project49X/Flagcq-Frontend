@@ -84,10 +84,21 @@ export default function Question({
                 <th className=" px-4 py-2">Select</th>
               )}
 
-              <th className="px-4 py-2 text-green-400">Question name</th>
-              <th className=" px-4 py-2 text-green-400">Difficulty</th>
-              <th className=" px-4 py-2 text-green-400">Point</th>
-              <th className=" px-4 py-2 text-green-400">Solver</th>
+              <th
+                className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+                onClick={() => {}}
+              >
+                Question name
+              </th>
+              <th className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700">
+                Difficulty
+              </th>
+              <th className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700">
+                Point
+              </th>
+              <th className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700">
+                Solver
+              </th>
               {isAdmin && (
                 <>
                   <th className=" px-4 py-2 text-green-400">Edit</th>
