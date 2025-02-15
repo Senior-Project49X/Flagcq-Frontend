@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { colCount } from "@tiptap/pm/tables";
 
 type TournamentDetail = {
   id: number;
@@ -42,15 +41,26 @@ export default function MyteamTourlist({
   const [isEventStarted, setIsEventStarted] = useState<boolean>(false);
 
   useEffect(() => {
+    // Check if event has started
     if (eventtime <= Date() && enrolltime >= eventtime) {
       setIsEventStarted(true);
     }
-  }, [eventtime]);
+  }, [eventtime, enrolltime]);
+
+  const handleClick = () => {
+    if (isEventStarted) {
+      router.push(`/tournament/TournamentPage?tournamentId=${id}`);
+    }
+  };
 
   return (
     <div
-      className="py-6 px-5 bg-gray-800 rounded-lg shadow-lg cursor-pointer 
-         glow-effect transition duration-300 hover:shadow-green-400 hover:shadow-lg"
+      className={`py-6 px-5 bg-gray-800 rounded-lg shadow-lg transition duration-300 ${
+        isEventStarted
+          ? "cursor-pointer glow-effect hover:shadow-green-400 hover:shadow-lg"
+          : "cursor-not-allowed "
+      }`}
+      onClick={handleClick}
     >
       <div className="flex justify-between items-center">
         <div>
@@ -81,23 +91,15 @@ export default function MyteamTourlist({
             </span>
           </div>
 
-          {/* Show mode selection only if the user is an admin */}
           <div className="flex items-center gap-2 text-blue-400">{mode}</div>
-          <div className="flex flex-col gap-2">
-            <button
-              className={`px-6 py-2 rounded-lg text-gray-300 ${
-                isEventStarted
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-customGrey cursor-not-allowed"
-              }`}
-              onClick={() =>
-                isEventStarted &&
-                router.push(`/tournament/TournamentPage?tournamentId=${id}`)
-              }
-              disabled={!isEventStarted}
-            >
-              Play tournament
-            </button>
+
+          {/* "Play Tournament" text instead of button */}
+          <div
+            className={`px-6 py-2 rounded-lg ${
+              isEventStarted ? "text-blue-500" : "text-gray-400"
+            }`}
+          >
+            {isEventStarted ? "Play Tournament" : "Closed"}
           </div>
         </div>
       </div>

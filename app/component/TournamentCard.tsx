@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import EnrollModal from "./EnrollModal";
 import Image from "next/image";
 import { isRoleAdmin } from "../lib/role";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 type TournamentDetail = {
   id: number;
@@ -40,26 +41,24 @@ export default function TournamentCard({
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
-    const role = isRoleAdmin();
-    setIsAdmin(role);
+    setIsAdmin(isRoleAdmin());
   }, []);
 
-  // Determine event start and end statuses
+  // Ensure date comparisons work correctly
 
-  // Determine status; closed if the current time is past enrollment end
-  const effectiveStatus = Date() < enrolltime ? "closed" : status;
+  // Determine if the card is clickable
+  const isFull = teamCount >= teamLimit;
+  const isEnrollmentOpen = status === "open" && Date() > enrolltime;
+  const isClickable = isAdmin || (isEnrollmentOpen && !isFull);
 
-  const handleOpenModal = () => {
-    if (effectiveStatus === "open" || isAdmin) {
+  const handleClick = () => {
+    if (isClickable) {
       setIsModalOpen(true);
     }
   };
 
   return (
-    <div
-      className="py-6 px-5 bg-gray-800 rounded-lg shadow-lg cursor-pointer 
-      glow-effect transition duration-300 hover:shadow-green-400 hover:shadow-lg"
-    >
+    <div>
       {isModalOpen && (
         <EnrollModal
           ClosePopup={() => setIsModalOpen(false)}
@@ -69,62 +68,62 @@ export default function TournamentCard({
           joinCode={joinCode}
         />
       )}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold mb-1 text-green-400">{topic}</h2>
-          <div className="text-green-400 text-sm">
-            <div>
-              Event Start: {eventStart}{" "}
-              <span className="text-red-500">({eventtime})</span>
-            </div>
-            <div>Event End: {event_endDate}</div>
-            <div>
-              Enroll End: {enrollEnd}{" "}
-              <span className="text-red-500">({enrolltime})</span>
+      <div
+        className={`py-6 px-5 bg-gray-800 rounded-lg shadow-lg transition duration-300 
+          ${
+            isClickable
+              ? "cursor-pointer glow-effect hover:shadow-green-400 hover:shadow-lg"
+              : "cursor-not-allowed"
+          }`}
+        onClick={handleClick}
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold mb-1 text-green-400">{topic}</h2>
+            <div className="text-green-400 text-sm">
+              <div>
+                Event Start: {eventStart}{" "}
+                <span className="text-red-500">({eventtime})</span>
+              </div>
+              <div>Event End: {event_endDate}</div>
+              <div>
+                Enroll End: {enrollEnd}{" "}
+                <span className="text-red-500">({enrolltime})</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/people.svg"
-              alt="Category logo"
-              width={40}
-              height={40}
-              className="object-contain"
-            />
-            <span className="text-xl font-bold text-blue-500">
-              {teamCount}/{teamLimit}
-            </span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/people.svg"
+                alt="Category logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <span className="text-xl font-bold text-blue-500">
+                {teamCount}/{teamLimit}
+              </span>
+            </div>
+
+            {isAdmin && <div className="text-blue-500">{mode}</div>}
+
+            {/* Show enroll status correctly */}
+            <div
+              className={`px-6 py-2 rounded-lg ${
+                isClickable ? "text-green-400" : "text-gray-400"
+              }`}
+            >
+              {isAdmin
+                ? ""
+                : isFull
+                ? "Full"
+                : isEnrollmentOpen
+                ? "Enroll"
+                : "Closed"}
+            </div>
           </div>
-
-          {/* Show mode selection only if the user is an admin */}
-          {isAdmin && (
-            <div className="flex items-center gap-2 text-blue-500">{mode}</div>
-          )}
-
-          <button
-            className={`px-6 py-2 rounded-lg text-black ${
-              teamCount >= teamLimit && !isAdmin
-                ? "bg-gray-500 cursor-not-allowed" // Non-admins see a disabled grey button when full
-                : effectiveStatus === "open" || isAdmin
-                ? "bg-customGreen hover:bg-green-500 ease-out duration-300"
-                : "bg-customGrey cursor-not-allowed"
-            }`}
-            onClick={handleOpenModal}
-            disabled={
-              !isAdmin && (teamCount >= teamLimit || effectiveStatus !== "open")
-            }
-          >
-            {isAdmin
-              ? "Manage"
-              : teamCount >= teamLimit
-              ? "Full"
-              : effectiveStatus === "open"
-              ? "Enroll"
-              : "Closed"}
-          </button>
         </div>
       </div>
     </div>
