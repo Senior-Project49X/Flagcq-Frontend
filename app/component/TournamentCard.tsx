@@ -100,7 +100,9 @@ export default function TournamentCard({
           </div>
 
           {/* Show mode selection only if the user is an admin */}
-          {isAdmin && <div className="flex items-center gap-2">{mode}</div>}
+          {isAdmin && (
+            <div className="flex items-center gap-2 text-blue-500">{mode}</div>
+          )}
 
           <button
             className={`px-6 py-2 rounded-lg text-black ${
