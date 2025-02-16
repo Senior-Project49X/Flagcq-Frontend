@@ -4,6 +4,7 @@ import QuestionPopup from "./QuestionPopup";
 import Link from "next/link";
 import { DeleteQuestionsByID } from "../lib/API/QuestionAPI";
 import DeleteQPuestionPopup from "./QuestionComponent/DeleteQuestionPopup";
+
 type detail = {
   id: number;
   Topic: string;

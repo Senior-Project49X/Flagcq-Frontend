@@ -140,6 +140,7 @@ export default function Homepage() {
                 selectedCategory={selectedCategories.join(",")}
                 questions={questions}
                 setSort={handleOnSort}
+                sort={sort}
               />
 
               <Pagination

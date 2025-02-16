@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { isRoleAdmin } from "../lib/role";
 import { usePathname } from "next/navigation";
 import { getCookie, isHasCookie, setCookie } from "../lib/cookies";
+import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
+import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
@@ -14,6 +16,7 @@ interface CryptographyProps {
   tournament_id?: number;
   isTable?: boolean;
   setSort: (sort: string) => void;
+  sort?: { name: string; order: string };
 }
 
 export default function Question({
@@ -23,6 +26,7 @@ export default function Question({
   tournament_id,
   isTable: isTableProp,
   setSort,
+  sort,
 }: Readonly<CryptographyProps>) {
   const pathname = usePathname();
   const [isCreateQuestionTournament, setIsCreateQuestionTournament] =
@@ -107,6 +111,12 @@ export default function Question({
                 }}
               >
                 Question name
+                {sort?.name === "QuestionName" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "QuestionName" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
               </th>
               <th
                 className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
@@ -115,6 +125,12 @@ export default function Question({
                 }}
               >
                 Difficulty
+                {sort?.name === "Difficulty" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "Difficulty" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
               </th>
               <th
                 className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700
@@ -125,6 +141,12 @@ export default function Question({
                 }}
               >
                 Point
+                {sort?.name === "Point" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "Point" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
               </th>
               <th
                 className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
@@ -133,6 +155,12 @@ export default function Question({
                 }}
               >
                 Solved
+                {sort?.name === "Solved" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "Solved" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
               </th>
               {isAdmin && (
                 <>
