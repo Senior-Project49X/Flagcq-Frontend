@@ -35,7 +35,10 @@ export default function Homepage() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-
+  const [sort, setSort] = useState<{ name: string; order: string }>({
+    name: "",
+    order: "acs",
+  });
   useEffect(() => {
     const role = isRoleAdmin();
     setIsAdmin(role);
@@ -45,6 +48,32 @@ export default function Homepage() {
     const pageParam = searchParams.get("page") || "1";
     setPage(pageParam);
   }, [searchParams]);
+
+  const handleOnSort = (sortName: string) => {
+    let order = "asc";
+    if (sort.name === sortName) {
+      order = sort.order === "asc" ? "desc" : "asc";
+      setSort({ name: sortName, order: order });
+    } else {
+      setSort({ name: sortName, order: "asc" });
+    }
+
+    const fetchUserQuestions = async () => {
+      const result = await GetQuestions(
+        selectedCategory,
+        selectedDifficulty,
+        page,
+        "Tournament",
+        Number(tournament_id),
+        undefined,
+        { name: sortName, order: order }
+      );
+      setTotalPages(result.totalPages);
+      setHasNextPage(result.hasNextPage);
+      setQuestions(result.data);
+    };
+    fetchUserQuestions();
+  };
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
@@ -164,7 +193,8 @@ export default function Homepage() {
             selectedDifficulty={selectedDifficulty}
             selectedCategory={selectedCategory}
             questions={questions}
-            isTable={true}
+            setSort={handleOnSort}
+            sort={sort}
           />
           <Pagination
             pagePath={`?tournamentId=${tournament_id}&page=`}
