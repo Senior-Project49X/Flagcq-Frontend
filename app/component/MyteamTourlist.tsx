@@ -39,7 +39,7 @@ export default function MyteamTourlist({
 }: TournamentDetail) {
   const router = useRouter();
   const [isEventStarted, setIsEventStarted] = useState<boolean>(false);
-
+  const truncatedTopic = topic.length > 30 ? `${topic.slice(0, 20)}...` : topic;
   useEffect(() => {
     // Check if event has started
     if (eventtime <= Date() && enrolltime >= eventtime) {
@@ -64,7 +64,9 @@ export default function MyteamTourlist({
     >
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold mb-1 text-green-400">{topic}</h2>
+          <h2 className="text-2xl font-bold mb-1 text-green-600">
+            {truncatedTopic}
+          </h2>
           <div className="text-green-400 text-sm">
             <div>
               Event Start: {eventStart}{" "}

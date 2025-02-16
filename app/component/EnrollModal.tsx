@@ -28,6 +28,7 @@ export default function EnrollModal({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const truncatedTopic = Topic.length > 30 ? `${Topic.slice(0, 25)}...` : Topic;
   const router = useRouter();
 
   // Check if the user is an admin
@@ -90,7 +91,7 @@ export default function EnrollModal({
           onMouseDown={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between px-6 py-4 border-b">
-            <h3 className="text-lg font-semibold">{Topic}</h3>
+            <h3 className="text-lg font-semibold">{truncatedTopic}</h3>
             <button className="text-black text-2xl" onClick={ClosePopup}>
               &times;
             </button>
