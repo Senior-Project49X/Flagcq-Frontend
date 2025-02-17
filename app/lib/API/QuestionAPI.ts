@@ -86,33 +86,6 @@ export const CreateQuestionTournamentAPI = async (
   }
 };
 
-// export const GetQuestions = async (
-//   selectedCategory: string,
-//   selectedDifficulty: string,
-//   page: string | null
-// ) => {
-//   const NewPage = page ?? 1;
-
-//   try {
-
-//     const resp = await axios.get(
-//       `${ip}/api/questions/practice?mode=Practice${
-//         selectedCategory === "All Categories"
-//           ? ""
-//           : `&category=${selectedCategory}`
-//       }${
-//         selectedDifficulty === "All Difficulty"
-//           ? ""
-//           : `&Difficulty=${selectedDifficulty}`
-//       }&page=${NewPage}`,
-//       { withCredentials: true }
-//     );
-//     return resp.data;
-//   } catch (e) {
-//     console.error("Error fetching questions:", e);
-//   }
-//   // console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
-// };
 
 export const GetQuestions = async (
   selectedCategory: string,
@@ -120,7 +93,8 @@ export const GetQuestions = async (
   page: string | null,
   mode: string,
   tournament_id?: number,
-  isTornamentSelected?: boolean
+  isTornamentSelected?: boolean,
+  sort?: { name: string; order: string },
 ) => {
   const NewPage = page ?? 1;
   const useSelected = isTornamentSelected ?? false;
@@ -139,7 +113,8 @@ export const GetQuestions = async (
   if (selectedDifficulty !== "All Difficulty") {
     url += `&difficulty=${selectedDifficulty}`;
   }
-
+  if(sort?.name !== '') url += `&sort=${sort?.name}`;
+  if(sort?.order !== '') url += `&sort_order=${sort?.order}`;
   if (tournament_id && !useSelected) {
     url += `&tournament_id=${tournament_id}`;
   }else if(tournament_id && useSelected){
@@ -298,4 +273,46 @@ export const DeleteQuestionTournament  = async (questionIds: number,tournamentId
   } catch (error) {
     console.error("Error downloading file:", error);
   }
+};
+
+export const EditCategoryAPI = async (
+  name: string,
+  id: number
+): Promise<any> => {
+  return axios
+    .put(`${ip}/api/categories/${id}`, {name}, {
+      withCredentials: true,
+      
+    })
+    .then((resp) => {
+      console.log(resp);
+      if (resp.status === 200) {
+        return resp.data.id;
+      }
+    })
+    .catch((e) => {
+      console.log("e", e.response.data.message);
+
+      return e;
+    });
+};
+export const DeleteCategoryAPI = async (
+  id: number
+): Promise<any> => {
+  return axios
+    .delete(`${ip}/api/categories/${id}`, {
+      withCredentials: true,
+      
+    })
+    .then((resp) => {
+      console.log(resp);
+      if (resp.status === 200) {
+        return resp.data;
+      }
+    })
+    .catch((e) => {
+      console.log("e", e.response.data.message);
+
+      return e;
+    });
 };

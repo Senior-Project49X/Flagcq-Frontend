@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { isRoleAdmin } from "../lib/role";
 import { usePathname } from "next/navigation";
 import { getCookie, isHasCookie, setCookie } from "../lib/cookies";
+import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
+import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
@@ -13,6 +15,8 @@ interface CryptographyProps {
   question_id?: number[]; // Add this prop
   tournament_id?: number;
   isTable?: boolean;
+  setSort: (sort: string) => void;
+  sort?: { name: string; order: string };
 }
 
 export default function Question({
@@ -21,11 +25,13 @@ export default function Question({
   question_id,
   tournament_id,
   isTable: isTableProp,
+  setSort,
+  sort,
 }: Readonly<CryptographyProps>) {
   const pathname = usePathname();
   const [isCreateQuestionTournament, setIsCreateQuestionTournament] =
     useState<boolean>(false);
-  const [isTable, setIsTable] = useState(getCookie("view") === "true");
+  const [isTable, setIsTable] = useState(isTableProp);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   useEffect(() => {
     const fetchRole = async () => {
@@ -33,8 +39,17 @@ export default function Question({
     };
     fetchRole();
   }, []);
+
+  const handleVIew = (isTable: boolean) => {
+    setIsTable(isTable);
+    setCookie("TableView", isTable.toString());
+  };
+
   useEffect(() => {
-    if (!isHasCookie("view")) setCookie("view", "false");
+    if (!isHasCookie("TableView")) {
+      setCookie("TableView", "false");
+      setIsTable(false);
+    } else setIsTable(getCookie("TableView") === "true");
   }, []);
 
   useEffect(() => {
@@ -44,12 +59,9 @@ export default function Question({
   }, [pathname]);
   return (
     <div>
-      <div className="flex justify-end mt-4 mr-16">
+      <div className="flex justify-end mt-4">
         <button
-          onClick={() => {
-            setCookie("view", "false");
-            setIsTable(false);
-          }}
+          onClick={() => handleVIew(false)}
           className={`rounded-l-md px-4 py-2 ${
             !isTable ? "bg-gray-300" : "bg-white"
           } transition`}
@@ -57,10 +69,7 @@ export default function Question({
           Card view
         </button>
         <button
-          onClick={() => {
-            setCookie("view", "true");
-            setIsTable(true);
-          }}
+          onClick={() => handleVIew(true)}
           className={`px-4 py-2 rounded-r-md ${
             isTable ? "bg-gray-300" : "bg-white"
           } transition`}
@@ -88,17 +97,71 @@ export default function Question({
           ))}
         </div>
       ) : (
-        <table className="table-auto w-full ">
+        <table className="table-auto w-full">
           <thead className="bg-gray-900 text-green">
             <tr>
               {isAdmin && isCreateQuestionTournament && (
                 <th className=" px-4 py-2">Select</th>
               )}
 
-              <th className="px-4 py-2 text-green-400">Question name</th>
-              <th className=" px-4 py-2 text-green-400">Difficulty</th>
-              <th className=" px-4 py-2 text-green-400">Point</th>
-              <th className=" px-4 py-2 text-green-400">Solved</th>
+              <th
+                className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+                onClick={() => {
+                  setSort("QuestionName");
+                }}
+              >
+                Question name
+                {sort?.name === "QuestionName" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "QuestionName" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
+              </th>
+              <th
+                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+                onClick={() => {
+                  setSort("Difficulty");
+                }}
+              >
+                Difficulty
+                {sort?.name === "Difficulty" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "Difficulty" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
+              </th>
+              <th
+                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700
+              
+              "
+                onClick={() => {
+                  setSort("Point");
+                }}
+              >
+                Point
+                {sort?.name === "Point" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "Point" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
+              </th>
+              <th
+                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+                onClick={() => {
+                  setSort("Solved");
+                }}
+              >
+                Solved
+                {sort?.name === "Solved" && sort?.order === "asc" && (
+                  <ArrowDropUpRoundedIcon />
+                )}
+                {sort?.name === "Solved" && sort?.order === "desc" && (
+                  <ArrowDropDownRoundedIcon />
+                )}
+              </th>
               {isAdmin && (
                 <>
                   <th className=" px-4 py-2 text-green-400">Edit</th>
