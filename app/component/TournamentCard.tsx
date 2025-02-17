@@ -44,9 +44,6 @@ export default function TournamentCard({
     setIsAdmin(isRoleAdmin());
   }, []);
 
-  // Ensure date comparisons work correctly
-
-  // Determine if the card is clickable
   const isFull = teamCount >= teamLimit;
   const isEnrollmentOpen = status === "open" && Date() > enrolltime;
   const isClickable = isAdmin || (isEnrollmentOpen && !isFull);
@@ -56,6 +53,8 @@ export default function TournamentCard({
       setIsModalOpen(true);
     }
   };
+
+  const truncatedTopic = topic.length > 30 ? `${topic.slice(0, 20)}...` : topic;
 
   return (
     <div>
@@ -79,7 +78,9 @@ export default function TournamentCard({
       >
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold mb-1 text-green-400">{topic}</h2>
+            <h2 className="text-2xl font-bold mb-1 text-green-600">
+              {truncatedTopic}
+            </h2>
             <div className="text-green-400 text-sm">
               <div>
                 Event Start: {eventStart}{" "}
