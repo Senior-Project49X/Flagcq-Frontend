@@ -145,7 +145,7 @@ export default function Page() {
     setSuccessMessage(null);
     try {
       const teamData = await PostJoinTeam({
-        invite_code: inviteCodePrivate,
+        invite_code: inviteCode,
         teamName: teamName,
       });
       if (!teamData || !teamData.team) {
@@ -169,7 +169,7 @@ export default function Page() {
     setSuccessMessage(null);
     try {
       const teamData = await PostJoinTeam({
-        invite_code: inviteCode,
+        invite_code: inviteCodePrivate,
         teamName: teamName,
       });
       if (!teamData || !teamData.team) {
@@ -192,7 +192,6 @@ export default function Page() {
       <Navbar />
       <div className="relative">
         <div className="max-w-5xl mx-auto flex items-center justify-between mb-10 mr-14">
-          {/* Tournament List Heading, centered using flex */}
           <div className="flex-1 flex justify-center mr-96">
             <h5 className="text-2xl font-semibold text-green-600 mt-10 ">
               Tournament List
@@ -201,7 +200,6 @@ export default function Page() {
 
           {!isAdmin && (
             <div className="w-80 flex flex-col items-center space-y-4 ml-auto">
-              {/* Join Team Heading */}
               <h5 className="text-lg font-semibold text-green-600">
                 Join Team
               </h5>
