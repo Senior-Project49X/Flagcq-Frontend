@@ -168,6 +168,7 @@ export default function Homepage() {
               questions={questions}
               question_id={question_id} // Add this prop
               tournament_id={tournament_id}
+              setSort={() => {}}
               isTable={false}
             />
 

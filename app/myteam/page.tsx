@@ -40,7 +40,7 @@ const formatDate = (dateString: string): string => {
   return `${day}/${month}/${year}`;
 };
 
-export default function myuserpage() {
+export default function Myuserpage() {
   const [tourData, setTourData] = useState<Tournament[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
