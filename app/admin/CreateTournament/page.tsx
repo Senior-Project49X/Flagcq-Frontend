@@ -3,8 +3,7 @@ import { PostCreateTour } from "../../lib/API/PostCreateTour";
 import { useState, useEffect } from "react";
 import Navbar from "../../component/Navbar/navbar";
 import { formatDynamicAPIAccesses } from "next/dist/server/app-render/dynamic-rendering";
-import { useRouter } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
 import { EditTourAPI, GetTournamentByID } from "@/app/lib/API/EditTour";
 import dynamic from "next/dynamic";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
@@ -25,13 +24,9 @@ interface CreateTourState {
   tournament_id: number | null | undefined;
 }
 
-interface CreateTourProps {
-  tournament_id: number | null | undefined;
-}
-
-export default function CreateTour({
-  tournament_id,
-}: Readonly<CreateTourProps>) {
+export default function CreateTour() {
+  const searchParams = useSearchParams();
+  const tournament_id = Number(searchParams.get("TournamentID"));
   const [CreateTourData, setCreateTourData] = useState<CreateTourState>({
     topic: "",
     description: "",
