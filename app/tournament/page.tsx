@@ -13,6 +13,7 @@ import { isRoleAdmin } from "../lib/role";
 interface RemainingTime {
   time: string;
   status: string;
+  color?: string;
 }
 
 interface Tournament {
@@ -50,12 +51,12 @@ const calculateRemainingTime = (
 
   // If current time is between start and end (event is ongoing)
   if (now >= eventStart && now <= eventEnd) {
-    return { time: "ongoing", status: "open" };
+    return { time: "ongoing", status: "open", color: "#2ecc71" };
   }
 
   // If current time is after event end (event is finished)
   if (now > eventEnd) {
-    return { time: "closed", status: "closed" };
+    return { time: "closed", status: "closed", color: "#ff4757" };
   }
 
   // If event hasn't started, show countdown
@@ -73,6 +74,7 @@ const calculateRemainingTime = (
         .toString()
         .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
       status: "open",
+      color: "#2ecc71",
     };
   }
 
@@ -80,6 +82,7 @@ const calculateRemainingTime = (
   return {
     time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
     status: "open",
+    color: "#2ecc71",
   };
 };
 
@@ -90,7 +93,7 @@ const calculateEnrollRemainingTime = (endDate: string): RemainingTime => {
 
   // If enrollment end date is before now
   if (enrollEnd < now) {
-    return { time: "closed", status: "closed" };
+    return { time: "closed", status: "closed", color: "#ff4757" };
   }
 
   // If enrollment is still open, show countdown
@@ -107,12 +110,14 @@ const calculateEnrollRemainingTime = (endDate: string): RemainingTime => {
         .toString()
         .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
       status: "open",
+      color: "#2ecc71",
     };
   }
 
   return {
     time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
     status: "open",
+    color: "#2ecc71",
   };
 };
 

@@ -56,7 +56,7 @@ export default function MyteamTourlist({
 
   return (
     <div
-      className={`py-6 px-5 bg-gray-800 rounded-lg shadow-lg transition duration-300 ${
+      className={`py-6 px-5 bg-gray-800 rounded-lg shadow-lg transition duration-300 border-2 border-rgba(255,255,255,0.1)${
         isEventStarted
           ? "cursor-pointer glow-effect hover:shadow-green-400 hover:shadow-lg"
           : "cursor-not-allowed "
@@ -65,10 +65,10 @@ export default function MyteamTourlist({
     >
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold mb-1 text-green-600">
+          <h2 className="text-2xl font-bold mb-1 text-[#00ff9d]">
             {truncatedTopic}
           </h2>
-          <div className="text-green-400 text-sm">
+          <div className="text-[#94a3b8] text-sm">
             <div>
               Event Start: {eventStart}{" "}
               <span className="text-red-500">({eventtime})</span>
@@ -94,7 +94,7 @@ export default function MyteamTourlist({
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-blue-400">{mode}</div>
+          <div className="flex items-center gap-2 text-[#64748b]">{mode}</div>
 
           {/* "Play Tournament" text instead of button */}
           <div
