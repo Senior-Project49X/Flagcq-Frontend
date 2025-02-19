@@ -43,7 +43,7 @@ export default function MyteamTourlist({
   const isJoinedAndNotStart = hasJoined && Date() > eventtime;
   useEffect(() => {
     // Check if event has started
-    if (eventtime <= Date() && enrolltime >= eventtime) {
+    if (eventtime >= Date() && enrolltime <= eventtime) {
       setIsEventStarted(true);
     }
   }, [eventtime, enrolltime]);

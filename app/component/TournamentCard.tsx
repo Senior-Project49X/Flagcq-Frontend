@@ -46,7 +46,7 @@ export default function TournamentCard({
 
   const isFull = teamCount >= teamLimit;
   const isEnrollmentOpen = status === "open" && Date() > enrolltime;
-  const isJoinedAndNotStart = hasJoined && Date() < eventStart;
+  const isEventStarted = eventtime <= Date() && enrolltime >= eventtime;
   const isClickable = isAdmin || (isEnrollmentOpen && !isFull);
 
   const handleClick = () => {
