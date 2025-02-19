@@ -55,7 +55,7 @@ export default function Tourteam_member() {
     };
 
     fetchTourMemData();
-  }, []);
+  }, [tournamentId, teamId]);
 
   useEffect(() => {
     if (TourMemData && TourMemData.members && TourMemData.members.length > 0) {
@@ -69,7 +69,7 @@ export default function Tourteam_member() {
         setRole("member");
       }
     }
-  }, [TourMemData]);
+  }, [TourMemData, data]);
 
   if (role === null) {
     return <div>Loading...</div>;

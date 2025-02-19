@@ -12,11 +12,10 @@ import CreateCategories from "../component/CreateCategories";
 import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import ModeEditOutlineRoundedIcon from "@mui/icons-material/ModeEditOutlineRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-
 import EditCategories from "../component/EditCategories";
 import DeleteCategories from "../component/DeleteCategories";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
@@ -37,14 +36,13 @@ interface ButtonStates {
   [key: string]: boolean; // Define a dynamic object where keys are strings and values are boolean
 }
 interface Category {
-  [x: string]: any;
   id: string;
   name: string;
 }
-interface EditQuestionProps {
-  id: number | null | undefined;
-}
-export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
+
+export default function CreateQuestion() {
+  const searchParams = useSearchParams();
+  const id = Number(searchParams.get("QuestionID"));
   const router = useRouter();
   const [modeSelection, setModeSelection] = useState<ButtonStates>({
     Practice: false,
@@ -55,9 +53,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [categories, setCategories] = useState<Category[]>(
-    [] as unknown as Category[]
-  );
+  const [categories, setCategories] = useState<Category[]>([] as Category[]);
   const newCategory = false;
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
@@ -117,7 +113,6 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
       "isFileEdited",
       typeof file === "string" ? "false" : "true"
     );
-    console.log(id);
 
     if (id !== null && id !== undefined) {
       EditQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess }, id);

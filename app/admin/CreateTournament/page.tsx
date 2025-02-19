@@ -23,13 +23,9 @@ interface CreateTourState {
   tournament_id: number | null | undefined;
 }
 
-interface CreateTourProps {
-  tournament_id: number | null | undefined;
-}
-
-export default function CreateTour({
-  tournament_id,
-}: Readonly<CreateTourProps>) {
+export default function CreateTour() {
+  const searchParams = useSearchParams();
+  const tournament_id = Number(searchParams.get("TournamentID"));
   const [CreateTourData, setCreateTourData] = useState<CreateTourState>({
     topic: "",
     description: "",
