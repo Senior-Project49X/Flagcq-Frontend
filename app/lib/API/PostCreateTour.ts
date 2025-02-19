@@ -35,6 +35,13 @@ export const PostCreateTour = async (data: TournamentData) => {
     );
     return resp.data;
   } catch (e) {
+    if (axios.isAxiosError(e) && e.response?.status === 400) {
+      return {
+        success: false,
+        message: e.response.data.message,
+      };
+    }
+
     console.error("Error posting tournament data:", e);
     return null; // Return null to indicate failure
   }

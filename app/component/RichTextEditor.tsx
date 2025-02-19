@@ -249,7 +249,6 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           style={{ left: 0 }}
         />
       </div>
-      <p className="text-sm text-gray-600">{value}</p>
     </div>
   );
 };

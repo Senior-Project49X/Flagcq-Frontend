@@ -46,6 +46,7 @@ export default function TournamentCard({
 
   const isFull = teamCount >= teamLimit;
   const isEnrollmentOpen = status === "open" && Date() > enrolltime;
+  const isJoinedAndNotStart = hasJoined && Date() < eventStart;
   const isClickable = isAdmin || (isEnrollmentOpen && !isFull);
 
   const handleClick = () => {
@@ -101,7 +102,7 @@ export default function TournamentCard({
                 alt="Category logo"
                 width={40}
                 height={40}
-                className="object-contain"
+                className="object-contain invert-50"
               />
               <span className="text-xl font-bold text-blue-500">
                 {teamCount}/{teamLimit}

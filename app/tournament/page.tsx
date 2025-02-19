@@ -157,7 +157,7 @@ export default function Page() {
       );
     } catch (error) {
       console.error("Error joining team:", error);
-      setErrorMessage("Code is invalid or incorrect. Please try again.");
+      setErrorMessage("Code is invalid or Team is full. Please try again.");
     } finally {
       setIsLoadingJoin(false);
     }
@@ -181,7 +181,9 @@ export default function Page() {
       );
     } catch (error) {
       console.error("Error joining team:", error);
-      setErrorMessagePrivate("Code is invalid or incorrect. Please try again.");
+      setErrorMessagePrivate(
+        "Code is invalid or team is full. Please try again."
+      );
     } finally {
       setIsLoadingJoin(false);
     }
@@ -191,52 +193,53 @@ export default function Page() {
     <div>
       <Navbar />
       <div className="relative">
-        <div className="max-w-5xl mx-auto flex items-center justify-between mb-10 mr-14">
-          <div className="flex-1 flex justify-center mr-96">
-            <h5 className="text-2xl font-semibold text-green-600 mt-10 ">
-              Tournament List
-            </h5>
-          </div>
-
+        <div className="flex-1 flex justify-center">
+          <h5 className="text-2xl font-semibold text-green-600 mt-10 ">
+            Tournament List
+          </h5>
+        </div>
+        <br />
+        <div className="max-w-5xl mx-auto flex justify-center items-center space-x-8">
           {!isAdmin && (
-            <div className="w-80 flex flex-col items-center space-y-4 ml-auto">
-              <h5 className="text-lg font-semibold text-green-600">
-                Join Team
-              </h5>
-
-              {/* Invite Code Form */}
-              <form
-                onSubmit={handleJoinTeam}
-                className="w-full flex items-center space-x-2"
-              >
-                <input
-                  type="text"
-                  placeholder="Invite Code"
-                  className="flex-1 px-3 py-2 border rounded"
-                  maxLength={50}
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value)}
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-                  disabled={isLoadingJoin}
+            <>
+              {/* Join Team Section */}
+              <div className="w-96 flex flex-col items-center">
+                <h5 className="text-lg font-semibold text-green-600 text-center">
+                  Join Team
+                </h5>
+                <form
+                  onSubmit={handleJoinTeam}
+                  className="w-full flex items-center space-x-2"
                 >
-                  {isLoadingJoin ? "Joining..." : "Join"}
-                </button>
-              </form>
-              {errorMessage && (
-                <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
-              )}
+                  <input
+                    type="text"
+                    placeholder="Invite Code"
+                    className="flex-1 px-3 py-2 border rounded text-center"
+                    maxLength={50}
+                    value={inviteCode}
+                    onChange={(e) => setInviteCode(e.target.value)}
+                  />
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+                    disabled={isLoadingJoin}
+                  >
+                    {isLoadingJoin ? "Joining..." : "Join"}
+                  </button>
+                </form>
+                {errorMessage && (
+                  <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+                )}
+              </div>
 
-              {/* Join Private Tournament Button */}
-              <div className="w-full flex flex-col items-center">
-                <h5 className="text-lg font-semibold text-green-600">
+              {/* Join Private Tournament Section */}
+              <div className="w-96 flex flex-col items-center">
+                <h5 className="text-lg font-semibold text-green-600 text-center">
                   Join Private Tournament
                 </h5>
                 <button
                   onClick={() => setShowPopup(true)}
-                  className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                  className="w-full bg-blue-300 text-black py-2 rounded hover:bg-blue-400 transition duration-300"
                 >
                   Join Private
                 </button>
@@ -244,7 +247,7 @@ export default function Page() {
 
               {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-w-full relative z-25">
+                  <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-96 max-w-full relative z-25 text-center">
                     <button
                       className="absolute top-2 right-4 text-black text-2xl"
                       onClick={() => setShowPopup(false)}
@@ -252,28 +255,26 @@ export default function Page() {
                       &times;
                     </button>
                     <br />
-                    <h5 className="text-sm font-bold mb-2 text-center">
-                      Create New Team
-                    </h5>
+                    <h5 className="text-sm font-bold mb-2">Create New Team</h5>
 
                     <form onSubmit={handleJoinTeamPrivate} className="w-full">
                       <input
                         type="text"
                         placeholder="Team Name"
-                        className="w-full px-3 py-2 border rounded mb-4"
+                        className="w-full px-3 py-2 border rounded mb-4 text-center"
                         maxLength={50}
                         value={teamName}
                         onChange={(e) => setTeamName(e.target.value)}
                       />
 
-                      <h5 className="text-sm font-bold mb-2 text-center">
+                      <h5 className="text-sm font-bold mb-2">
                         Code from Private Tournament
                       </h5>
 
                       <input
                         type="text"
                         placeholder="Invite Code"
-                        className="w-full px-3 py-2 border rounded mb-4"
+                        className="w-full px-3 py-2 border rounded mb-4 text-center"
                         value={inviteCodePrivate}
                         onChange={(e) => setInviteCodePrivate(e.target.value)}
                       />
@@ -294,7 +295,7 @@ export default function Page() {
                   </div>
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
 
