@@ -51,7 +51,7 @@ export default function LoadingPopup({
               </>
             )}
 
-            <div className="flex items-center p-6 border-t border-solid border-blueGray-200 rounded-b justify-center">
+            <div className="bg-gray-300 flex items-center p-6 border-t border-solid border-blueGray-200 rounded-b justify-center">
               <button
                 className="absolute mt-6 text-red-500 hover:text-red font-bold text-2xl"
                 type="button"

@@ -71,11 +71,12 @@ export default function TournamentCard({
       )}
       <div
         className={`py-6 px-5 bg-gray-800 rounded-lg shadow-lg transition duration-300 border-2 border-rgba(255,255,255,0.1)
-        ${
-          isClickable
-            ? "cursor-pointer glow-effect hover:shadow-green-400 hover:shadow-lg "
-            : "cursor-not-allowed"
-        }`}
+  ${
+    isClickable
+      ? "cursor-pointer glow-effect hover:shadow-green-400 hover:shadow-lg"
+      : "cursor-not-allowed"
+  }
+  ${!isEnrollmentOpen && !isAdmin ? "opacity-70" : ""}`}
         onClick={handleClick}
       >
         <div className="flex justify-between items-center">

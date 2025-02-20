@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../../component/Navbar/navbar";
 import LoadingPopup from "../../component/LoadingPopup";
 import { EditTourAPI, GetTournamentByID } from "@/app/lib/API/EditTour";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
   loading: () => <p>Loading...</p>,

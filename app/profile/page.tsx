@@ -32,7 +32,7 @@ export default function Profile() {
       <div className="flex justify-center items-center mt-10">
         <div className="bg-gray-800 rounded-lg p-8 w-full max-w-4xl shadow-lg">
           <div className="flex mt-8">
-            <div className="w-48 h-48 rounded-lg">
+            <div className="w-48 h-48 rounded-lg bg-white">
               <Image
                 src="/logo_eng.svg"
                 alt="logo"
