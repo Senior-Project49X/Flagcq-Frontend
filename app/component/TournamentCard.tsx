@@ -12,6 +12,7 @@ type TournamentDetail = {
   enrollEnd: string;
   status: string;
   enrolltime: string;
+  statusColor?: string;
   eventtime: string;
   event_endDate: string;
   hasJoined: boolean;
@@ -31,6 +32,7 @@ export default function TournamentCard({
   enrolltime,
   eventtime,
   event_endDate,
+  statusColor,
   hasJoined,
   teamCount,
   mode,
@@ -68,32 +70,35 @@ export default function TournamentCard({
         />
       )}
       <div
-        className={`py-6 px-5 bg-gray-800 rounded-lg shadow-lg transition duration-300 
-          ${
-            isClickable
-              ? "cursor-pointer glow-effect hover:shadow-green-400 hover:shadow-lg"
-              : "cursor-not-allowed"
-          }`}
+        className={`py-6 px-5 bg-gray-800 rounded-lg shadow-lg transition duration-300 border-2 border-rgba(255,255,255,0.1)
+        ${
+          isClickable
+            ? "cursor-pointer glow-effect hover:shadow-green-400 hover:shadow-lg "
+            : "cursor-not-allowed"
+        }`}
         onClick={handleClick}
       >
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold mb-1 text-green-600">
+            <h2 className="text-2xl font-bold mb-1 text-[#00ff9d]">
               {truncatedTopic}
             </h2>
-            <div className="text-green-400 text-sm">
+            <div className="text-[#94a3b8] text-sm">
               <div>
                 Event Start: {eventStart}{" "}
-                <span className="text-red-500">({eventtime})</span>
+                <span style={{ color: statusColor || "#ff4757" }}>
+                  ({eventtime})
+                </span>
               </div>
               <div>Event End: {event_endDate}</div>
               <div>
                 Enroll End: {enrollEnd}{" "}
-                <span className="text-red-500">({enrolltime})</span>
+                <span style={{ color: statusColor || "#ff4757" }}>
+                  ({enrolltime})
+                </span>
               </div>
             </div>
           </div>
-
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Image
@@ -101,20 +106,19 @@ export default function TournamentCard({
                 alt="Category logo"
                 width={40}
                 height={40}
-                className="object-contain"
+                className="object-contain invert-50"
               />
               <span className="text-xl font-bold text-blue-500">
                 {teamCount}/{teamLimit}
               </span>
             </div>
-
-            {isAdmin && <div className="text-blue-500">{mode}</div>}
-
-            {/* Show enroll status correctly */}
+            {isAdmin && <div className="text-[#64748b]">{mode}</div>}
             <div
-              className={`px-6 py-2 rounded-lg ${
-                isClickable ? "text-green-400" : "text-gray-400"
-              }`}
+              style={{
+                color: statusColor || (isClickable ? "#2ecc71" : "#ff4757"),
+                padding: "8px 24px",
+                borderRadius: "8px",
+              }}
             >
               {isAdmin
                 ? ""

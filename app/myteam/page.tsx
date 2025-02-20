@@ -12,6 +12,7 @@ import MyteamCard from "../component/MyteamCard";
 interface RemainingTime {
   time: string;
   status: string;
+  color?: string;
 }
 
 interface Tournament {
@@ -50,15 +51,26 @@ export default function Myuserpage() {
 
   const router = useRouter();
 
-  const calculateRemainingTime = (endDate: string): RemainingTime => {
+  const calculateRemainingTime = (
+    startDate: string,
+    endDate: string
+  ): RemainingTime => {
     const now = new Date();
-    const targetDate = new Date(endDate);
-    const remaining = targetDate.getTime() - now.getTime();
+    const eventStart = new Date(startDate);
+    const eventEnd = new Date(endDate);
+    const remaining = eventStart.getTime() - now.getTime();
 
-    if (remaining <= 0) {
-      return { time: "Time Ended", status: "closed" };
+    // If current time is between start and end (event is ongoing)
+    if (now >= eventStart && now <= eventEnd) {
+      return { time: "ongoing", status: "open", color: "#2ecc71" };
     }
 
+    // If current time is after event end (event is finished)
+    if (now > eventEnd) {
+      return { time: "closed", status: "closed", color: "#ff4757" };
+    }
+
+    // If event hasn't started, show countdown
     const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
       (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
@@ -66,9 +78,55 @@ export default function Myuserpage() {
     const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
+    // Format for hours:minutes:seconds
+    if (days === 0) {
+      return {
+        time: `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+        status: "open",
+      };
+    }
+
+    // Format for days, hours, minutes, seconds
     return {
       time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
       status: "open",
+    };
+  };
+
+  const calculateEnrollRemainingTime = (endDate: string): RemainingTime => {
+    const now = new Date();
+    const enrollEnd = new Date(endDate);
+    const remaining = enrollEnd.getTime() - now.getTime();
+
+    // If enrollment end date is before now
+    if (enrollEnd < now) {
+      return { time: "closed", status: "closed", color: "#ff4757" };
+    }
+
+    // If enrollment is still open, show countdown
+    const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    if (days === 0) {
+      return {
+        time: `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+        status: "open",
+        color: "#2ecc71",
+      };
+    }
+
+    return {
+      time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+      status: "open",
+      color: "#2ecc71",
     };
   };
 
@@ -85,10 +143,13 @@ export default function Myuserpage() {
           const initializedData = Tournaments1.map(
             (tournament1: Tournament) => ({
               ...tournament1,
-              enrollRemaining: calculateRemainingTime(
+              enrollRemaining: calculateEnrollRemainingTime(
                 tournament1.enroll_endDate
               ),
-              eventRemaining: calculateRemainingTime(tournament1.event_endDate),
+              eventRemaining: calculateRemainingTime(
+                tournament1.event_endDate,
+                tournament1.event_endDate
+              ),
             })
           );
           setTourData(initializedData);
@@ -111,8 +172,13 @@ export default function Myuserpage() {
       setTourData((prevData) =>
         prevData.map((tournament) => ({
           ...tournament,
-          enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
-          eventRemaining: calculateRemainingTime(tournament.event_endDate),
+          enrollRemaining: calculateEnrollRemainingTime(
+            tournament.enroll_endDate
+          ),
+          eventRemaining: calculateRemainingTime(
+            tournament.event_endDate,
+            tournament.event_endDate
+          ),
         }))
       );
     }, 1000);
@@ -147,7 +213,7 @@ export default function Myuserpage() {
                   enrollEnd={formatDate(tournament1.enroll_endDate)}
                   status={tournament1.eventRemaining?.status || "closed"}
                   enrolltime={tournament1.enrollRemaining?.time || "Time Ended"}
-                  eventtime={tournament1.eventRemaining?.time || "Time Ended"}
+                  eventtime={tournament1.eventRemaining?.time || "Starting"}
                   event_endDate={formatDate(tournament1.event_endDate)}
                   hasJoined={tournament1.hasJoined}
                   teamId={tournament1.teamId}

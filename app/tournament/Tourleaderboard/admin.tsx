@@ -28,10 +28,7 @@ export default function TeamLeaderboardAdmin() {
     TeamLeaderboardData[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTeam, setSelectedTeam] = useState<TeamLeaderboardData | null>(
-    null
-  );
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [openedIndexes, setOpenedIndexes] = useState<number[]>([]); // Track open cards
 
   useEffect(() => {
     const fetchTeamLeaderboardData = async () => {
@@ -49,9 +46,10 @@ export default function TeamLeaderboardAdmin() {
     fetchTeamLeaderboardData();
   }, [tournamentId]);
 
-  const handleTeamClick = (team: TeamLeaderboardData, index: number) => {
-    setSelectedTeam(team);
-    setSelectedIndex(index);
+  const handleTeamClick = (index: number) => {
+    setOpenedIndexes((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
   };
 
   return (
@@ -85,25 +83,28 @@ export default function TeamLeaderboardAdmin() {
               Total Points
             </div>
           </div>
+
           {!isLoading && teamLeaderboardData.length > 0 ? (
             teamLeaderboardData.map((team, index) => (
               <div key={team.teamID}>
                 <div
-                  className="cursor-pointer bg-gray-900 rounded-lg p-6 text-green-500 shadow-md flex justify-between items-center hover:bg-gray-700 border-green-500 border-2"
-                  onClick={() => handleTeamClick(team, index)}
+                  className={`cursor-pointer bg-gray-900 rounded-lg p-6 text-green-500 shadow-md flex justify-between items-center hover:bg-gray-700 border-green-500 border-2 ${
+                    openedIndexes.includes(index) ? "bg-gray-700" : ""
+                  }`}
+                  onClick={() => handleTeamClick(index)}
                 >
                   <div className="flex-1 font-bold text-left">{index + 1}</div>
                   <div className="flex-1 font-bold text-center">
                     {team.teamName}
                   </div>
-                  <div className="flex-1  font-bold text-right">
+                  <div className="flex-1 font-bold text-right">
                     {team.totalPoints}
                   </div>
                   <span className="text-green-500 ml-2">→</span>
                 </div>
 
-                {/* Our Team Leaderboard appears here if this card is selected */}
-                {selectedIndex === index && selectedTeam && (
+                {/* Team Leaderboard appears here if this card is selected */}
+                {openedIndexes.includes(index) && (
                   <div className="bg-gray-800 text-black rounded-lg shadow-md p-6 mt-4 border-white-500 border-1">
                     <h2 className="text-xl font-bold mb-4 text-center text-green-600">
                       Our Team Leaderboard
@@ -113,8 +114,8 @@ export default function TeamLeaderboardAdmin() {
                       <span className="text-red-500">Score</span>
                     </div>
                     <hr className="border-t-2 mb-4" />
-                    {selectedTeam.members.length > 0 ? (
-                      selectedTeam.members.map((member, memberIndex) => (
+                    {team.members.length > 0 ? (
+                      team.members.map((member, memberIndex) => (
                         <div
                           key={member.userId}
                           className="flex justify-between items-center text-lg mb-2"

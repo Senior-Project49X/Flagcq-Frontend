@@ -2,43 +2,40 @@
 import React from "react";
 import Navbar from "../component/Navbar/navbar";
 import Image from "next/image";
-import { LinkedIn } from "@mui/icons-material";
-
-const professor = {
-  name: "อาจารย์ เอะ",
-  title: "Professor of Computer Engineering",
-  faculty: "Faculty of Engineering",
-  image: "/profile_professor.jpg",
-};
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const students = [
   {
-    name: "สิรวิชญ์ ปินตานา",
+    name: "Sirawich Pintana",
     studentCode: "640612099",
     faculty: "Faculty of Engineering",
     image: "/profile_fifa.jpg",
-    LinkedIn: "https://www.linkedin.com/in/sirawich-pintana-3733a1294/",
+    github: "https://github.com/ILikeMonday",
+    linkedin: "https://www.linkedin.com/in/sirawich-pintana-3733a1294/",
   },
   {
-    name: "ปราชญ์ชยา กรณิศทิศารัศม์",
+    name: "Praschaya Kornnittisarat ",
     studentCode: "640610649",
     faculty: "Faculty of Engineering",
     image: "/profile_ariya.jpg",
-    LinkedIn: "https://www.linkedin.com/in/praschaya-kornnittisarat/",
+    github: "https://github.com/Nanashikung",
+    linkedin: "https://www.linkedin.com/in/praschaya-kornnittisarat/",
   },
   {
-    name: "ภาณุวัฒน์ เงินท๊อก",
+    name: "Phanuwat Ngoenthok",
     studentCode: "640610659",
     faculty: "Faculty of Engineering",
     image: "/profile_nattawut.jpg",
-    LinkedIn: "https://www.linkedin.com/in/phanuwat1/",
+    github: "https://github.com/nunu111",
+    linkedin: "https://www.linkedin.com/in/phanuwat1/",
   },
   {
-    name: "ภัสกรณ์ สินเธาว์",
+    name: "Pasakorn Sintao",
     studentCode: "640610658",
     faculty: "Faculty of Engineering",
     image: "/profile_preeya.jpg",
-    LinkedIn: "https://www.linkedin.com/in/pasakorn-sintao-ba06b326a/",
+    github: "https://github.com/HiM4278",
+    linkedin: "https://www.linkedin.com/in/pasakorn-sintao-ba06b326a/",
   },
 ];
 
@@ -47,29 +44,9 @@ export default function Profile() {
     <div className="min-h-screen">
       <Navbar />
       <div className="container mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold text-center mb-8 text-white">
+        <h1 className="text-3xl font-bold text-center mb-8 text-green-500">
           About Us
         </h1>
-
-        {/* Professor Card */}
-        <div className="bg-white rounded-lg p-10 shadow-xl flex items-center space-x-10 mb-10 w-full max-w-4xl mx-auto">
-          <div className="w-48 h-48 flex-shrink-0">
-            <Image
-              src={professor.image}
-              alt={professor.name}
-              width={500}
-              height={500}
-              className="object-cover rounded-lg"
-            />
-          </div>
-          <div className="space-y-3">
-            <h2 className="text-2xl font-bold">{professor.name}</h2>
-            <p className="text-gray-600 font-semibold">{professor.title}</p>
-            <p className="text-gray-600">
-              <span className="font-bold">Faculty:</span> {professor.faculty}
-            </p>
-          </div>
-        </div>
 
         {/* Students Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -88,7 +65,7 @@ export default function Profile() {
                 />
               </div>
               <div className="space-y-3">
-                <h2 className="text-xl font-bold text-red-500">
+                <h2 className="text-xl font-bold text-gray-300">
                   {student.name}
                 </h2>
                 <p className="text-green-400">
@@ -98,15 +75,31 @@ export default function Profile() {
                 <p className="text-green-400">
                   <span className="font-bold">Faculty:</span> {student.faculty}
                 </p>
-                <p className="text-green-400">
-                  <span className="font-bold">LinkedIn:</span>{" "}
-                  <a
-                    href={student.LinkedIn}
-                    className="text-blue-600 underline"
-                  >
-                    {student.LinkedIn}
-                  </a>
-                </p>
+                {/* Social Links */}
+                <div className="flex items-center space-x-4">
+                  {student.github && (
+                    <a
+                      href={student.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-blue-400 hover:text-blue-500"
+                    >
+                      <FaGithub size={20} />
+                      GitHub
+                    </a>
+                  )}
+                  {student.linkedin && (
+                    <a
+                      href={student.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-blue-400 hover:text-blue-500"
+                    >
+                      <FaLinkedin size={20} />
+                      LinkedIn
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           ))}

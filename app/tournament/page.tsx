@@ -1,8 +1,7 @@
 "use client";
-
 import React, { useState, useEffect, FormEvent } from "react";
 import Navbar from "../component/Navbar/navbar";
-import { GetTourList, JoinTeam } from "../lib/API/GetTourListAPI";
+import { GetTourList } from "../lib/API/GetTourListAPI";
 import { PostJoinTeam } from "../lib/API/PostJoinTeam";
 import TournamentCard from "../component/TournamentCard";
 import MyteamTourlist from "../component/MyteamTourlist";
@@ -10,10 +9,11 @@ import Pagination from "../component/Pagination";
 import { useSearchParams, useRouter } from "next/navigation";
 import { isRoleAdmin } from "../lib/role";
 
-// Define Tournament Type
+// Types
 interface RemainingTime {
   time: string;
   status: string;
+  color?: string;
 }
 
 interface Tournament {
@@ -34,20 +34,32 @@ interface Tournament {
   teamId: number;
 }
 
-// Format Date Utility
+// Utility Functions
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-GB"); // Format: DD/MM/YYYY
+  return date.toLocaleDateString("en-GB");
 };
 
-// Calculate Remaining Time
-const calculateRemainingTime = (endDate: string): RemainingTime => {
+const calculateRemainingTime = (
+  startDate: string,
+  endDate: string
+): RemainingTime => {
   const now = new Date();
-  const targetDate = new Date(endDate);
-  const remaining = targetDate.getTime() - now.getTime();
+  const eventStart = new Date(startDate);
+  const eventEnd = new Date(endDate);
+  const remaining = eventStart.getTime() - now.getTime();
 
-  if (remaining <= 0) return { time: "Time Ended", status: "closed" };
+  // If current time is between start and end (event is ongoing)
+  if (now >= eventStart && now <= eventEnd) {
+    return { time: "ongoing", status: "open", color: "#2ecc71" };
+  }
 
+  // If current time is after event end (event is finished)
+  if (now > eventEnd) {
+    return { time: "closed", status: "closed", color: "#ff4757" };
+  }
+
+  // If event hasn't started, show countdown
   const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
   const hours = Math.floor(
     (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
@@ -55,39 +67,148 @@ const calculateRemainingTime = (endDate: string): RemainingTime => {
   const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
-  return { time: `${days}d ${hours}h ${minutes}m ${seconds}s`, status: "open" };
+  // Format for hours:minutes:seconds
+  if (days === 0) {
+    return {
+      time: `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+      status: "open",
+      color: "#2ecc71",
+    };
+  }
+
+  // Format for days, hours, minutes, seconds
+  return {
+    time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+    status: "open",
+    color: "#2ecc71",
+  };
 };
 
-export default function Page() {
+const calculateEnrollRemainingTime = (endDate: string): RemainingTime => {
+  const now = new Date();
+  const enrollEnd = new Date(endDate);
+  const remaining = enrollEnd.getTime() - now.getTime();
+
+  // If enrollment end date is before now
+  if (enrollEnd < now) {
+    return { time: "closed", status: "closed", color: "#ff4757" };
+  }
+
+  // If enrollment is still open, show countdown
+  const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+  if (days === 0) {
+    return {
+      time: `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+      status: "open",
+      color: "#2ecc71",
+    };
+  }
+
+  return {
+    time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+    status: "open",
+    color: "#2ecc71",
+  };
+};
+
+// Component for Join Team Form
+const JoinTeamForm = ({
+  isPrivate = false,
+  onClose,
+}: {
+  isPrivate?: boolean;
+  onClose?: () => void;
+}) => {
+  const router = useRouter();
+  const [teamName, setTeamName] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const teamData = await PostJoinTeam({
+        invite_code: inviteCode,
+        teamName: isPrivate ? teamName : "",
+      });
+
+      if (!teamData?.team) throw new Error("Invalid response from server.");
+
+      router.push(
+        `/tournament/Tourteam_member?tournamentId=${teamData.team.tournament_id}&teamId=${teamData.team.id}`
+      );
+      if (onClose) onClose();
+    } catch (error) {
+      setErrorMessage("Code is invalid or Team is full. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="w-full">
+      {isPrivate && (
+        <input
+          type="text"
+          placeholder="Team Name"
+          className="w-full px-3 py-2 border rounded mb-4 text-center"
+          maxLength={50}
+          value={teamName}
+          onChange={(e) => setTeamName(e.target.value)}
+        />
+      )}
+      <input
+        type="text"
+        placeholder="Invite Code"
+        className="w-full px-3 py-2 border rounded mb-4 text-center"
+        value={inviteCode}
+        onChange={(e) => setInviteCode(e.target.value)}
+      />
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+        disabled={isLoading}
+      >
+        {isLoading ? "Joining..." : "Join"}
+      </button>
+      {errorMessage && (
+        <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+      )}
+    </form>
+  );
+};
+
+// Main Component
+export default function TournamentPage() {
   const [unjoinedTournaments, setUnjoinedTournaments] = useState<Tournament[]>(
     []
   );
-  const [joinedTournaments, setJoinedTournaments] = useState<Tournament[]>([]);
-
-  const [teamName, setTeamName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-  const [isLoadingJoin, setIsLoadingJoin] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [inviteCode, setInviteCode] = useState("");
-  const [inviteCodePrivate, setInviteCodePrivate] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [errorMessagePrivate, setErrorMessagePrivate] = useState("");
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || "1";
 
+  // Check admin status
   useEffect(() => {
-    const role = isRoleAdmin();
-    setIsAdmin(role);
-    if (!role) {
-      console.log("Not an admin");
-    }
+    setIsAdmin(isRoleAdmin());
   }, []);
 
   useEffect(() => {
@@ -96,15 +217,17 @@ export default function Page() {
         const response = await GetTourList(page);
         setTotalPages(response.totalPages);
         setHasNextPage(response.hasNextPage);
-        console.log("Tournaments:", response.data);
-
         if (Array.isArray(response.data)) {
           const formattedData = response.data.map((tournament: Tournament) => ({
             ...tournament,
-            enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
-            eventRemaining: calculateRemainingTime(tournament.event_endDate),
+            enrollRemaining: calculateEnrollRemainingTime(
+              tournament.enroll_endDate
+            ),
+            eventRemaining: calculateRemainingTime(
+              tournament.event_startDate,
+              tournament.event_endDate
+            ),
           }));
-
           setUnjoinedTournaments(formattedData);
         }
       } catch (error) {
@@ -113,7 +236,6 @@ export default function Page() {
         setIsLoading(false);
       }
     };
-
     fetchTournaments();
   }, [page]);
 
@@ -122,185 +244,65 @@ export default function Page() {
       setUnjoinedTournaments((prevData) =>
         prevData.map((tournament) => ({
           ...tournament,
-          enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
-          eventRemaining: calculateRemainingTime(tournament.event_endDate),
-        }))
-      );
-
-      setJoinedTournaments((prevData) =>
-        prevData.map((tournament) => ({
-          ...tournament,
-          enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
-          eventRemaining: calculateRemainingTime(tournament.event_endDate),
+          enrollRemaining: calculateEnrollRemainingTime(
+            tournament.enroll_endDate
+          ),
+          eventRemaining: calculateRemainingTime(
+            tournament.event_startDate,
+            tournament.event_endDate
+          ),
         }))
       );
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
-
-  const handleJoinTeam = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsLoadingJoin(true);
-    setSuccessMessage(null);
-    try {
-      const teamData = await PostJoinTeam({
-        invite_code: inviteCodePrivate,
-        teamName: teamName,
-      });
-      if (!teamData || !teamData.team) {
-        throw new Error("Invalid response from server.");
-      }
-      setSuccessMessage("Successfully joined the team!");
-      router.push(
-        `/tournament/Tourteam_member?tournamentId=${teamData.team.tournament_id}&teamId=${teamData.team.id}`
-      );
-    } catch (error) {
-      console.error("Error joining team:", error);
-      setErrorMessage("Code is invalid or incorrect. Please try again.");
-    } finally {
-      setIsLoadingJoin(false);
-    }
-  };
-
-  const handleJoinTeamPrivate = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsLoadingJoin(true);
-    setSuccessMessage(null);
-    try {
-      const teamData = await PostJoinTeam({
-        invite_code: inviteCode,
-        teamName: teamName,
-      });
-      if (!teamData || !teamData.team) {
-        throw new Error("Invalid response from server.");
-      }
-      setSuccessMessage("Successfully joined the team!");
-      router.push(
-        `/tournament/Tourteam_member?tournamentId=${teamData.team.tournament_id}&teamId=${teamData.team.id}`
-      );
-    } catch (error) {
-      console.error("Error joining team:", error);
-      setErrorMessagePrivate("Code is invalid or incorrect. Please try again.");
-    } finally {
-      setIsLoadingJoin(false);
-    }
-  };
 
   return (
     <div>
       <Navbar />
       <div className="relative">
-        <div className="max-w-5xl mx-auto flex items-center justify-between mb-10 mr-14">
-          {/* Tournament List Heading, centered using flex */}
-          <div className="flex-1 flex justify-center mr-96">
-            <h5 className="text-2xl font-semibold text-green-600 mt-10 ">
-              Tournament List
-            </h5>
-          </div>
-
-          {!isAdmin && (
-            <div className="w-80 flex flex-col items-center space-y-4 ml-auto">
-              {/* Join Team Heading */}
-              <h5 className="text-lg font-semibold text-green-600">
-                Join Team
-              </h5>
-
-              {/* Invite Code Form */}
-              <form
-                onSubmit={handleJoinTeam}
-                className="w-full flex items-center space-x-2"
-              >
-                <input
-                  type="text"
-                  placeholder="Invite Code"
-                  className="flex-1 px-3 py-2 border rounded"
-                  maxLength={50}
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value)}
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-                  disabled={isLoadingJoin}
-                >
-                  {isLoadingJoin ? "Joining..." : "Join"}
-                </button>
-              </form>
-              {errorMessage && (
-                <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
-              )}
-
-              {/* Join Private Tournament Button */}
-              <div className="w-full flex flex-col items-center">
-                <h5 className="text-lg font-semibold text-green-600">
-                  Join Private Tournament
-                </h5>
-                <button
-                  onClick={() => setShowPopup(true)}
-                  className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
-                >
-                  Join Private
-                </button>
-              </div>
-
-              {showPopup && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-w-full relative z-25">
-                    <button
-                      className="absolute top-2 right-4 text-black text-2xl"
-                      onClick={() => setShowPopup(false)}
-                    >
-                      &times;
-                    </button>
-                    <br />
-                    <h5 className="text-sm font-bold mb-2 text-center">
-                      Create New Team
-                    </h5>
-
-                    <form onSubmit={handleJoinTeamPrivate} className="w-full">
-                      <input
-                        type="text"
-                        placeholder="Team Name"
-                        className="w-full px-3 py-2 border rounded mb-4"
-                        maxLength={50}
-                        value={teamName}
-                        onChange={(e) => setTeamName(e.target.value)}
-                      />
-
-                      <h5 className="text-sm font-bold mb-2 text-center">
-                        Code from Private Tournament
-                      </h5>
-
-                      <input
-                        type="text"
-                        placeholder="Invite Code"
-                        className="w-full px-3 py-2 border rounded mb-4"
-                        value={inviteCodePrivate}
-                        onChange={(e) => setInviteCodePrivate(e.target.value)}
-                      />
-
-                      <button
-                        type="submit"
-                        className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
-                        disabled={isLoadingCreate}
-                      >
-                        {isLoadingCreate ? "Creating..." : "Create"}
-                      </button>
-                    </form>
-                    {errorMessagePrivate && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errorMessagePrivate}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+        <div className="flex-1 flex justify-center">
+          <h5 className="text-2xl font-semibold text-green-600 mt-10">
+            Tournament List
+          </h5>
         </div>
 
-        {/* Joined Tournaments */}
+        {!isAdmin && (
+          <div className="max-w-5xl mx-auto flex justify-center items-center space-x-8 mt-4">
+            <div className="w-96">
+              <h5 className="text-lg font-semibold text-green-600 text-center">
+                Join Team
+              </h5>
+              <JoinTeamForm />
+            </div>
+            <div className="w-96">
+              <h5 className="text-lg font-semibold text-green-600 text-center">
+                Join Private Tournament
+              </h5>
+              <button
+                onClick={() => setShowPopup(true)}
+                className="w-full bg-blue-300 text-black py-2 rounded hover:bg-blue-400 transition duration-300"
+              >
+                Join Private
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showPopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-96 max-w-full relative">
+              <button
+                className="absolute top-2 right-4 text-black text-2xl"
+                onClick={() => setShowPopup(false)}
+              >
+                &times;
+              </button>
+              <JoinTeamForm isPrivate onClose={() => setShowPopup(false)} />
+            </div>
+          </div>
+        )}
+
         <div className="space-y-4 max-w-3xl mx-auto mt-4">
           {isLoading ? (
             <div className="text-center text-gray-600">Loading...</div>

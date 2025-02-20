@@ -2,18 +2,28 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../component/Navbar/navbar";
 import Image from "next/image";
-
 import { DecodedToken } from "../lib/types/DecodedToken";
 import { GetUserData } from "../lib/API/GetUserAPI";
 
 export default function Profile() {
   const [data, setData] = useState<undefined | DecodedToken>(undefined);
+  const [userRole, setUserRole] = useState<string>("");
 
   useEffect(() => {
+    // Fetch user data
     GetUserData().then((data) => {
       console.log(data);
       setData(data);
     });
+
+    // Read user-role from cookies
+    const cookies = document.cookie.split("; ").reduce((acc, cookie) => {
+      const [name, value] = cookie.split("=");
+      acc[name] = value;
+      return acc;
+    }, {} as Record<string, string>);
+
+    setUserRole(cookies["user-role"] || "Unknown");
   }, []);
 
   return (
@@ -44,8 +54,7 @@ export default function Profile() {
                 {data?.faculty}
               </div>
               <div className="text-lg">
-                <span className="font-bold text-white">Account Type:</span>{" "}
-                {data?.AccType}
+                <span className="font-bold text-white">Role:</span> {userRole}
               </div>
               <div className="text-lg">
                 <span className="font-bold text-white">Point:</span>{" "}
