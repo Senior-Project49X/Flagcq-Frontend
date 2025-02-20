@@ -25,9 +25,9 @@ export default function Yay({
         <h2 className="text-2xl font-bold text-green-500 mb-4">
           Congratulations!
         </h2>
-        <p>You answered correctly!</p>
+        <p className="text-green-500">You answered correctly!</p>
         <button
-          className="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg"
+          className="mt-4 bg-red-500 text-white px-6 py-2 rounded-lg"
           onClick={() => location.reload()}
         >
           Close
