@@ -2,8 +2,7 @@
 import { PostCreateTour } from "../../lib/API/PostCreateTour";
 import { useState, useEffect } from "react";
 import Navbar from "../../component/Navbar/navbar";
-import { formatDynamicAPIAccesses } from "next/dist/server/app-render/dynamic-rendering";
-import { useRouter, useSearchParams } from "next/navigation";
+import LoadingPopup from "../../component/LoadingPopup";
 import { EditTourAPI, GetTournamentByID } from "@/app/lib/API/EditTour";
 import dynamic from "next/dynamic";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
@@ -24,9 +23,13 @@ interface CreateTourState {
   tournament_id: number | null | undefined;
 }
 
-export default function CreateTour() {
-  const searchParams = useSearchParams();
-  const tournament_id = Number(searchParams.get("TournamentID"));
+interface CreateTourProps {
+  tournament_id: number | null | undefined;
+}
+
+export default function CreateTour({
+  tournament_id,
+}: Readonly<CreateTourProps>) {
   const [CreateTourData, setCreateTourData] = useState<CreateTourState>({
     topic: "",
     description: "",
@@ -34,7 +37,7 @@ export default function CreateTour() {
     enroll_endDate: "",
     event_startDate: "",
     event_endDate: "",
-    mode: "",
+    mode: "Public",
     teamSizeLimit: 0,
     limit: 0,
     joinCode: "",
@@ -42,24 +45,26 @@ export default function CreateTour() {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [popupMessage, setPopupMessage] = useState<string>("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
-  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCreateTourData((prevData) => ({ ...prevData, [name]: value }));
-    setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: false })); // Clear error on change
+    setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Reset messages and errors
-    setSuccessMessage(null);
-    setErrorMessage(null);
+    // Reset states
     setFieldErrors({});
+    setIsLoading(true);
+    setIsFailed(false);
+    setIsSuccess(false);
+    setPopupMessage("");
 
     const formattedData = {
       ...CreateTourData,
@@ -75,37 +80,46 @@ export default function CreateTour() {
     if (formattedData.enroll_startDate >= formattedData.enroll_endDate) {
       errors.enroll_startDate = true;
       errors.enroll_endDate = true;
-      setErrorMessage("Enroll start date must be before Enroll end date.");
-    } else if (formattedData.enroll_endDate >= formattedData.event_startDate) {
+      setPopupMessage("Enroll start date must be before Enroll end date.");
+      setIsFailed(true);
+    } else if (formattedData.enroll_endDate >= formattedData.event_endDate) {
       errors.enroll_endDate = true;
-      errors.event_startDate = true;
-      setErrorMessage("Enroll end date must be before Event start date.");
+      errors.event_endDate = true;
+      setPopupMessage("Enroll end date must be before Event end date.");
+      setIsFailed(true);
     } else if (formattedData.event_startDate >= formattedData.event_endDate) {
       errors.event_startDate = true;
       errors.event_endDate = true;
-      setErrorMessage("Event start date must be before Event end date.");
+      setPopupMessage("Event start date must be before Event end date.");
+      setIsFailed(true);
     }
 
     setFieldErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      return; // Prevent form submission if there are errors
+      return;
     }
 
     try {
-      setIsLoading(true);
       if (tournament_id !== null && tournament_id !== undefined) {
-        EditTourAPI(formattedData);
+        await EditTourAPI(formattedData);
+        setIsSuccess(true);
+        setPopupMessage("Tournament edited successfully!");
       } else {
-        PostCreateTour(formattedData);
+        const response = await PostCreateTour(formattedData);
+
+        if (response.success) {
+          setIsSuccess(true);
+          setPopupMessage("Tournament created successfully!");
+        } else {
+          setIsFailed(true);
+          setPopupMessage(response.message || "Failed to create tournament.");
+        }
       }
-      setSuccessMessage("Tournament Editted successfully!");
-      router.push("/tournament");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating tournament:", error);
-      setErrorMessage("Failed to create the tournament. Please try again.");
-    } finally {
-      setIsLoading(false);
+      setIsFailed(true);
+      setPopupMessage(error.message || "An unexpected error occurred.");
     }
   };
 
@@ -207,25 +221,24 @@ export default function CreateTour() {
           </div>
 
           {/* Mode */}
-          <div className="mb-4">
-            <label className="block font-medium mb-2">Mode</label>
-            <div className="flex space-x-4">
-              {["Public", "Private"].map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  value={CreateTourData.mode}
-                  onClick={() => handleIChange(option)}
-                  className={`px-4 py-2 rounded-md text-white font-medium ${
-                    CreateTourData.mode === option
-                      ? "bg-green-500"
-                      : "bg-gray-500 hover:bg-gray-600"
-                  }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+          <div className="mb-4 space-x-4">
+            <label className=" font-medium mb-2">Mode</label>
+
+            {["Public", "Private"].map((option) => (
+              <button
+                key={option}
+                type="button"
+                value={CreateTourData.mode}
+                onClick={() => handleIChange(option)}
+                className={`px-4 py-2 rounded-md text-white font-medium ${
+                  CreateTourData.mode === option
+                    ? "bg-green-500"
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
           </div>
 
           <div className="mb-4 flex items-center space-x-2">
@@ -364,18 +377,13 @@ export default function CreateTour() {
           </button>
         </form>
 
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mt-4 p-2 text-center bg-green-100 text-green-700 rounded">
-            {successMessage}
-          </div>
-        )}
-
-        {/* Error Message */}
-        {errorMessage && (
-          <div className="mt-4 p-2 text-center bg-red-100 text-red-700 rounded">
-            {errorMessage}
-          </div>
+        {isLoading && (
+          <LoadingPopup
+            setLoading={setIsLoading}
+            isFailed={isFailed}
+            isSuccess={isSuccess}
+            Message={popupMessage}
+          />
         )}
       </div>
     </div>
