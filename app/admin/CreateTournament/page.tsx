@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../../component/Navbar/navbar";
 import LoadingPopup from "../../component/LoadingPopup";
 import { EditTourAPI, GetTournamentByID } from "@/app/lib/API/EditTour";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
   loading: () => <p>Loading...</p>,
@@ -180,21 +181,23 @@ export default function CreateTour() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090147] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#090147] to-[#1a1163] text-white">
       <Navbar />
-
-      <div className="max-w-3xl mx-auto p-8">
-        <h1 className="text-3xl font-bold mb-4 text-center">
+      <div className="max-w-4xl mx-auto p-8">
+        <h1 className="text-4xl font-bold mb-8 text-center text-green-400 drop-shadow-lg">
           Create Tournament
         </h1>
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-100 p-6 rounded-lg shadow-md text-black"
+          className="bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700"
         >
           {/* Topic */}
-          <div className="mb-4">
-            <label htmlFor="topic" className="block font-medium mb-2">
-              Topic
+          <div className="mb-6">
+            <label
+              htmlFor="topic"
+              className="block text-lg font-medium mb-2 text-green-400"
+            >
+              Tournament Topic
             </label>
             <input
               type="text"
@@ -202,62 +205,78 @@ export default function CreateTour() {
               name="topic"
               value={CreateTourData.topic}
               onChange={handleInputChange}
-              className={getInputClass("topic")}
+              className={`${getInputClass(
+                "topic"
+              )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
               required
             />
           </div>
 
           {/* Description */}
-          <div className="mb-4">
-            <label htmlFor="description" className="block font-medium mb-2">
+          <div className="mb-6">
+            <label
+              htmlFor="description"
+              className="block text-lg font-medium mb-2 text-green-400"
+            >
               Description
             </label>
-            <RichTextEditor
-              value={CreateTourData.description}
-              onChange={handleDescriptionChange}
-            />
+            <div className="bg-gray-700 rounded-lg overflow-hidden">
+              <RichTextEditor
+                value={CreateTourData.description}
+                onChange={handleDescriptionChange}
+              />
+            </div>
           </div>
 
           {/* Mode */}
-          <div className="mb-4 space-x-4">
-            <label className=" font-medium mb-2">Mode</label>
-
-            {["Public", "Private"].map((option) => (
-              <button
-                key={option}
-                type="button"
-                value={CreateTourData.mode}
-                onClick={() => handleIChange(option)}
-                className={`px-4 py-2 rounded-md text-white font-medium ${
-                  CreateTourData.mode === option
-                    ? "bg-green-500"
-                    : "bg-gray-500 hover:bg-gray-600"
-                }`}
-              >
-                {option}
-              </button>
-            ))}
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-3 text-green-400">
+              Mode
+            </label>
+            <div className="flex space-x-4">
+              {["Public", "Private"].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  value={CreateTourData.mode}
+                  onClick={() => handleIChange(option)}
+                  className={`px-6 py-3 rounded-lg text-white font-medium transition-all duration-300 transform hover:scale-105 ${
+                    CreateTourData.mode === option
+                      ? "bg-green-500 shadow-lg"
+                      : "bg-gray-600 hover:bg-gray-500"
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="mb-4 flex items-center space-x-2">
+          {/* Team Limits Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Team Size Limit */}
-            <div className="w-1/2">
-              <label htmlFor="teamSizeLimit" className="block font-medium mb-2">
-                Number of partcipants per team
+            <div>
+              <label
+                htmlFor="teamSizeLimit"
+                className="block text-lg font-medium mb-2 text-green-400"
+              >
+                Participants per team
               </label>
               <select
                 id="teamSizeLimit"
                 name="teamSizeLimit"
                 value={CreateTourData.teamSizeLimit || ""}
                 onChange={handleNumberChange}
-                className={`${getInputClass("teamSizeLimit")} text-gray-400`} // Ensures the text color matches
+                className={`${getInputClass(
+                  "teamSizeLimit"
+                )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
                 required
               >
-                <option value="" disabled className="text-gray-400">
-                  Select number between 1-4
+                <option value="" disabled>
+                  Select number (1-4)
                 </option>
                 {[1, 2, 3, 4].map((size) => (
-                  <option key={size} value={size} className="text-black">
+                  <option key={size} value={size}>
                     {size}
                   </option>
                 ))}
@@ -265,99 +284,120 @@ export default function CreateTour() {
             </div>
 
             {/* Team Limit */}
-            <div className="w-1/2">
-              <label htmlFor="limit" className="block font-medium mb-2">
-                Total teams in tournament (max 120)
+            <div>
+              <label
+                htmlFor="limit"
+                className="block text-lg font-medium mb-2 text-green-400"
+              >
+                Total teams limit
               </label>
               <input
                 type="number"
                 id="limit"
                 name="limit"
-                value={CreateTourData.limit || ""} // Ensures the placeholder is shown first
+                value={CreateTourData.limit || ""}
                 onChange={handleInputChange}
-                className={`${getInputClass("limit")} placeholder-gray-400`} // Placeholder color
+                className={`${getInputClass(
+                  "limit"
+                )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
                 min="1"
                 max="120"
-                placeholder="Select number between 1-120"
+                placeholder="Enter number (1-120)"
                 required
               />
             </div>
           </div>
 
-          <div className="mb-4 flex items-center space-x-2">
-            <div className="w-1/2">
-              <label
-                htmlFor="enroll_startDate"
-                className="block font-medium mb-2"
-              >
-                Enroll Start Date
-              </label>
-              <input
-                type="datetime-local"
-                id="enroll_startDate"
-                name="enroll_startDate"
-                value={CreateTourData.enroll_startDate}
-                onChange={handleInputChange}
-                className={getInputClass("enroll_startDate")}
-                required
-              />
+          {/* Date Sections */}
+          <div className="space-y-6">
+            {/* Enrollment Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <div>
+                <label
+                  htmlFor="enroll_startDate"
+                  className="block text-lg font-medium mb-2 text-green-400"
+                >
+                  Enrollment Start
+                </label>
+                <input
+                  type="datetime-local"
+                  id="enroll_startDate"
+                  name="enroll_startDate"
+                  value={CreateTourData.enroll_startDate}
+                  onChange={handleInputChange}
+                  className={`${getInputClass(
+                    "enroll_startDate"
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  required
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-2xl text-green-400 mx-4">→</span>
+                <div className="flex-1">
+                  <label
+                    htmlFor="enroll_endDate"
+                    className="block text-lg font-medium mb-2 text-green-400"
+                  >
+                    Enrollment End
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="enroll_endDate"
+                    name="enroll_endDate"
+                    value={CreateTourData.enroll_endDate}
+                    onChange={handleInputChange}
+                    className={`${getInputClass(
+                      "enroll_endDate"
+                    )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                    required
+                  />
+                </div>
+              </div>
             </div>
 
-            <span className="text-xl font-bold text-gray-600 mt-7">→</span>
-
-            <div className="w-1/2">
-              <label
-                htmlFor="enroll_endDate"
-                className="block font-medium mb-2"
-              >
-                Enroll End Date
-              </label>
-              <input
-                type="datetime-local"
-                id="enroll_endDate"
-                name="enroll_endDate"
-                value={CreateTourData.enroll_endDate}
-                onChange={handleInputChange}
-                className={getInputClass("enroll_endDate")}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 flex items-center space-x-2">
-            <div className="w-1/2">
-              <label
-                htmlFor="event_startDate"
-                className="block font-medium mb-2"
-              >
-                Event Start Date
-              </label>
-              <input
-                type="datetime-local"
-                id="event_startDate"
-                name="event_startDate"
-                value={CreateTourData.event_startDate}
-                onChange={handleInputChange}
-                className={getInputClass("event_startDate")}
-                required
-              />
-            </div>
-
-            <span className="text-xl font-bold text-gray-600 mt-7">→</span>
-
-            <div className="w-1/2">
-              <label htmlFor="event_endDate" className="block font-medium mb-2">
-                Event End Date
-              </label>
-              <input
-                type="datetime-local"
-                id="event_endDate"
-                name="event_endDate"
-                value={CreateTourData.event_endDate}
-                onChange={handleInputChange}
-                className={getInputClass("event_endDate")}
-                required
-              />
+            {/* Event Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <div>
+                <label
+                  htmlFor="event_startDate"
+                  className="block text-lg font-medium mb-2 text-green-400"
+                >
+                  Event Start
+                </label>
+                <input
+                  type="datetime-local"
+                  id="event_startDate"
+                  name="event_startDate"
+                  value={CreateTourData.event_startDate}
+                  onChange={handleInputChange}
+                  className={`${getInputClass(
+                    "event_startDate"
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  required
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-2xl text-green-400 mx-4">→</span>
+                <div className="flex-1">
+                  <label
+                    htmlFor="event_endDate"
+                    className="block text-lg font-medium mb-2 text-green-400"
+                  >
+                    Event End
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="event_endDate"
+                    name="event_endDate"
+                    value={CreateTourData.event_endDate}
+                    onChange={handleInputChange}
+                    className={`${getInputClass(
+                      "event_endDate"
+                    )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                    required
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -365,13 +405,13 @@ export default function CreateTour() {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full p-2 rounded font-bold ${
+            className={`w-full py-4 rounded-lg font-bold text-lg mt-8 transition-all duration-300 transform hover:scale-105 ${
               isLoading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600 text-white"
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600 text-white shadow-lg"
             }`}
           >
-            {isLoading ? "Submitting..." : "Confirm"}
+            {isLoading ? "Creating Tournament..." : "Create Tournament"}
           </button>
         </form>
 

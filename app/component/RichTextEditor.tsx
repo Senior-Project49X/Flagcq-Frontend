@@ -240,7 +240,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         <MenuBar editor={editor} />
         <EditorContent
           editor={editor}
-          className="p-2 w-full h-full rich-text bg-white overflow-auto"
+          className="p-2 w-full h-full rich-text bg-white overflow-auto text-black"
         />
 
         <div

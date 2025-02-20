@@ -1,12 +1,14 @@
 import React, { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+
 interface LoadingPopupProps {
   setLoading: Dispatch<SetStateAction<boolean>>;
   isFailed: boolean;
   isSuccess: boolean;
   Message: string;
 }
+
 export default function LoadingPopup({
   setLoading,
   isFailed,
@@ -18,6 +20,7 @@ export default function LoadingPopup({
     if (isSuccess) window.location.href = "/";
     else setLoading(false);
   };
+
   return (
     <>
       <div
@@ -25,45 +28,72 @@ export default function LoadingPopup({
         onMouseDown={() => setLoading(false)}
       >
         <div
-          className="relative w-auto my-6 mx-auto max-w-3xl"
+          className="relative w-auto my-6 mx-auto max-w-md"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          {/*content*/}
-          <div className="text-black border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none p-6">
-            {isFailed ? (
-              <>{Message}</>
-            ) : isSuccess ? (
-              <>Successful</>
-            ) : (
-              <>
-                <div className="flex items-center space-x-4">
-                  <Image
-                    src="/ring-resize.svg"
-                    alt="FlagConquest logo"
-                    width={50}
-                    height={50}
-                    className="object-contain "
-                  />
-                  <h1 className="text-green-400 text-xl font-bold">
-                    Loading...
-                  </h1>
+          <div className="relative bg-gray-800 rounded-xl shadow-2xl border-2 border-opacity-20 border-white">
+            {/* Header */}
+            <div className="p-6">
+              {isFailed ? (
+                // Error State
+                <div className="flex flex-col items-center">
+                  <FaTimesCircle className="w-16 h-16 text-red-500 mb-4" />
+                  <h2 className="text-xl font-bold text-white mb-2">Error</h2>
+                  <p className="text-gray-300 text-center">{Message}</p>
                 </div>
-              </>
-            )}
+              ) : isSuccess ? (
+                // Success State
+                <div className="flex flex-col items-center">
+                  <FaCheckCircle className="w-16 h-16 text-green-500 mb-4" />
+                  <h2 className="text-xl font-bold text-white mb-2">
+                    Success!
+                  </h2>
+                  <p className="text-gray-300">
+                    Operation completed successfully
+                  </p>
+                </div>
+              ) : (
+                // Loading State
+                <div className="flex flex-col items-center">
+                  <div className="relative">
+                    <Image
+                      src="/ring-resize.svg"
+                      alt="Loading"
+                      width={64}
+                      height={64}
+                      className="animate-spin"
+                    />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mt-4">
+                    Loading...
+                  </h2>
+                  <p className="text-gray-300 text-sm mt-2">Please wait</p>
+                </div>
+              )}
+            </div>
 
-            <div className="flex items-center p-6 border-t border-solid border-blueGray-200 rounded-b justify-center">
+            {/* Footer */}
+            <div className="bg-gray-900 px-6 py-4 rounded-b-xl">
               <button
-                className="absolute mt-6 text-red-500 hover:text-red font-bold text-2xl"
-                type="button"
-                onClick={() => onClose()}
+                className={`w-full py-2 rounded-lg transition-all duration-300 font-semibold
+                  ${
+                    isFailed
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : isSuccess
+                      ? "bg-green-500 hover:bg-green-600 text-white"
+                      : "bg-blue-500 hover:bg-blue-600 text-white"
+                  }`}
+                onClick={onClose}
               >
-                Close
+                {isFailed ? "Try Again" : isSuccess ? "Continue" : "Cancel"}
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div className="opacity-40 fixed inset-0 z-40 bg-black"></div>
+
+      {/* Backdrop */}
+      <div className="fixed inset-0 z-40 bg-black bg-opacity-75 backdrop-blur-sm"></div>
     </>
   );
 }
