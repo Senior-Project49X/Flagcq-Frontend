@@ -1,3 +1,5 @@
+'use server'
+
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
@@ -7,11 +9,10 @@ const publicRoutes = ["/login", "/cmuEntraIDCallback"]; // Except these
 
 const adminRoutes = [/^\/admin.*/];
 
-const ip = process.env.NEXT_PUBLIC_IP_URL;
+const ip = process.env.MIDDLEWARE_URL;
 export const CheckToken = async (token: string | undefined) => {
   try {
     const resp = await axios.post(`${ip}/api/token`, { token });
-
     return {
       tokenValid: true,
       role: resp.data.role,
@@ -33,7 +34,6 @@ export default async function middleware(req: NextRequest) {
   ); // Check if path matches any admin route
   const token = req.cookies.get("cmu-oauth-token")?.value;
   const { tokenValid, role } = await CheckToken(token);
-
   // 4. Redirect to /login if the user is not authenticated
   if (isProtectedRoute && !isPublicRoute && !tokenValid) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
