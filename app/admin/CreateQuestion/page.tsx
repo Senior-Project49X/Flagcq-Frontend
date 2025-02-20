@@ -42,7 +42,9 @@ interface Category {
 
 export default function CreateQuestion() {
   const searchParams = useSearchParams();
-  const id = Number(searchParams.get("QuestionID"));
+  const id = searchParams.get("QuestionID")
+    ? Number(searchParams.get("QuestionID"))
+    : null;
   const router = useRouter();
   const [modeSelection, setModeSelection] = useState<ButtonStates>({
     Practice: false,
