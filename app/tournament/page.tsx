@@ -290,14 +290,20 @@ export default function TournamentPage() {
         )}
 
         {showPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-96 max-w-full relative">
-              <button
-                className="absolute top-2 right-4 text-black text-2xl"
-                onClick={() => setShowPopup(false)}
-              >
-                &times;
-              </button>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-2xl w-96 max-w-full relative border border-gray-700">
+              <div className=" px-6 py-4 border-b ">
+                <h2 className="text-xl font-semibold text-green-400">
+                  Join Team
+                </h2>
+                <button
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200 text-2xl"
+                  onClick={() => setShowPopup(false)}
+                >
+                  &times;
+                </button>
+              </div>
+              <br />
               <JoinTeamForm isPrivate onClose={() => setShowPopup(false)} />
             </div>
           </div>

@@ -220,7 +220,7 @@ export default function CreateQuestion() {
   }, [router]);
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-[#090147] to-[#1a1163] text-white">
       {loading && (
         <LoadingPopup
           setLoading={setLoading}
@@ -262,14 +262,21 @@ export default function CreateQuestion() {
         />
       )}
       <Navbar />
-      <div className="p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">
-          CreateQuestion
+      <div className="max-w-3xl mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-4 text-center text-green-400 drop-shadow-lg">
+          Create Question
         </h1>
 
-        <div className="max-w-3xl mx-auto bg-gray-100 p-6 rounded-lg shadow-md text-black">
-          <form onSubmit={onCreateQuestion}>
-            <label htmlFor="topic" className="mr-2">
+        <form
+          onSubmit={onCreateQuestion}
+          className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700"
+        >
+          {/* Topic */}
+          <div className="mb-4">
+            <label
+              htmlFor="topic"
+              className="block text-base font-medium mb-1 text-green-400"
+            >
               Topic
             </label>
             <input
@@ -278,87 +285,99 @@ export default function CreateQuestion() {
               onChange={(e) => setTopic(e.target.value)}
               type="text"
               name="title"
-              className="w-full p-2 border-2 border-gray-300 rounded"
+              className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
               required
               maxLength={50}
             />
+          </div>
 
-            <br />
-            <div>
-              Category{" "}
-              <div className="flex">
-                <select
-                  name="categories_id"
-                  className="flex w-full p-2 border-2 border-gray-300 rounded"
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  required
-                >
-                  <option value={category}>---please select category---</option>
-                  {categories.map((category: Category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                  <option value={"New Category"}>[New Category]</option>
-                </select>
-                {selectedCategory !== "" && (
-                  <>
-                    <button
-                      className="bg-gray-300 ml-2 p-2 rounded-md hover:bg-slate-600 transition duration-100"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsEditCategory(true);
-                      }}
-                    >
-                      <ModeEditOutlineRoundedIcon />
-                    </button>
-                    <button
-                      className="bg-red-300 ml-2 p-2 rounded-md hover:bg-red-600 transition duration-100"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsDeleteCategory(true);
-                      }}
-                    >
-                      <DeleteRoundedIcon />
-                    </button>
-                  </>
-                )}
-              </div>
-              {newCategory && (
-                <input
-                  type="text"
-                  value={newCategoryName}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                  className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
-                />
-              )}
-            </div>
-            <br />
-            <label>
-              Difficulty{" "}
+          {/* Category */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-1 text-green-400">
+              Category
+            </label>
+            <div className="flex gap-1">
               <select
-                value={difficultysID}
-                name="difficultys_id"
-                className="w-full p-2 border-2 border-gray-300 rounded"
-                onChange={(e) => setDifficultysID(e.target.value)}
+                name="categories_id"
+                className="flex-1 p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
                 required
               >
-                <option value={""}>---please select Difficulty---</option>
-                <option value={"Easy"}>Easy</option>
-                <option value={"Medium"}>Medium</option>
-                <option value={"Hard"}>Hard</option>
+                <option value={category}>---please select category---</option>
+                {categories.map((category: Category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+                <option value={"New Category"}>[New Category]</option>
               </select>
+              {selectedCategory !== "" && (
+                <>
+                  <button
+                    className="p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsEditCategory(true);
+                    }}
+                  >
+                    <ModeEditOutlineRoundedIcon />
+                  </button>
+                  <button
+                    className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsDeleteCategory(true);
+                    }}
+                  >
+                    <DeleteRoundedIcon />
+                  </button>
+                </>
+              )}
+            </div>
+            {newCategory && (
+              <input
+                type="text"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className="mt-1 w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+              />
+            )}
+          </div>
+
+          {/* Difficulty */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-1 text-green-400">
+              Difficulty
             </label>
-            <br />
-            <div>
-              <p>Mode</p>
+            <select
+              value={difficultysID}
+              name="difficultys_id"
+              className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+              onChange={(e) => setDifficultysID(e.target.value)}
+              required
+            >
+              <option value={""}>---please select Difficulty---</option>
+              <option value={"Easy"}>Easy</option>
+              <option value={"Medium"}>Medium</option>
+              <option value={"Hard"}>Hard</option>
+            </select>
+          </div>
+
+          {/* Mode */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-2 text-green-400">
+              Mode
+            </label>
+            <div className="flex flex-wrap gap-2">
               {Object.keys(modeSelection).map((buttonKey) => (
                 <button
                   key={buttonKey}
                   type="button"
-                  className={`button_select unSelect ${
-                    modeSelection[buttonKey] && "selected"
+                  className={`px-4 py-2 rounded-md text-white font-medium transition-all duration-300 ${
+                    modeSelection[buttonKey]
+                      ? "bg-green-500 shadow-md"
+                      : "bg-gray-600 hover:bg-gray-500"
                   }`}
                   onClick={() => handleToggle(buttonKey)}
                 >
@@ -366,142 +385,160 @@ export default function CreateQuestion() {
                 </button>
               ))}
             </div>
-            <label>
+          </div>
+
+          {/* Description */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-1 text-green-400">
               Description
-              {/* <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                name="Description"
-                className="w-full p-2 border-2 border-gray-300 rounded"
-              /> */}
             </label>
+            <div className="bg-gray-700 rounded-md overflow-hidden">
+              <RichTextEditor value={description} onChange={setDescription} />
+            </div>
+          </div>
 
-            <RichTextEditor value={description} onChange={setDescription} />
+          {/* Hints */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-2 text-green-400">
+              Hints
+            </label>
+            {hints.length < 3 && (
+              <button
+                type="button"
+                onClick={addHint}
+                className="px-4 py-2 bg-green-500 text-white rounded-md font-medium transition-all duration-300 hover:bg-green-600 mb-2"
+              >
+                Add Hint
+              </button>
+            )}
+            <div className="space-y-2">
+              {hints.length > 0 &&
+                hints.map((hint, index) => (
+                  <CreateHint
+                    key={hint.id}
+                    index={index}
+                    detail={hint.detail}
+                    penalty={hint.penalty}
+                    handleHintChange={handleHintChange}
+                    removeHint={removeHint}
+                  />
+                ))}
+            </div>
+          </div>
 
-            <br />
-            <p>Hint</p>
-            <div>
-              {hints.length < 3 && (
-                <button
-                  type="button"
-                  onClick={addHint}
-                  className="p-2 border rounded border-gray-300 mb-2 bg-green-500 text-white hover:bg-green-600 transition-colors duration-100 "
-                >
-                  Add Hint
-                </button>
+          {/* Answer */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-1 text-green-400">
+              Answer
+            </label>
+            <div className="flex items-center gap-1">
+              {modeSelection["Practice"] && (
+                <span className="text-white">CTFCQ{" {"}</span>
+              )}
+              <input
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                name="Answer"
+                type="text"
+                className="flex-1 p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+                required
+              />
+              {modeSelection["Practice"] && (
+                <span className="text-white">{"}"}</span>
               )}
             </div>
-            {hints.length > 0 &&
-              hints.map((hint, index) => (
-                <CreateHint
-                  key={hint.id}
-                  index={index}
-                  detail={hint.detail}
-                  penalty={hint.penalty}
-                  handleHintChange={handleHintChange}
-                  removeHint={removeHint}
-                />
-              ))}
-            <br />
-            <span>Answer: </span>
-            {modeSelection["Practice"] && <label>{`CTFCQ{ `}</label>}
-
-            <input
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              name="Answer"
-              type="text"
-              className=" p-2 border-2 border-gray-300 rounded"
-              required
-            />
             {modeSelection["Practice"] && (
-              <>
-                <label>{` }`}</label>
-                <div className="text-red-500 font-bold">
-                  Warning in practice mode your answer will be warpped by CTFCQ
-                  {`{Youranswer} `}
-                </div>
-              </>
+              <p className="mt-1 text-red-400 text-sm">
+                Warning: In practice mode your answer will be wrapped by CTFCQ
+                {"{YourAnswer}"}
+              </p>
             )}
-            <br />
-            <label>
-              Point{}
-              <input
-                name="point"
-                type="number"
-                min="0"
-                max="10000000"
-                className="p-2 border-2 border-gray-300 rounded"
-                required
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "e" ||
-                    e.key === "E" ||
-                    e.key === "+" ||
-                    e.key === "-"
-                  )
-                    e.preventDefault();
-                }}
-                value={point}
-                onChange={handleNumberChange}
-              />
+          </div>
+
+          {/* Points */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-1 text-green-400">
+              Points
             </label>
-            <br />
-            <label>
-              File{}
+            <input
+              name="point"
+              type="number"
+              min="0"
+              max="10000000"
+              className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+              required
+              onKeyDown={(e) => {
+                if (
+                  e.key === "e" ||
+                  e.key === "E" ||
+                  e.key === "+" ||
+                  e.key === "-"
+                )
+                  e.preventDefault();
+              }}
+              value={point}
+              onChange={handleNumberChange}
+            />
+          </div>
+
+          {/* File Upload */}
+          <div className="mb-4">
+            <label className="block text-base font-medium mb-1 text-green-400">
+              File
+            </label>
+            <div className="flex gap-2 items-center">
               <input
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
                 name="file"
                 type="file"
-                className="p-2 border border-gray-300 rounded"
+                className="flex-1 p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
                 ref={(input) => {
                   if (input && file === null) input.value = "";
                 }}
               />
               <button
                 type="button"
-                className={`px-4 py-2 font-bold rounded transition 
-                bg-red-500 text-white
-              `}
+                className="px-3 py-2 bg-red-500 text-white rounded-md font-medium hover:bg-red-600 transition-all duration-300"
                 onClick={(e) => {
                   e.preventDefault();
                   setFile(null);
                 }}
               >
-                {" "}
-                Delete File that Exists
+                Delete
               </button>
-              {file && typeof file === "string" && (
-                <p>
-                  Current file:
-                  {id && (
-                    <button
-                      type="button" // Ensure the button does not submit the form
-                      onClick={(e) => {
-                        e.preventDefault(); // Prevent form submission
-                        DownloadQuestionsByID(id);
-                      }}
-                    >
-                      {file}
-                    </button>
-                  )}
-                </p>
-              )}
-            </label>
-            <br />
-            <button
-              type="submit"
-              className={`w-full p-2 rounded font-bold ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600 text-white"
-              }`}
-            >
-              Confirm
-            </button>
-          </form>
-        </div>
+            </div>
+            {file && typeof file === "string" && (
+              <div className="mt-1 text-white text-sm">
+                Current file:
+                {id && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      DownloadQuestionsByID(id);
+                    }}
+                    className="ml-1 text-green-400 hover:text-green-300"
+                  >
+                    {file}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className={`w-full py-3 rounded-md font-bold text-base transition-all duration-300 ${
+              loading
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600 text-white shadow-md"
+            }`}
+          >
+            {loading ? "Creating Question..." : "Create Question"}
+          </button>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

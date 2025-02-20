@@ -2,7 +2,7 @@
 
 import React, { FormEvent, useState, useEffect } from "react";
 import { PostCreateTeam } from "../lib/API/GetCreateTeam";
-import { EditTourAPI } from "../lib/API/EditTour";
+import { FaTrash, FaEdit, FaEye, FaExclamationTriangle } from "react-icons/fa";
 import { isRoleAdmin } from "../lib/role";
 import { DeleteTour } from "../lib/API/DelTourAPI";
 import { useRouter } from "next/navigation";
@@ -81,28 +81,36 @@ export default function EnrollModal({
 
   return (
     <>
-      <div className="opacity-40 fixed inset-0 z-40 bg-black"></div>
+      <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm z-40"></div>
       <div
         className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
         onMouseDown={ClosePopup}
       >
         <div
-          className="relative w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg"
+          className="relative w-full max-w-lg mx-4 bg-gray-800 rounded-xl shadow-2xl border border-gray-700"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b">
-            <h3 className="text-lg font-semibold">{truncatedTopic}</h3>
-            <button className="text-black text-2xl" onClick={ClosePopup}>
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+            <h3 className="text-xl font-bold text-green-400">
+              {truncatedTopic}
+            </h3>
+            <button
+              className="text-gray-400 hover:text-white text-2xl transition-colors"
+              onClick={ClosePopup}
+            >
               &times;
             </button>
           </div>
 
+          {/* Content */}
           <div className="px-6 py-6">
-            <h4 className="text-center text-lg font-semibold mb-6">Detail</h4>
-            <div className="text-center mb-6">
-              {" "}
+            <h4 className="text-center text-lg font-semibold mb-6 text-white">
+              Detail
+            </h4>
+            <div className="text-center mb-8">
               <div
-                className="text-white text-lg leading-relaxed break-words rich-text"
+                className="text-gray-300 text-lg leading-relaxed break-words rich-text bg-gray-700 p-4 rounded-lg"
                 dangerouslySetInnerHTML={{
                   __html: Detail ?? "",
                 }}
@@ -111,49 +119,44 @@ export default function EnrollModal({
 
             {isAdmin ? (
               <div className="flex flex-col gap-4">
-                {/* Grid for Delete & Edit */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col items-center border-r pr-4">
-                    <button
-                      onClick={() => setShowConfirmDelete(true)}
-                      className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-300"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <button
-                      onClick={handleEditTour}
-                      className="w-full bg-yellow-400 text-black py-2 rounded hover:bg-yellow-600 transition duration-300"
-                    >
-                      Edit
-                    </button>
-                  </div>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <button
+                    onClick={() => setShowConfirmDelete(true)}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 transform hover:scale-105"
+                  >
+                    <FaTrash /> Delete
+                  </button>
+                  <button
+                    onClick={handleEditTour}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-yellow-500 text-gray-900 rounded-lg hover:bg-yellow-600 transition-all duration-300 transform hover:scale-105"
+                  >
+                    <FaEdit /> Edit
+                  </button>
                 </div>
-
-                {/* Full-width "View Tournament" Button */}
                 <button
                   onClick={handleAdminRoute}
-                  className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105"
                 >
-                  View Tournament
+                  <FaEye /> View Tournament
                 </button>
               </div>
             ) : (
               <div className="flex flex-col items-center">
-                <h5 className="text-sm font-bold mb-2">Create new team</h5>
+                <h5 className="text-lg font-bold mb-4 text-white">
+                  Create new team
+                </h5>
                 <form onSubmit={handleCreate} className="w-full">
                   <input
                     type="text"
                     placeholder="Team Name"
-                    className="w-full px-3 py-2 border rounded mb-4"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg mb-4 text-white placeholder-gray-400 focus:outline-none focus:border-green-400"
                     maxLength={50}
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                   />
                   <button
                     type="submit"
-                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-300"
+                    className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
                     disabled={isLoadingCreate}
                   >
                     {isLoadingCreate ? "Creating..." : "Create"}
@@ -163,37 +166,45 @@ export default function EnrollModal({
             )}
 
             {joinCode && (
-              <div className="flex flex-col items-center font-semibold">
-                <br />
-                Code: {joinCode}
+              <div className="mt-6 p-4 bg-gray-700 rounded-lg text-center">
+                <span className="text-gray-400">Code: </span>
+                <span className="font-mono font-bold text-green-400">
+                  {joinCode}
+                </span>
               </div>
             )}
           </div>
         </div>
       </div>
 
+      {/* Delete Confirmation Modal */}
       {showConfirmDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full text-center relative">
+        <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 border border-gray-700 text-center">
+            <FaExclamationTriangle className="text-5xl text-yellow-500 mx-auto mb-4" />
             <h2 className="text-red-500 font-bold text-2xl mb-4">
               Confirm Delete
             </h2>
-            <p className="mb-6">
+            <p className="mb-6 text-gray-300">
               Are you sure you want to delete this tournament?
+              <br />
+              <span className="text-red-400">
+                This action cannot be undone.
+              </span>
             </p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowConfirmDelete(false)}
-                className="px-6 py-2 rounded bg-gray-400 text-white hover:bg-gray-500"
+                className="px-6 py-3 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteTournament}
-                className="px-6 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+                className="px-6 py-3 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all duration-300 disabled:opacity-50"
                 disabled={isLoadingDelete}
               >
-                {isLoadingDelete ? "Deleting..." : "Confirm"}
+                {isLoadingDelete ? "Deleting..." : "Delete Tournament"}
               </button>
             </div>
           </div>
