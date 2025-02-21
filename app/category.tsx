@@ -64,7 +64,7 @@ export default function Category({
   }, []);
 
   return (
-    <div className="bg-[#090147] px-10">
+    <div className=" px-10">
       <div className="w-full">
         <div className="rounded-lg p-6 h-full">
           <div className="items-center mb-2">

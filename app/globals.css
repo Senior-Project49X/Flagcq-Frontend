@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 :root {
+  @apply min-h-screen bg-gradient-to-b from-[#090147] to-[#050030];
   background-color: #090147;
   overflow-y: scroll;
 }

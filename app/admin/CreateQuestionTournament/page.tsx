@@ -93,6 +93,8 @@ export default function Homepage() {
     const TID = Number(e.target.value);
     setQuestion_id([]);
     setTournament_id(TID);
+    localStorage.setItem("selectedTournament", String(TID)); // Save to localStorage
+
     const result = await GetQuestions(
       selectedCategory.join(","),
       selectedDifficulty,
@@ -105,6 +107,13 @@ export default function Homepage() {
     setHasNextPage(result.hasNextPage);
     setQuestions(result.data);
   };
+
+  useEffect(() => {
+    const storedTournament = localStorage.getItem("selectedTournament");
+    if (storedTournament) {
+      setTournament_id(Number(storedTournament));
+    }
+  }, []);
 
   return (
     <div>

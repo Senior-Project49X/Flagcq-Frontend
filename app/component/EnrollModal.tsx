@@ -2,7 +2,13 @@
 
 import React, { FormEvent, useState, useEffect } from "react";
 import { PostCreateTeam } from "../lib/API/GetCreateTeam";
-import { FaTrash, FaEdit, FaEye, FaExclamationTriangle } from "react-icons/fa";
+import {
+  FaTrash,
+  FaEdit,
+  FaEye,
+  FaExclamationTriangle,
+  FaRegCopy,
+} from "react-icons/fa";
 import { isRoleAdmin } from "../lib/role";
 import { DeleteTour } from "../lib/API/DelTourAPI";
 import { useRouter } from "next/navigation";
@@ -110,7 +116,7 @@ export default function EnrollModal({
             </h4>
             <div className="text-center mb-8">
               <div
-                className="text-gray-300 text-lg leading-relaxed break-words rich-text bg-gray-700 p-4 rounded-lg"
+                className="text-gray-300 text-lg leading-relaxed break-words rich-text  p-4 rounded-lg"
                 dangerouslySetInnerHTML={{
                   __html: Detail ?? "",
                 }}
@@ -166,11 +172,25 @@ export default function EnrollModal({
             )}
 
             {joinCode && (
-              <div className="mt-6 p-4 bg-gray-700 rounded-lg text-center">
-                <span className="text-gray-400">Code: </span>
-                <span className="font-mono font-bold text-green-400">
-                  {joinCode}
-                </span>
+              <div className="mt-6 p-4 bg-[#151a3d]/90 backdrop-blur-sm rounded-lg text-center border border-[#2a2f62]">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-gray-400">Code: </span>
+                  <span className="font-mono font-bold text-[#00ffcc]">
+                    {joinCode}
+                  </span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(joinCode);
+                      // You can add toast notification here if you have one
+                    }}
+                    className="flex items-center justify-center w-8 h-8 rounded-lg transition-all 
+                   hover:bg-[#1c2252] active:scale-95 focus:outline-none focus:ring-2 
+                   focus:ring-[#00ffcc]/50 bg-[#1c2252]/50"
+                    title="Copy code"
+                  >
+                    <FaRegCopy className="w-4 h-4 text-[#00ffcc]" />
+                  </button>
+                </div>
               </div>
             )}
           </div>
