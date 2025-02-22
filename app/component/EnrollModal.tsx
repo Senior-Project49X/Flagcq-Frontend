@@ -76,7 +76,7 @@ export default function EnrollModal({
       setSuccessMessage(null);
       await DeleteTour(tournament_id);
       setSuccessMessage("Tournament deleted successfully!");
-      router.push("/tournament");
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting tournament:", error);
     } finally {

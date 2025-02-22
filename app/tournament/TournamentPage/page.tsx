@@ -136,6 +136,14 @@ export default function Homepage() {
     const calculateRemainingTime = () => {
       const now = new Date();
       const endDate = new Date(tourData.event_endDate);
+
+      // Check if endDate is a valid date
+      if (isNaN(endDate.getTime())) {
+        console.error("Invalid event_endDate:", tourData.event_endDate);
+        setRemainingTime("Invalid Date");
+        return;
+      }
+
       const remaining = endDate.getTime() - now.getTime();
 
       if (remaining <= 0) {

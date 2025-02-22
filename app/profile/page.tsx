@@ -41,7 +41,7 @@ export default function Profile() {
                 className="object-contain"
               />
             </div>
-            <div className="ml-8 space-y-4 text-green-500">
+            <div className="ml-8 space-y-2 text-green-500">
               <div className="text-2xl font-bold">
                 {data?.first_name} {data?.last_name}
               </div>

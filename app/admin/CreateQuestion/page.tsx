@@ -22,16 +22,7 @@ const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });
-interface CreateNewQuestion {
-  CategoriesId: string | null;
-  Title: string;
-  Description: string;
-  Answer: string;
-  Point: number;
-  DifficultyId: string;
-  FilePath: File | null;
-  Mode: string[];
-}
+
 interface ButtonStates {
   [key: string]: boolean; // Define a dynamic object where keys are strings and values are boolean
 }
