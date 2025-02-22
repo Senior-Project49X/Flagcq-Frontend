@@ -190,6 +190,7 @@ export default function Homepage() {
 
         <div className="flex-1 p-6 rounded-lg">
           <Question
+            tournament_id={Number(tournament_id)}
             selectedDifficulty={selectedDifficulty}
             selectedCategory={selectedCategory}
             questions={questions}

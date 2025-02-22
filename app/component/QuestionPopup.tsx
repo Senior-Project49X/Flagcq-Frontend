@@ -17,6 +17,7 @@ import AdminEditDelQuestion from "./QuestionComponent/admin/AdminEditDelQuestion
 import { useSearchParams } from "next/navigation";
 
 type State = {
+  tournamentId?: number;
   id: number;
   Topic: string;
   ClosePopup: Function;
@@ -90,7 +91,10 @@ export default function QuestionPopup(Question: Readonly<State>) {
 
   useEffect(() => {
     const fetchQuestion = async () => {
-      const getQuestion = await GetQuestionsByID(Question.id);
+      const getQuestion = await GetQuestionsByID(
+        Question.id,
+        Question.tournamentId
+      );
       setShowQuestion(getQuestion);
       setLoading(false);
     };

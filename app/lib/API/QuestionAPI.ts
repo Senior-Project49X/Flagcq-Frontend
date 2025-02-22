@@ -113,8 +113,8 @@ export const GetQuestions = async (
   if (selectedDifficulty !== "All Difficulty") {
     url += `&difficulty=${selectedDifficulty}`;
   }
-  if(sort?.name !== '') url += `&sort=${sort?.name}`;
-  if(sort?.order !== '') url += `&sort_order=${sort?.order}`;
+  if(sort?.name !== '' && sort?.name !== undefined) url += `&sort=${sort?.name}`;
+  if(sort?.order !== '' && sort?.order !== undefined) url += `&sort_order=${sort?.order}`;
   if (tournament_id && !useSelected) {
     url += `&tournament_id=${tournament_id}`;
   }else if(tournament_id && useSelected){
@@ -131,9 +131,14 @@ export const GetQuestions = async (
   }
 };
 
-export const GetQuestionsByID = async (id: number) => {
+export const GetQuestionsByID = async (id: number,tournament_id?: number) => {
   try {
-    const resp = await axios.get(`${ip}/api/question/${id}`, {
+    let url = `${ip}/api/question?id=${id}`;
+    if(tournament_id){
+      url += `&tournament_id=${tournament_id}`;
+    }
+    
+    const resp = await axios.get(url, {
       withCredentials: true,
     });
     console.log(resp.data);

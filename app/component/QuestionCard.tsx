@@ -80,6 +80,7 @@ export default function QuestionCard({
     <>
       {showModal ? (
         <QuestionPopup
+          tournamentId={tournament_id}
           id={id}
           ClosePopup={setShowModal}
           Topic={Topic}

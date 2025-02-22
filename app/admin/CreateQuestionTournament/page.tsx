@@ -13,6 +13,7 @@ import {
 } from "../../lib/API/QuestionAPI";
 import { questions } from "../../lib/types/QuestionType";
 import { GetAllTourList } from "@/app/lib/API/GetTourListAPI";
+import { isRoleAdmin } from "@/app/lib/role";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -29,7 +30,10 @@ export default function Homepage() {
   const [tournament_id, setTournament_id] = useState<number>(0);
   const [question_id, setQuestion_id] = useState<number[]>([]);
   const [tournamentList, setTournamentList] = useState<any[]>([]);
-
+  const [sort, setSort] = useState<{ name: string; order: string }>({
+    name: "",
+    order: "acs",
+  });
   const handleCategoryClick = (categories: string[]) => {
     setSelectedCategory(categories);
     router.push("?page=1");
@@ -86,7 +90,31 @@ export default function Homepage() {
       console.error("Error CreateQuestionTournament:", error);
     }
   };
+  const handleOnSort = (sortName: string) => {
+    let order = "asc";
+    if (sort.name === sortName) {
+      order = sort.order === "asc" ? "desc" : "asc";
+      setSort({ name: sortName, order: order });
+    } else {
+      setSort({ name: sortName, order: "asc" });
+    }
 
+    const fetchUserQuestions = async () => {
+      const result = await GetQuestions(
+        selectedCategory.join(","),
+        selectedDifficulty,
+        page,
+        "Tournament",
+        undefined,
+        undefined,
+        { name: sortName, order: order }
+      );
+      setTotalPages(result.totalPages);
+      setHasNextPage(result.hasNextPage);
+      setQuestions(result.data);
+    };
+    fetchUserQuestions();
+  };
   const onSelectTournament = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ): Promise<void> => {
@@ -168,7 +196,8 @@ export default function Homepage() {
               questions={questions}
               question_id={question_id} // Add this prop
               tournament_id={tournament_id}
-              setSort={() => {}}
+              setSort={handleOnSort}
+              sort={sort}
               isTable={false}
             />
 

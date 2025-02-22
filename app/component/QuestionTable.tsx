@@ -4,139 +4,138 @@ import QuestionPopup from "./QuestionPopup";
 import Link from "next/link";
 import { DeleteQuestionsByID } from "../lib/API/QuestionAPI";
 import DeleteQPuestionPopup from "./QuestionComponent/DeleteQuestionPopup";
-
+import { questions } from "../lib/types/QuestionType";
+import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
+import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
+import QuestionListDetail from "./QuestionComponent/QuestionListDetail";
 type detail = {
-  id: number;
-  Topic: string;
-  Level: string;
-  Category: string;
-  Solved: boolean;
-  point: string;
+  setSort: (sort: string) => void;
+  sort?: { name: string; order: string };
   addQuestionTournament?: (id: number) => void;
   question_id?: number[]; // Add this prop
-  is_selected?: boolean;
   tournament_id?: number;
-  isRoleAdmin: boolean;
-  submitCount: number;
+  isAdmin: boolean;
   isCreateQuestionTournament?: boolean;
+  questions: questions[];
 };
 export default function QuestionTable({
-  id,
-  Topic,
-  Level,
-  Category,
-  Solved,
-  point,
+  setSort,
+  sort,
+  questions,
+  isAdmin,
   addQuestionTournament,
   question_id,
-  is_selected,
   tournament_id,
-  submitCount,
-  isRoleAdmin,
   isCreateQuestionTournament,
 }: Readonly<detail>) {
-  const isCanEdit = !is_selected && submitCount === 0;
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const showLevel = (Level: string) => {
-    if (Level == "Easy") {
-      return <span className="text-green-500">Easy</span>;
-    } else if (Level == "Medium") {
-      return <span className="text-yellow-500">Medium</span>;
-    } else {
-      return <span className="text-red-500">Hard</span>;
-    }
-  };
-
-  const handleConfirmDelete = () => {
-    DeleteQuestionsByID(id);
-    setShowDeletePopup(false);
-
-    location.reload();
-  };
   return (
-    <tr className="even:bg-[#0D1B2A] odd:bg-gray-800 text-white">
-      {isCreateQuestionTournament && (
-        <td className=" px-4 py-2">
-          <div className="justify-center flex">
-            <input type="checkbox" />
-          </div>
-        </td>
-      )}
+    <table className="table-auto w-full">
+      <thead className="bg-gray-900 text-green">
+        <tr>
+          {isAdmin && isCreateQuestionTournament && (
+            <th className=" px-4 py-2 text-green-400 ">Select</th>
+          )}
 
-      <td className=" px-4 py-2 ">
-        {showDeletePopup && (
-          <DeleteQPuestionPopup
-            // DeleteRef={null}
-            handleClosePopup={() => setShowDeletePopup(false)}
-            handleConfirmDelete={handleConfirmDelete}
+          <th
+            className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            onClick={() => {
+              setSort("QuestionName");
+            }}
+          >
+            Question name
+            {sort?.name === "QuestionName" && sort?.order === "asc" && (
+              <ArrowDropUpRoundedIcon />
+            )}
+            {sort?.name === "QuestionName" && sort?.order === "desc" && (
+              <ArrowDropDownRoundedIcon />
+            )}
+          </th>
+          <th
+            className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            onClick={() => {
+              setSort("Category");
+            }}
+          >
+            Category
+            {sort?.name === "Category" && sort?.order === "asc" && (
+              <ArrowDropUpRoundedIcon />
+            )}
+            {sort?.name === "Category" && sort?.order === "desc" && (
+              <ArrowDropDownRoundedIcon />
+            )}
+          </th>
+          <th
+            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            onClick={() => {
+              setSort("Difficulty");
+            }}
+          >
+            Difficulty
+            {sort?.name === "Difficulty" && sort?.order === "asc" && (
+              <ArrowDropUpRoundedIcon />
+            )}
+            {sort?.name === "Difficulty" && sort?.order === "desc" && (
+              <ArrowDropDownRoundedIcon />
+            )}
+          </th>
+          <th
+            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700
+              
+              "
+            onClick={() => {
+              setSort("Point");
+            }}
+          >
+            Point
+            {sort?.name === "Point" && sort?.order === "asc" && (
+              <ArrowDropUpRoundedIcon />
+            )}
+            {sort?.name === "Point" && sort?.order === "desc" && (
+              <ArrowDropDownRoundedIcon />
+            )}
+          </th>
+          <th
+            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            onClick={() => {
+              setSort("Solved");
+            }}
+          >
+            Solved
+            {sort?.name === "Solved" && sort?.order === "asc" && (
+              <ArrowDropUpRoundedIcon />
+            )}
+            {sort?.name === "Solved" && sort?.order === "desc" && (
+              <ArrowDropDownRoundedIcon />
+            )}
+          </th>
+          {isAdmin && (
+            <>
+              <th className=" px-4 py-2 text-green-400">Edit</th>
+              <th className=" px-4 py-2 text-green-400">Delete</th>
+            </>
+          )}
+        </tr>
+      </thead>
+      <tbody>
+        {questions.map((question) => (
+          <QuestionListDetail
+            addQuestionTournament={addQuestionTournament}
+            key={question.id}
+            id={question.id}
+            Topic={question.title}
+            Level={question.difficultys_id}
+            Category={question.categories_name}
+            Solved={question.solved}
+            point={question.point}
+            question_id={question_id} // Pass the prop
+            is_selected={question.is_selected}
+            tournament_id={tournament_id}
+            isRoleAdmin={isAdmin}
+            isCreateQuestionTournament={isCreateQuestionTournament}
+            submitCount={question.submitCount}
           />
-        )}
-        {showModal && (
-          <div>
-            <QuestionPopup
-              isCanEdit={isCanEdit}
-              id={id}
-              ClosePopup={setShowModal}
-              Topic={Topic}
-            />
-          </div>
-        )}
-        <button
-          onClick={() => setShowModal(true)}
-          className="hover:text-blue-500 underline"
-        >
-          {Topic}
-        </button>
-      </td>
-      <td className="px-4 py-2 ">{showLevel(Level)}</td>
-      <td className="px-4 py-2 ">{point}</td>
-      <td className="px-4 py-2 ">{submitCount}</td>
-
-      {isRoleAdmin && (
-        <>
-          <td className=" px-4 py-2 ">
-            <div className="justify-center flex">
-              <button
-                disabled={!isCanEdit}
-                className={`p-2 transition rounded-md flex items-center justify-center ${
-                  isCanEdit
-                    ? "bg-yellow-200 hover:bg-yellow-300"
-                    : "cursor-not-allowed bg-gray-200"
-                }`}
-              >
-                <Link
-                  href={`/admin/EditQuestion?QuestionID=${id}`}
-                  title={
-                    isCanEdit ? "Click to Submit" : "Someone already submitted"
-                  }
-                >
-                  <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
-                </Link>
-              </button>
-            </div>
-          </td>
-          <td className=" px-4 py-2">
-            <div className="justify-center flex">
-              <button
-                className="p-2 bg-red-300 hover:bg-red-500 transition rounded-md"
-                onClick={() => {
-                  setShowDeletePopup(true);
-                }}
-              >
-                <div className="flex items-center justify-center">
-                  <Image
-                    src="/delete.svg"
-                    width={15}
-                    height={15}
-                    alt={"Delete"}
-                  />
-                </div>
-              </button>
-            </div>
-          </td>
-        </>
-      )}
-    </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
