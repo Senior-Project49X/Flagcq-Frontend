@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { isRoleAdmin } from "../lib/role";
 import { usePathname } from "next/navigation";
 import { getCookie, isHasCookie, setCookie } from "../lib/cookies";
-import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
+
 interface CryptographyProps {
   selectedDifficulty: string | null;
   selectedCategory: string | null;
@@ -97,100 +96,16 @@ export default function Question({
           ))}
         </div>
       ) : (
-        <table className="table-auto w-full">
-          <thead className="bg-gray-900 text-green">
-            <tr>
-              {isAdmin && isCreateQuestionTournament && (
-                <th className=" px-4 py-2">Select</th>
-              )}
-
-              <th
-                className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
-                onClick={() => {
-                  setSort("QuestionName");
-                }}
-              >
-                Question name
-                {sort?.name === "QuestionName" && sort?.order === "asc" && (
-                  <ArrowDropUpRoundedIcon />
-                )}
-                {sort?.name === "QuestionName" && sort?.order === "desc" && (
-                  <ArrowDropDownRoundedIcon />
-                )}
-              </th>
-              <th
-                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
-                onClick={() => {
-                  setSort("Difficulty");
-                }}
-              >
-                Difficulty
-                {sort?.name === "Difficulty" && sort?.order === "asc" && (
-                  <ArrowDropUpRoundedIcon />
-                )}
-                {sort?.name === "Difficulty" && sort?.order === "desc" && (
-                  <ArrowDropDownRoundedIcon />
-                )}
-              </th>
-              <th
-                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700
-              
-              "
-                onClick={() => {
-                  setSort("Point");
-                }}
-              >
-                Point
-                {sort?.name === "Point" && sort?.order === "asc" && (
-                  <ArrowDropUpRoundedIcon />
-                )}
-                {sort?.name === "Point" && sort?.order === "desc" && (
-                  <ArrowDropDownRoundedIcon />
-                )}
-              </th>
-              <th
-                className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
-                onClick={() => {
-                  setSort("Solved");
-                }}
-              >
-                Solved
-                {sort?.name === "Solved" && sort?.order === "asc" && (
-                  <ArrowDropUpRoundedIcon />
-                )}
-                {sort?.name === "Solved" && sort?.order === "desc" && (
-                  <ArrowDropDownRoundedIcon />
-                )}
-              </th>
-              {isAdmin && (
-                <>
-                  <th className=" px-4 py-2 text-green-400">Edit</th>
-                  <th className=" px-4 py-2 text-green-400">Delete</th>
-                </>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {questions.map((question) => (
-              <QuestionTable
-                addQuestionTournament={addQuestionTournament}
-                key={question.id}
-                id={question.id}
-                Topic={question.title}
-                Level={question.difficultys_id}
-                Category={question.categories_name}
-                Solved={question.solved}
-                point={question.point}
-                question_id={question_id} // Pass the prop
-                is_selected={question.is_selected}
-                tournament_id={tournament_id}
-                isRoleAdmin={isAdmin}
-                isCreateQuestionTournament={isCreateQuestionTournament}
-                submitCount={question.submitCount}
-              />
-            ))}
-          </tbody>
-        </table>
+        <QuestionTable
+          setSort={setSort}
+          sort={sort}
+          addQuestionTournament={addQuestionTournament}
+          questions={questions}
+          question_id={question_id} // Pass the prop
+          tournament_id={tournament_id}
+          isAdmin={isAdmin}
+          isCreateQuestionTournament={isCreateQuestionTournament}
+        />
       )}
     </div>
   );
