@@ -49,14 +49,14 @@ export default function Login() {
       description: "Leaderboard Information",
     },
     {
-      src: "/tour_list.png",
+      src: "/tour.png",
       alt: "Tournament List Preview",
       title: "Tournament List",
       label: "Part 4",
       description: "Tournament List Information",
     },
     {
-      src: "/Tour_joined1.png",
+      src: "/Tour_joined.png",
       alt: "Tournament Joined Preview",
       title: "Tournament Details",
       label: "Part 5",

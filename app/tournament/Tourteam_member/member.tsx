@@ -68,9 +68,9 @@ export default function Member() {
   }, [tournamentId, teamId]);
 
   return (
-    <div className="min-h-screen bg-[#090147] text-white">
+    <div className="min-h-screen text-white">
       <Navbar />
-      <div className="min-h-screen bg-[#090147] text-white">
+      <div className="min-h-screen text-white">
         <div className="text-center mt-8">
           <p className="text-lg font-semibold">
             Tournament: {TourMemData?.tournamentName}

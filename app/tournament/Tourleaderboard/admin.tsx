@@ -53,7 +53,7 @@ export default function TeamLeaderboardAdmin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090147] text-white">
+    <div className="min-h-screen text-white">
       <Navbar />
 
       <div className="flex justify-between items-center p-6">
@@ -105,32 +105,32 @@ export default function TeamLeaderboardAdmin() {
 
                 {/* Team Leaderboard appears here if this card is selected */}
                 {openedIndexes.includes(index) && (
-                  <div className="bg-gray-800 text-black rounded-lg shadow-md p-6 mt-4 border-white-500 border-1">
-                    <h2 className="text-xl font-bold mb-4 text-center text-green-600">
+                  <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62] mt-4">
+                    <h2 className="text-xl font-semibold mb-6 text-center text-[#00ffcc]">
                       Our Team Leaderboard
                     </h2>
-                    <div className="flex justify-between font-bold text-lg mb-4">
-                      <span className="text-green-600">Member</span>
-                      <span className="text-red-500">Score</span>
+                    <div className="flex justify-between font-semibold text-lg mb-4">
+                      <span className="text-[#00ffcc]">Member</span>
+                      <span className="text-[#00ffcc]">Score</span>
                     </div>
-                    <hr className="border-t-2 mb-4" />
+                    <hr className="border-t-2 border-[#2a2f62] mb-4" />
                     {team.members.length > 0 ? (
                       team.members.map((member, memberIndex) => (
                         <div
                           key={member.userId}
-                          className="flex justify-between items-center text-lg mb-2"
+                          className="flex justify-between items-center p-3 rounded-lg transition-all hover:bg-[#1c2252]"
                         >
-                          <span className="text-green-600">
-                            {memberIndex + 1}. {member.firstName}{" "}
+                          <span className="text-white">
+                            #{memberIndex + 1} {member.firstName}{" "}
                             {member.lastName}
                           </span>
-                          <span className="text-red-500">
-                            {member.individualScore}
+                          <span className="font-mono text-[#00ffcc]">
+                            {member.individualScore.toLocaleString()}
                           </span>
                         </div>
                       ))
                     ) : (
-                      <div className="text-center text-gray-500">
+                      <div className="text-center text-gray-400">
                         No member data available.
                       </div>
                     )}

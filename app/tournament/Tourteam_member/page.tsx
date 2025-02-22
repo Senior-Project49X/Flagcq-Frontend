@@ -76,7 +76,7 @@ export default function Tourteam_member() {
   }
 
   return (
-    <div className="min-h-screen bg-[#090147] text-white">
+    <div className="min-h-screen text-white">
       {role === "leader" && <Leader />}
       {role === "member" && <Member />}
     </div>

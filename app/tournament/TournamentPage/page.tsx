@@ -9,6 +9,14 @@ import { GetQuestions } from "../../lib/API/QuestionAPI";
 import { questions } from "../../lib/types/QuestionType";
 import { GetTourPage } from "@/app/lib/API/GetTourPage";
 import { isRoleAdmin } from "../../lib/role";
+import {
+  FaTrophy,
+  FaClock,
+  FaCalendarAlt,
+  FaMedal,
+  FaUsers,
+  FaStar,
+} from "react-icons/fa";
 
 interface TourData {
   name: string;
@@ -17,14 +25,22 @@ interface TourData {
   teamRank: number;
   teamScore: number;
   individualScore: number;
-  eventEndDate: string;
+  event_endDate: string;
+  event_startDate: string;
+  enroll_startDate: string;
+  enroll_endDate: string;
+}
+
+interface InfoBlockProps {
+  title: string;
+  value: string | number;
+  icon: React.ElementType;
 }
 
 export default function Homepage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tournament_id = searchParams.get("tournamentId");
-
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedDifficulty, setSelectedDifficulty] =
     useState("All Difficulty");
@@ -35,6 +51,10 @@ export default function Homepage() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+  const EnrollEnddate = new Date(tourData?.enroll_endDate || "");
+  const EventEnddate = new Date(tourData?.event_endDate || "");
+  const EnrollStartdate = new Date(tourData?.enroll_startDate || "");
+  const EventStartdate = new Date(tourData?.event_startDate || "");
   const [sort, setSort] = useState<{ name: string; order: string }>({
     name: "",
     order: "acs",
@@ -111,11 +131,19 @@ export default function Homepage() {
   }, [tournament_id]);
 
   useEffect(() => {
-    if (!tourData?.eventEndDate) return;
+    if (!tourData?.event_endDate) return;
 
     const calculateRemainingTime = () => {
       const now = new Date();
-      const endDate = new Date(tourData.eventEndDate);
+      const endDate = new Date(tourData.event_endDate);
+
+      // Check if endDate is a valid date
+      if (isNaN(endDate.getTime())) {
+        console.error("Invalid event_endDate:", tourData.event_endDate);
+        setRemainingTime("Invalid Date");
+        return;
+      }
+
       const remaining = endDate.getTime() - now.getTime();
 
       if (remaining <= 0) {
@@ -137,55 +165,123 @@ export default function Homepage() {
     calculateRemainingTime();
 
     return () => clearInterval(interval);
-  }, [tourData?.eventEndDate]);
+  }, [tourData?.event_endDate]);
 
   return (
     <div>
       <Navbar />
       <div className="flex">
         <div className="w-80 p-6 bg-darkblue text-white">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-green-500">
-              Tournament Name
-            </h2>
-            <p className="text-lg">{tourData?.name ?? "Loading..."}</p>
+          <div className="w-80 p-6 bg-[#151a3d]/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#2a2f62]">
+            {isAdmin && (
+              <>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Tournament Name
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {tourData?.name ?? "Loading..."}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Remaining Time
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {remainingTime || "Calculating..."}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Enroll Start Date
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {EnrollStartdate.toLocaleString() || "Calculating..."}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Enroll End Date
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {EnrollEnddate.toLocaleString() || "Calculating..."}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Event Start Date
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {EventStartdate.toLocaleString() || "Calculating..."}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Event End Date
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {EventEnddate.toLocaleString() || "Calculating..."}
+                  </p>
+                </div>
+              </>
+            )}
+            {!isAdmin && (
+              <>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Tournament Name
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {tourData?.name ?? "Loading..."}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Remaining Time
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {remainingTime || "Calculating..."}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Team Rank
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {tourData?.teamRank || "N/A"}
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Team Score
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {tourData?.teamScore || 0} Points
+                  </p>
+                </div>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-[#00ffcc]">
+                    Individual Score
+                  </h2>
+                  <p className="text-lg text-white mt-2">
+                    {tourData?.individualScore || 0} Points
+                  </p>
+                </div>
+              </>
+            )}
+            <button
+              onClick={() =>
+                router.push(
+                  `/tournament/Tourleaderboard?tournamentId=${Number(
+                    tournament_id
+                  )}`
+                )
+              }
+              className="w-full bg-[#00ffcc]/20 text-[#00ffcc] py-2 px-4 rounded-lg hover:bg-[#00ffcc]/30 transition-all duration-300 font-semibold"
+            >
+              Leaderboard
+            </button>
           </div>
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-green-500">Remaining Time</h2>
-            <p className="text-lg">{remainingTime || "Calculating..."}</p>
-          </div>
-          {!isAdmin && (
-            <>
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-green-500">Team Rank</h2>
-                <p className="text-lg">{tourData?.teamRank || "N/A"}</p>
-              </div>
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-green-500">Team Score</h2>
-                <p className="text-lg">{tourData?.teamScore || 0} Points</p>
-              </div>
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-green-500">
-                  Individual Score
-                </h2>
-                <p className="text-lg">
-                  {tourData?.individualScore || 0} Points
-                </p>
-              </div>
-            </>
-          )}
-          <button
-            onClick={() =>
-              router.push(
-                `/tournament/Tourleaderboard?tournamentId=${Number(
-                  tournament_id
-                )}`
-              )
-            }
-            className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
-          >
-            Leaderboard
-          </button>
         </div>
 
         <div className="flex-1 p-6 rounded-lg">

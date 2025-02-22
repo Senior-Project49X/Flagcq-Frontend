@@ -22,16 +22,7 @@ const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });
-interface CreateNewQuestion {
-  CategoriesId: string | null;
-  Title: string;
-  Description: string;
-  Answer: string;
-  Point: number;
-  DifficultyId: string;
-  FilePath: File | null;
-  Mode: string[];
-}
+
 interface ButtonStates {
   [key: string]: boolean; // Define a dynamic object where keys are strings and values are boolean
 }
@@ -220,7 +211,7 @@ export default function CreateQuestion() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090147] to-[#1a1163] text-white">
+    <div className="min-h-screen  text-white">
       {loading && (
         <LoadingPopup
           setLoading={setLoading}
@@ -483,19 +474,33 @@ export default function CreateQuestion() {
 
           {/* File Upload */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-1 text-green-400">
-              File
+            <label className="block text-base font-medium mb-2 text-green-400">
+              Upload File
             </label>
             <div className="flex gap-2 items-center">
+              {/* Hidden file input */}
               <input
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                name="file"
+                id="file-upload"
                 type="file"
-                className="flex-1 p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+                name="file"
+                className="hidden"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
                 ref={(input) => {
                   if (input && file === null) input.value = "";
                 }}
               />
+              {/* Custom file upload button */}
+              <label
+                htmlFor="file-upload"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md font-medium cursor-pointer hover:bg-blue-600 transition-all duration-300"
+              >
+                Choose File
+              </label>
+              {/* File Name Display */}
+              {file && typeof file !== "string" && (
+                <span className="text-white">{file.name}</span>
+              )}
+              {/* Delete Button */}
               <button
                 type="button"
                 className="px-3 py-2 bg-red-500 text-white rounded-md font-medium hover:bg-red-600 transition-all duration-300"
@@ -507,6 +512,7 @@ export default function CreateQuestion() {
                 Delete
               </button>
             </div>
+            {/* File Download (if applicable) */}
             {file && typeof file === "string" && (
               <div className="mt-1 text-white text-sm">
                 Current file:
@@ -524,6 +530,10 @@ export default function CreateQuestion() {
                 )}
               </div>
             )}
+            {/* File Size Limit Notice */}
+            <p className="mt-2 text-sm text-gray-400">
+              Maximum file size: 200MB
+            </p>
           </div>
 
           {/* Submit Button */}

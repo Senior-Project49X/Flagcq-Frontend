@@ -4,8 +4,8 @@ import Navbar from "../../component/Navbar/navbar";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { GetAllinfo } from "@/app/lib/API/GetAllinfo";
+import { FaTrophy, FaUsers, FaArrowLeft, FaMedal } from "react-icons/fa";
 
-// Define types for the leaderboard data
 type Member = {
   userId: number;
   isLeader: boolean;
@@ -21,11 +21,9 @@ type TeamLeaderboardData = {
   members: Member[];
 };
 
-// Component
 export default function TeamLeaderboardAdmin() {
   const searchParams = useSearchParams();
   const tournamentId = searchParams.get("tournamentId");
-
   const [teamLeaderboardData, setTeamLeaderboardData] = useState<
     TeamLeaderboardData[]
   >([]);
@@ -47,101 +45,145 @@ export default function TeamLeaderboardAdmin() {
     fetchTeamLeaderboardData();
   }, [tournamentId]);
 
+  const getRankIcon = (rank: number) => {
+    if (rank === 1) return <FaTrophy className="text-yellow-400 w-5 h-5" />;
+    if (rank === 2) return <FaMedal className="text-gray-300 w-5 h-5" />;
+    if (rank === 3) return <FaMedal className="text-amber-600 w-5 h-5" />;
+    return null;
+  };
+
   return (
-    <div className="min-h-screen bg-[#090147] text-white">
+    <div className="min-h-screen">
       <Navbar />
 
-      <div className="flex justify-between items-center p-6">
+      <div className="max-w-6xl mx-auto px-4 py-6">
         <button
           onClick={() => window.history.back()}
-          className="text-xl text-green-300 hover:underline ml-auto"
+          className="flex items-center gap-2 text-[#00ffcc] hover:text-[#00ffcc]/80 transition-colors mb-8"
         >
-          Back →
+          <FaArrowLeft /> Back
         </button>
-      </div>
 
-      <div className="max-w-5xl mx-auto p-8">
-        <h1 className="text-2xl font-bold mb-8 text-center text-green-500">
-          Tournament Leaderboard
-        </h1>
-        <div className="bg-gray-800 text-green-500 rounded-lg shadow-md p-6 w-full">
-          <div className="flex justify-between mb-4">
-            <span className="font-bold">Rank</span>
-            <span className="font-bold">Team Name</span>
-            <span className="font-bold">Total Points</span>
-          </div>
-          <hr className="border-t-2 mb-4" />
+        {/* Tournament Leaderboard */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold mb-8 text-center text-[#00ffcc]">
+            Tournament Leaderboard
+          </h1>
 
-          {!isLoading && teamLeaderboardData.length > 0 ? (
-            teamLeaderboardData.map((team, index) => (
-              <div
-                key={team.teamID}
-                className="flex justify-between items-center text-lg mb-2"
-              >
-                <span>{index + 1}</span>
-                <span>{team.teamName}</span>
-                <span>{team.totalPoints}</span>
+          <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
+            <div className="flex justify-between mb-6 text-sm uppercase tracking-wider text-gray-400">
+              <span>Rank</span>
+              <span>Team Name</span>
+              <span>Total Points</span>
+            </div>
+
+            {!isLoading && teamLeaderboardData.length > 0 ? (
+              <div className="space-y-4">
+                {teamLeaderboardData.map((team, index) => (
+                  <div
+                    key={team.teamID}
+                    className="flex justify-between items-center p-3 rounded-lg transition-all hover:bg-[#1c2252]"
+                  >
+                    <div className="flex items-center gap-2">
+                      {getRankIcon(index + 1)}
+                      <span className="font-semibold text-white">
+                        {index + 1}
+                      </span>
+                    </div>
+                    <span className="font-medium text-gray-200">
+                      {team.teamName}
+                    </span>
+                    <span className="font-mono text-[#00ffcc]">
+                      {team.totalPoints.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))
-          ) : (
-            <p className="text-center">
-              {isLoading ? "Loading leaderboard..." : "No team data available."}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Our Team Leaderboard */}
-      <div className="max-w-5xl mx-auto p-8">
-        <h1 className="text-2xl font-bold mb-8 text-center">
-          Our Team Leaderboard
-        </h1>
-        <div className="bg-gray-800 text-white rounded-lg shadow-md p-6 mb-6 w-full">
-          <div className="flex justify-between mb-4">
-            <span className="font-bold text-green-500">Rank</span>
-            <span className="font-bold text-green-500">Team Name</span>
-            <span className="font-bold text-green-500">Total Points</span>
+            ) : (
+              <div className="text-center py-8 text-gray-400">
+                {isLoading
+                  ? "Loading leaderboard..."
+                  : "No team data available."}
+              </div>
+            )}
           </div>
-          <hr className="border-t-2 mb-4" />
-
-          {teamLeaderboardData.length > 0 ? (
-            <div className="flex justify-between items-center text-lg mb-2">
-              <span>1</span>
-              <span>{teamLeaderboardData[0]?.teamName || "N/A"}</span>
-              <span>{teamLeaderboardData[0]?.totalPoints || "0"}</span>
-            </div>
-          ) : (
-            <div className="text-center text-gray-500">
-              No team data available.
-            </div>
-          )}
         </div>
 
-        {/* Members List */}
-        <div className="bg-gray-800 text-green-500 rounded-lg shadow-md p-6 w-full">
-          <div className="flex justify-between font-bold text-lg mb-4 text-green-500">
-            <span className="text-green-600">Member</span>
-            <span className="text-red-500">Score</span>
-          </div>
-          <hr className="border-t-2 mb-4" />
-          {teamLeaderboardData.length > 0 &&
-          teamLeaderboardData[0]?.members?.length ? (
-            teamLeaderboardData[0].members.map((member, index) => (
-              <div
-                key={member.userId}
-                className="flex justify-between items-center text-lg mb-2"
-              >
-                <span>
-                  {index + 1}. {member.firstName} {member.lastName}
-                </span>
-                <span className="text-red-500">{member.individualScore}</span>
+        {/* Our Team Section */}
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold text-center text-white">
+            Your Team Stats
+          </h2>
+
+          {/* Team Overview */}
+          <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
+            {teamLeaderboardData.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-2xl font-bold text-[#00ffcc] mb-2">
+                      {teamLeaderboardData[0]?.teamName || "N/A"}
+                    </h3>
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <FaUsers />
+                      <span>
+                        {teamLeaderboardData[0]?.members?.length || 0} Members
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-400">Total Points</div>
+                    <br />
+                    <div className="font-mono text-[#00ffcc]">
+                      {teamLeaderboardData[0]?.totalPoints?.toLocaleString()}
+                    </div>
+                  </div>
+                </div>
               </div>
-            ))
-          ) : (
-            <div className="text-center text-gray-500">
-              No member data available.
+            ) : (
+              <div className="text-center text-gray-400">
+                No team data available.
+              </div>
+            )}
+          </div>
+
+          {/* Members List */}
+          <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
+            <h3 className="text-xl font-semibold mb-6 text-white">
+              Team Members
+            </h3>
+
+            <div className="space-y-4">
+              {teamLeaderboardData.length > 0 &&
+              teamLeaderboardData[0]?.members?.length ? (
+                teamLeaderboardData[0].members.map((member, index) => (
+                  <div
+                    key={member.userId}
+                    className="flex justify-between items-center p-3 rounded-lg transition-all hover:bg-[#1c2252]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-gray-400">#{index + 1}</span>
+                      <span className="text-white">
+                        {member.firstName} {member.lastName}
+                      </span>
+                      {member.isLeader && (
+                        <span className="px-2 py-1 text-xs bg-[#00ffcc]/20 text-[#00ffcc] rounded-full">
+                          Leader
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-mono text-[#00ffcc]">
+                      {member.individualScore.toLocaleString()}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center text-gray-400">
+                  No member data available.
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

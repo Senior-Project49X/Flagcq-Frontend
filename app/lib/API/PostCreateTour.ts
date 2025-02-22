@@ -14,9 +14,18 @@ export interface TournamentData {
   limit: number;
 }
 
-export const PostCreateTour = async (data: TournamentData) => {
-  try {
-    const resp = await axios.post(
+interface SetState {
+  setIsSuccess: (value: boolean) => void;
+  setIsFailed: (value: boolean) => void;
+  setMessage: (message: string) => void;
+}
+
+export const PostCreateTour = async (
+  data: TournamentData,
+  setState: SetState
+): Promise<any> => {
+  axios
+    .post(
       `${ip}/api/createTournament`,
       {
         name: data.topic,
@@ -30,19 +39,22 @@ export const PostCreateTour = async (data: TournamentData) => {
         limit: data.limit,
       },
       {
-        withCredentials: true, // Ensure cookies are sent if required by backend
+        withCredentials: true,
       }
-    );
-    return resp.data;
-  } catch (e) {
-    if (axios.isAxiosError(e) && e.response?.status === 400) {
-      return {
-        success: false,
-        message: e.response.data.message,
-      };
-    }
+    )
+    .then((resp) => {
+      console.log(resp);
 
-    console.error("Error posting tournament data:", e);
-    return null; // Return null to indicate failure
-  }
+      if (resp.status === 200) {
+        setState.setIsSuccess(true);
+        return resp.data;
+      }
+    })
+    .catch((e) => {
+      setState.setIsFailed(true);
+      console.log("e", e.response.data.message);
+      setState.setMessage(e.response.data.message);
+
+      return e;
+    });
 };

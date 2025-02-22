@@ -39,7 +39,7 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090147]">
+    <div className="min-h-screen">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="bg-gray-800 rounded-xl p-8 shadow-2xl border border-gray-700 max-w-2xl mx-auto mt-12">

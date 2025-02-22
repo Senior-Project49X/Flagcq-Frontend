@@ -5,6 +5,7 @@ import Navbar from "../../component/Navbar/navbar";
 import LoadingPopup from "../../component/LoadingPopup";
 import { EditTourAPI, GetTournamentByID } from "@/app/lib/API/EditTour";
 import { useSearchParams } from "next/navigation";
+
 import dynamic from "next/dynamic";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
   loading: () => <p>Loading...</p>,
@@ -43,10 +44,10 @@ export default function CreateTour() {
     tournament_id,
   });
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [popupMessage, setPopupMessage] = useState<string>("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,15 +56,9 @@ export default function CreateTour() {
     setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
   };
 
+  // Modify your handleSubmit function in CreateTour:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Reset states
-    setFieldErrors({});
-    setIsLoading(true);
-    setIsFailed(false);
-    setIsSuccess(false);
-    setPopupMessage("");
 
     const formattedData = {
       ...CreateTourData,
@@ -75,52 +70,39 @@ export default function CreateTour() {
 
     const errors: Record<string, boolean> = {};
 
-    // Validation checks
-    if (formattedData.enroll_startDate >= formattedData.enroll_endDate) {
-      errors.enroll_startDate = true;
-      errors.enroll_endDate = true;
-      setPopupMessage("Enroll start date must be before Enroll end date.");
-      setIsFailed(true);
-    } else if (formattedData.enroll_endDate >= formattedData.event_endDate) {
-      errors.enroll_endDate = true;
-      errors.event_endDate = true;
-      setPopupMessage("Enroll end date must be before Event end date.");
-      setIsFailed(true);
-    } else if (formattedData.event_startDate >= formattedData.event_endDate) {
-      errors.event_startDate = true;
-      errors.event_endDate = true;
-      setPopupMessage("Event start date must be before Event end date.");
-      setIsFailed(true);
-    }
-
-    setFieldErrors(errors);
-
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
-
     try {
-      if (tournament_id !== null && tournament_id !== undefined) {
-        await EditTourAPI(formattedData);
-        setIsSuccess(true);
-        setPopupMessage("Tournament edited successfully!");
+      if (tournament_id !== undefined && tournament_id !== null) {
+        await EditTourAPI(formattedData, {
+          setIsFailed,
+          setMessage,
+          setIsSuccess,
+        });
+        window.location.href = "/";
       } else {
-        const response = await PostCreateTour(formattedData);
-
-        if (response.success) {
-          setIsSuccess(true);
-          setPopupMessage("Tournament created successfully!");
-        } else {
-          setIsFailed(true);
-          setPopupMessage(response.message || "Failed to create tournament.");
-        }
+        await PostCreateTour(formattedData, {
+          setIsFailed,
+          setMessage,
+          setIsSuccess,
+        });
       }
+      setLoading(true);
+      setIsSuccess(true);
     } catch (error: any) {
       console.error("Error creating tournament:", error);
       setIsFailed(true);
-      setPopupMessage(error.message || "An unexpected error occurred.");
+      setLoading(true);
+      setMessage(error.message || "An unexpected error occurred.");
     }
   };
+
+  // Add this useEffect to handle state resets
+  useEffect(() => {
+    if (!loading) {
+      setMessage("");
+      setIsFailed(false);
+      setIsSuccess(false);
+    }
+  }, [loading]);
 
   useEffect(() => {
     if (!tournament_id) return;
@@ -181,7 +163,7 @@ export default function CreateTour() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#090147] to-[#1a1163] text-white">
+    <div className="min-h-screen  text-white">
       <Navbar />
       <div className="max-w-4xl mx-auto p-8">
         <h1 className="text-4xl font-bold mb-8 text-center text-green-400 drop-shadow-lg">
@@ -404,23 +386,21 @@ export default function CreateTour() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
             className={`w-full py-4 rounded-lg font-bold text-lg mt-8 transition-all duration-300 transform hover:scale-105 ${
-              isLoading
+              loading
                 ? "bg-gray-600 cursor-not-allowed"
                 : "bg-green-500 hover:bg-green-600 text-white shadow-lg"
             }`}
           >
-            {isLoading ? "Creating Tournament..." : "Create Tournament"}
+            {loading ? "Creating Tournament..." : "Create Tournament"}
           </button>
         </form>
-
-        {isLoading && (
+        {loading && (
           <LoadingPopup
-            setLoading={setIsLoading}
+            setLoading={setLoading}
             isFailed={isFailed}
             isSuccess={isSuccess}
-            Message={popupMessage}
+            Message={message}
           />
         )}
       </div>

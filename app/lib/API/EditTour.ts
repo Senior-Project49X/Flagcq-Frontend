@@ -15,7 +15,16 @@ export interface TournamentData {
   tournament_id: number | undefined | null;
 }
 
-export const EditTourAPI = async (data: TournamentData): Promise<any> => {
+interface SetState {
+  setIsSuccess: (value: boolean) => void;
+  setIsFailed: (value: boolean) => void;
+  setMessage: (message: string) => void;
+}
+
+export const EditTourAPI = async (
+  data: TournamentData,
+  setState: SetState
+): Promise<any> => {
   axios
     .put(
       `${ip}/api/editTournament`,
@@ -39,11 +48,14 @@ export const EditTourAPI = async (data: TournamentData): Promise<any> => {
       console.log(resp);
 
       if (resp.status === 200) {
+        setState.setIsSuccess(true);
         return resp.data;
       }
     })
     .catch((e) => {
+      setState.setIsFailed(true);
       console.log("e", e.response.data.message);
+      setState.setMessage(e.response.data.message);
 
       return e;
     });
