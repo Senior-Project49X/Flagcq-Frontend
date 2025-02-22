@@ -72,12 +72,31 @@ export default function CreateTour() {
 
     try {
       if (tournament_id !== undefined && tournament_id !== null) {
+        if (formattedData.enroll_startDate >= formattedData.enroll_endDate) {
+          errors.enroll_startDate = true;
+          errors.enroll_endDate = true;
+          setMessage("Enroll start date must be before Enroll end date.");
+          setIsFailed(true);
+        } else if (
+          formattedData.enroll_endDate >= formattedData.event_endDate
+        ) {
+          errors.enroll_endDate = true;
+          errors.event_endDate = true;
+          setMessage("Enroll end date must be before Event end date.");
+          setIsFailed(true);
+        } else if (
+          formattedData.event_startDate >= formattedData.event_endDate
+        ) {
+          errors.event_startDate = true;
+          errors.event_endDate = true;
+          setMessage("Event start date must be before Event end date.");
+          setIsFailed(true);
+        }
         await EditTourAPI(formattedData, {
           setIsFailed,
           setMessage,
           setIsSuccess,
         });
-        window.location.href = "/";
       } else {
         await PostCreateTour(formattedData, {
           setIsFailed,
