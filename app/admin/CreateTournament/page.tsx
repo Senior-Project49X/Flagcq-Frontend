@@ -62,10 +62,18 @@ export default function CreateTour() {
 
     const formattedData = {
       ...CreateTourData,
-      enroll_startDate: new Date(CreateTourData.enroll_startDate).toISOString(),
-      enroll_endDate: new Date(CreateTourData.enroll_endDate).toISOString(),
-      event_startDate: new Date(CreateTourData.event_startDate).toISOString(),
-      event_endDate: new Date(CreateTourData.event_endDate).toISOString(),
+      enroll_startDate: new Date(
+        new Date(CreateTourData.enroll_startDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
+      enroll_endDate: new Date(
+        new Date(CreateTourData.enroll_endDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
+      event_startDate: new Date(
+        new Date(CreateTourData.event_startDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
+      event_endDate: new Date(
+        new Date(CreateTourData.event_endDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
     };
 
     const errors: Record<string, boolean> = {};
@@ -123,31 +131,34 @@ export default function CreateTour() {
     }
   }, [loading]);
 
+  function formatToLocalDateTime(utcDateString: string): string {
+    // Create a date object from the UTC string
+    const date = new Date(utcDateString);
+
+    // Add 7 hours to convert to UTC+7
+    const utc7Date = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+
+    // Format to YYYY-MM-DDThh:mm (format required by datetime-local input)
+    return utc7Date.toISOString().slice(0, 16);
+  }
+
   useEffect(() => {
     if (!tournament_id) return;
     const fetchTournamentData = async () => {
       try {
         const getTournament = await GetTournamentByID(tournament_id);
         if (!getTournament) return;
-        console.log("getTournament", getTournament);
+
         setCreateTourData((prevData) => ({
           ...prevData,
           topic: getTournament.name,
           description: getTournament.description,
-          enroll_startDate: getTournament.enroll_startDate
-            ? new Date(getTournament.enroll_startDate)
-                .toISOString()
-                .slice(0, 16)
-            : "",
-          enroll_endDate: getTournament.enroll_endDate
-            ? new Date(getTournament.enroll_endDate).toISOString().slice(0, 16)
-            : "",
-          event_startDate: getTournament.event_startDate
-            ? new Date(getTournament.event_startDate).toISOString().slice(0, 16)
-            : "",
-          event_endDate: getTournament.event_endDate
-            ? new Date(getTournament.event_endDate).toISOString().slice(0, 16)
-            : "",
+          enroll_startDate: formatToLocalDateTime(
+            getTournament.enroll_startDate
+          ),
+          enroll_endDate: formatToLocalDateTime(getTournament.enroll_endDate),
+          event_startDate: formatToLocalDateTime(getTournament.event_startDate),
+          event_endDate: formatToLocalDateTime(getTournament.event_endDate),
           mode: getTournament.mode,
           teamSizeLimit: getTournament.teamSizeLimit,
           limit: getTournament.teamLimit,
