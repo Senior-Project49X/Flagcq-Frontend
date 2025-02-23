@@ -5,6 +5,7 @@ import { GetTourMem } from "../../lib/API/GetTourMem";
 import { LeaveTeam } from "@/app/lib/API/LeaveTeam";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { FaExclamationTriangle, FaRegCopy } from "react-icons/fa";
 
 type TourMemData = {
   tournamentName: string;
@@ -72,12 +73,32 @@ export default function Member() {
       <Navbar />
       <div className="min-h-screen text-white">
         <div className="text-center mt-8">
-          <p className="text-lg font-semibold">
+          <p className="text-2xl font-bold text-emerald-400">
             Tournament: {TourMemData?.tournamentName}
           </p>
-          <p className="text-md">Team: {TourMemData?.teamName}</p>
-          <p className="text-md">Invitation Code: {TourMemData?.invitedCode}</p>
-          <p className="text-lg font-bold mt-4">
+          <p className="text-xl text-gray-300 mt-2">
+            Team:{" "}
+            <span className="font-semibold text-white">
+              {TourMemData?.teamName}
+            </span>
+          </p>
+          <p className="text-xl text-gray-300 mt-2  gap-2">
+            Invite Code:{" "}
+            <span className="font-semibold text-white">
+              {TourMemData?.invitedCode}
+            </span>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(TourMemData?.invitedCode || "");
+                // You can add toast notification here if you have one
+              }}
+              className="ml-4 "
+              title="Copy code"
+            >
+              <FaRegCopy className="w-4 h-4 text-[#00ffcc]" />
+            </button>
+          </p>
+          <p className="text-2xl font-bold text-emerald-400 mt-4">
             {TourMemData?.memberCount}/{TourMemData?.memberLimit}
           </p>
         </div>
@@ -114,21 +135,29 @@ export default function Member() {
         </div>
 
         {showPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-12 max-w-2xl w-full text-center relative">
-              <button
-                onClick={handleClosePopup}
-                className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
-              >
-                X
-              </button>
-              <h2 className="text-red-500 font-bold text-3xl mb-8">
-                Are you sure you want to leave the team?
+          <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 border border-gray-700 text-center">
+              <FaExclamationTriangle className="text-5xl text-yellow-500 mx-auto mb-4" />
+              <h2 className="text-red-500 font-bold text-2xl mb-4">
+                Confirm Leave team
               </h2>
+              <p className="mb-6 text-gray-300">
+                Are you sure you want to leave the team?
+                <br />
+                <span className="text-red-400">
+                  This action cannot be undone.
+                </span>
+              </p>
               <div className="flex justify-center gap-4">
                 <button
+                  onClick={handleClosePopup}
+                  className="px-6 py-3 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300"
+                >
+                  Cancel
+                </button>
+                <button
                   onClick={handleLeaveTeam}
-                  className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl hover:bg-red-600"
+                  className="px-6 py-3 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all duration-300 disabled:opacity-50"
                 >
                   Confirm
                 </button>

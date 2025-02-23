@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { KickPlayerTour } from "../../lib/API/KickPlayerTour";
 import { DelTeamTour } from "../../lib/API/DelTeamTour";
 import { useRouter } from "next/navigation";
+import { FaRegCopy, FaExclamationTriangle } from "react-icons/fa";
 
 type TourMemData = {
   tournamentName: string;
@@ -112,12 +113,32 @@ export default function Leader() {
     <div className="min-h-screen text-white">
       <Navbar />
       <div className="text-center mt-8">
-        <p className="text-lg font-semibold">
+        <p className="text-2xl font-bold text-emerald-400">
           Tournament: {TourMemData?.tournamentName}
         </p>
-        <p className="text-md">Team: {TourMemData?.teamName}</p>
-        <p className="text-md">Invite Code: {TourMemData?.invitedCode}</p>
-        <p className="text-lg font-bold mt-4">
+        <p className="text-xl text-gray-300 mt-2">
+          Team:{" "}
+          <span className="font-semibold text-white">
+            {TourMemData?.teamName}
+          </span>
+        </p>
+        <p className="text-xl text-gray-300 mt-2  gap-2">
+          Invite Code:{" "}
+          <span className="font-semibold text-white">
+            {TourMemData?.invitedCode}
+          </span>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(TourMemData?.invitedCode || "");
+              // You can add toast notification here if you have one
+            }}
+            className="ml-4 "
+            title="Copy code"
+          >
+            <FaRegCopy className="w-4 h-4 text-[#00ffcc]" />
+          </button>
+        </p>
+        <p className="text-2xl font-bold text-emerald-400 mt-4">
           {TourMemData?.memberCount}/{TourMemData?.memberLimit}
         </p>
       </div>
@@ -155,27 +176,33 @@ export default function Leader() {
       </div>
 
       {showPopupKick && selectedMemberId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-12 max-w-2xl w-full text-center relative">
-            <button
-              onClick={() => setShowPopupKick(false)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
-            >
-              X
-            </button>
-            <h2 className="text-red-500 font-bold text-3xl mb-8">
-              Are you sure you want to kick this player?
+        <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 border border-gray-700 text-center">
+            <FaExclamationTriangle className="text-5xl text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-red-500 font-bold text-2xl mb-4">
+              Confirm kick this player
             </h2>
-
-            <button
-              onClick={() => handleKickPlayer()}
-              disabled={isLoadingKick}
-              className={`${
-                isLoadingKick ? "bg-gray-400" : "bg-red-500 hover:bg-red-600"
-              } text-white px-6 py-3 rounded-lg font-bold text-xl w-1/2`}
-            >
-              {isLoadingKick ? "Processing..." : "Confirm"}
-            </button>
+            <p className="mb-6 text-gray-300">
+              Are you sure you want to kick this player?
+              <br />
+              <span className="text-red-400">
+                This action cannot be undone.
+              </span>
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowPopupKick(false)}
+                className="px-6 py-3 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleKickPlayer()}
+                className="px-6 py-3 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all duration-300 disabled:opacity-50"
+              >
+                Confirm
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -190,21 +217,29 @@ export default function Leader() {
       </div>
 
       {showPopupDelTeam && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-12 max-w-2xl w-full text-center relative">
-            <button
-              onClick={() => setShowPopupDelTeam(false)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-black font-bold text-2xl"
-            >
-              X
-            </button>
-            <h2 className="text-red-500 font-bold text-3xl mb-8">
-              Are you sure you want to delete the team?
+        <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 border border-gray-700 text-center">
+            <FaExclamationTriangle className="text-5xl text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-red-500 font-bold text-2xl mb-4">
+              Confirm Delete team
             </h2>
+            <p className="mb-6 text-gray-300">
+              Are you sure you want to delete the team?
+              <br />
+              <span className="text-red-400">
+                This action cannot be undone.
+              </span>
+            </p>
             <div className="flex justify-center gap-4">
               <button
+                onClick={() => setShowPopupDelTeam(false)}
+                className="px-6 py-3 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300"
+              >
+                Cancel
+              </button>
+              <button
                 onClick={() => handleDeleteTeam()}
-                className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-xl hover:bg-red-600"
+                className="px-6 py-3 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all duration-300 disabled:opacity-50"
               >
                 Confirm
               </button>

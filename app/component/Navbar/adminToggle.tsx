@@ -1,5 +1,8 @@
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import { FaAddressBook, FaCog } from "react-icons/fa";
+import { IoCreate } from "react-icons/io5";
+import { MdAddCircleOutline, MdOutlineCreateNewFolder } from "react-icons/md";
 
 interface AdminToggleProps {
   pathname: string;
@@ -8,13 +11,30 @@ export default function AdminTogglePage({
   pathname,
 }: Readonly<AdminToggleProps>) {
   const navLinks = [
-    { href: "/admin/CreateQuestion", label: "Create Question" },
-    { href: "/admin/CreateTournament", label: "Create Tournament" },
+    {
+      href: "/admin/CreateQuestion",
+      label: "Create Question",
+      icon: MdAddCircleOutline,
+      className: "text-blue-400 hover:text-blue-300",
+    },
+    {
+      href: "/admin/CreateTournament",
+      label: "Create Tournament",
+      icon: IoCreate,
+      className: "text-blue-400 hover:text-blue-300",
+    },
     {
       href: "/admin/CreateQuestionTournament",
       label: "Add Question to Tournament",
+      icon: MdOutlineCreateNewFolder,
+      className: "text-blue-400 hover:text-blue-300",
     },
-    { href: "/admin/AddRole", label: "Add Role" },
+    {
+      href: "/admin/AddRole",
+      label: "Add Role",
+      icon: FaAddressBook,
+      className: "text-blue-400 hover:text-blue-300",
+    },
     // Add more links here as needed
   ];
   const [open, setOpen] = useState(false);
@@ -43,22 +63,33 @@ export default function AdminTogglePage({
         onClick={() => {
           setOpen(!open);
         }}
-        className={`  h-fit mt-3 
-          ${pathname.startsWith("/admin") && "text-green-400"}
-            `}
+        className={`text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg px-4 py-3 items-center space-x-2 ${
+          pathname.startsWith("/admin") && "text-green-400"
+        }`}
       >
+        <FaCog className="inline-block" /> {/* Ensure the icon is inline */}
         Admin Config ▾
         {open && (
-          <div className="absolute mt-2 w-50 bg-gray-600 rounded-md shadow-lg z-20 border-2 border-white">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block px-4 py-2 text-white hover:bg-gray-500 text-left "
-              >
-                {link.label}
-              </Link>
-            ))}
+          // <div className="absolute left-2 mt-3 w-80  rounded-xl bg-slate-800 shadow-lg ring-1 ring-black ring-opacity-5 opacity-100 scale-100 transition-all duration-200">
+          <div className="absolute mt-2 w-50 bg-slate-800  shadow-lg z-20 ">
+            <div className="p-1">
+              {navLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`
+              flex items-center gap-3 px-4 py-3 rounded-lg
+              ${item.className}
+              transition-colors duration-150
+              hover:bg-slate-700
+              
+            `}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="font-medium">{item.label}</span>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
       </button>
