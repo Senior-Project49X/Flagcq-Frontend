@@ -328,31 +328,29 @@ export default function CreateTour() {
                   onChange={handleInputChange}
                   className={`${getInputClass(
                     "enroll_startDate"
-                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg mr-6 `}
                   required
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-2xl text-green-400 mx-4">→</span>
-                <div className="flex-1">
-                  <label
-                    htmlFor="enroll_endDate"
-                    className="block text-lg font-medium mb-2 text-green-400"
-                  >
-                    Enrollment End
-                  </label>
-                  <input
-                    type="datetime-local"
-                    id="enroll_endDate"
-                    name="enroll_endDate"
-                    value={CreateTourData.enroll_endDate}
-                    onChange={handleInputChange}
-                    className={`${getInputClass(
-                      "enroll_endDate"
-                    )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
-                    required
-                  />
-                </div>
+
+              <div className="flex-1">
+                <label
+                  htmlFor="enroll_endDate"
+                  className="block text-lg font-medium mb-2 text-green-400"
+                >
+                  Enrollment End
+                </label>
+                <input
+                  type="datetime-local"
+                  id="enroll_endDate"
+                  name="enroll_endDate"
+                  value={CreateTourData.enroll_endDate}
+                  onChange={handleInputChange}
+                  className={`${getInputClass(
+                    "enroll_endDate"
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  required
+                />
               </div>
             </div>
 
@@ -377,27 +375,25 @@ export default function CreateTour() {
                   required
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-2xl text-green-400 mx-4">→</span>
-                <div className="flex-1">
-                  <label
-                    htmlFor="event_endDate"
-                    className="block text-lg font-medium mb-2 text-green-400"
-                  >
-                    Event End
-                  </label>
-                  <input
-                    type="datetime-local"
-                    id="event_endDate"
-                    name="event_endDate"
-                    value={CreateTourData.event_endDate}
-                    onChange={handleInputChange}
-                    className={`${getInputClass(
-                      "event_endDate"
-                    )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
-                    required
-                  />
-                </div>
+
+              <div className="flex-1">
+                <label
+                  htmlFor="event_endDate"
+                  className="block text-lg font-medium mb-2 text-green-400"
+                >
+                  Event End
+                </label>
+                <input
+                  type="datetime-local"
+                  id="event_endDate"
+                  name="event_endDate"
+                  value={CreateTourData.event_endDate}
+                  onChange={handleInputChange}
+                  className={`${getInputClass(
+                    "event_endDate"
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  required
+                />
               </div>
             </div>
           </div>
