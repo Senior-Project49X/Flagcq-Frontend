@@ -15,8 +15,7 @@ export default function LoadingPopup({
   isSuccess,
   Message,
 }: LoadingPopupProps) {
-  const onClose = () => {
-    console.log(isSuccess);
+  const onClickButton = () => {
     if (isSuccess) window.location.href = "/";
     else setLoading(false);
   };
@@ -83,7 +82,7 @@ export default function LoadingPopup({
                       ? "bg-green-500 hover:bg-green-600 text-white"
                       : "bg-blue-500 hover:bg-blue-600 text-white"
                   }`}
-                onClick={onClose}
+                onClick={onClickButton}
               >
                 {isFailed ? "Try Again" : isSuccess ? "Continue" : "Cancel"}
               </button>

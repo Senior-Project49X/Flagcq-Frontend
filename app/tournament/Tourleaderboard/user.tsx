@@ -7,7 +7,7 @@ import { GetAllinfo } from "@/app/lib/API/GetAllinfo";
 import { FaTrophy, FaUsers, FaArrowLeft, FaMedal } from "react-icons/fa";
 
 type Member = {
-  userId: number;
+  userId: string; // Changed to string based on API response
   isLeader: boolean;
   firstName: string;
   lastName: string;
@@ -15,9 +15,10 @@ type Member = {
 };
 
 type TeamLeaderboardData = {
-  teamName: string;
   teamID: number;
+  teamName: string;
   totalPoints: number;
+  rank: number;
   members: Member[];
 };
 
@@ -27,6 +28,7 @@ export default function TeamLeaderboardAdmin() {
   const [teamLeaderboardData, setTeamLeaderboardData] = useState<
     TeamLeaderboardData[]
   >([]);
+  const [currentTeamId, setCurrentTeamId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,6 +37,13 @@ export default function TeamLeaderboardAdmin() {
         if (!tournamentId) return;
         const response = await GetAllinfo(Number(tournamentId));
         setTeamLeaderboardData(response);
+
+        // Get the user's team ID from your authentication context or API
+        // For now, I'll use the first team's ID as an example
+        // You should replace this with actual logic to get the current user's team
+        if (response && response.length > 0) {
+          setCurrentTeamId(response[0].teamID);
+        }
       } catch (error) {
         console.error("Error fetching leaderboard data:", error);
       } finally {
@@ -45,12 +54,18 @@ export default function TeamLeaderboardAdmin() {
     fetchTeamLeaderboardData();
   }, [tournamentId]);
 
+  const getCurrentTeam = () => {
+    return teamLeaderboardData.find((team) => team.teamID === currentTeamId);
+  };
+
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <FaTrophy className="text-yellow-400 w-5 h-5" />;
     if (rank === 2) return <FaMedal className="text-gray-300 w-5 h-5" />;
     if (rank === 3) return <FaMedal className="text-amber-600 w-5 h-5" />;
     return null;
   };
+
+  const currentTeam = getCurrentTeam();
 
   return (
     <div className="min-h-screen">
@@ -117,25 +132,22 @@ export default function TeamLeaderboardAdmin() {
 
           {/* Team Overview */}
           <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
-            {teamLeaderboardData.length > 0 ? (
+            {currentTeam ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-2xl font-bold text-[#00ffcc] mb-2">
-                      {teamLeaderboardData[0]?.teamName || "N/A"}
+                      {currentTeam.teamName}
                     </h3>
                     <div className="flex items-center gap-2 text-gray-400">
                       <FaUsers />
-                      <span>
-                        {teamLeaderboardData[0]?.members?.length || 0} Members
-                      </span>
+                      <span>{currentTeam.members.length} Members</span>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-sm text-gray-400">Total Points</div>
-                    <br />
                     <div className="font-mono text-[#00ffcc]">
-                      {teamLeaderboardData[0]?.totalPoints?.toLocaleString()}
+                      {currentTeam.totalPoints.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -154,9 +166,8 @@ export default function TeamLeaderboardAdmin() {
             </h3>
 
             <div className="space-y-4">
-              {teamLeaderboardData.length > 0 &&
-              teamLeaderboardData[0]?.members?.length ? (
-                teamLeaderboardData[0].members.map((member, index) => (
+              {currentTeam && currentTeam.members.length > 0 ? (
+                currentTeam.members.map((member, index) => (
                   <div
                     key={member.userId}
                     className="flex justify-between items-center p-3 rounded-lg transition-all hover:bg-[#1c2252]"

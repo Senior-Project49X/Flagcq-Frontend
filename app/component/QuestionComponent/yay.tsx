@@ -7,9 +7,11 @@ type YayProps = {
   showPopup: boolean;
   setShowCongratPopup: (showPopup: boolean) => void;
   yayRef: React.RefObject<HTMLDivElement>;
+  point: number | undefined;
 };
 
 export default function Yay({
+  point,
   handleCorrectAnswer,
   showPopup,
   setShowCongratPopup,
@@ -50,8 +52,7 @@ export default function Yay({
         {/* Score Display */}
         <div className="bg-gray-700 rounded-lg p-4 mb-6">
           <p className="text-green-300 text-lg flex items-center justify-center gap-2">
-            <FaStar className="text-yellow-400" />
-            +100 Points Earned
+            <FaStar className="text-yellow-400" />+{point} Points Earned
             <FaStar className="text-yellow-400" />
           </p>
         </div>
@@ -63,12 +64,6 @@ export default function Yay({
             onClick={() => location.reload()}
           >
             Next Challenge
-          </button>
-          <button
-            className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all duration-300 hover:-translate-y-1"
-            onClick={() => setShowCongratPopup(false)}
-          >
-            Close
           </button>
         </div>
       </div>

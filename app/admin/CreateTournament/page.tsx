@@ -104,14 +104,12 @@ export default function CreateTour() {
           setIsSuccess,
         });
       }
-      setLoading(true);
-      setIsSuccess(true);
     } catch (error: any) {
       console.error("Error creating tournament:", error);
       setIsFailed(true);
-      setLoading(true);
       setMessage(error.message || "An unexpected error occurred.");
     }
+    setLoading(true);
   };
 
   // Add this useEffect to handle state resets

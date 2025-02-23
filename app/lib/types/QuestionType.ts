@@ -1,26 +1,26 @@
 export interface questions {
-    title: string;
-    categories_name: string;
-    id: number;
-    difficultys_id: string;
-    point: string;
-    type: string;
-    solved: boolean;
-    is_selected:boolean
-    tournament_id:number
-    submitCount:number
-  }
+  title: string;
+  categories_name: string;
+  id: number;
+  difficultys_id: string;
+  point: string;
+  type: string;
+  solved: boolean;
+  is_selected: boolean;
+  tournament_id: number;
+  submitCount: number;
+}
 
-  export interface Question {
-    title: string;
-    categories_name: string;
-    difficultys_id: string;
-    file_path: string;
-    description: string;
-    solved: boolean;
-    id: string;
-    point: string;
-    hints: Hint[];
+export interface Question {
+  title: string;
+  categories_name: string;
+  difficultys_id: string;
+  file_path: string;
+  description: string;
+  solved: boolean;
+  id: string;
+  point: number;
+  hints: Hint[];
 }
 
 interface Hint {

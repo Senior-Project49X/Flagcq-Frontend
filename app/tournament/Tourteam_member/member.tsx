@@ -5,7 +5,7 @@ import { GetTourMem } from "../../lib/API/GetTourMem";
 import { LeaveTeam } from "@/app/lib/API/LeaveTeam";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { FaExclamationTriangle, FaRegCopy } from "react-icons/fa";
+import { FaExclamationTriangle, FaRegCopy, FaCheck } from "react-icons/fa";
 
 type TourMemData = {
   tournamentName: string;
@@ -30,6 +30,15 @@ export default function Member() {
   const teamId = searchParams.get("teamId");
   const tournamentId = searchParams.get("tournamentId");
   const router = useRouter();
+
+  const [isCopied, setIsCopied] = useState(false); // State to track if code is copied
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(TourMemData?.invitedCode || "").then(() => {
+      setIsCopied(true); // Set copied state to true
+      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+    });
+  };
 
   const handleLeaveTeam = async () => {
     if (!teamId) {
@@ -82,20 +91,21 @@ export default function Member() {
               {TourMemData?.teamName}
             </span>
           </p>
-          <p className="text-xl text-gray-300 mt-2  gap-2">
+          <p className="text-xl text-gray-300 mt-2 gap-2">
             Invite Code:{" "}
             <span className="font-semibold text-white">
               {TourMemData?.invitedCode}
             </span>
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(TourMemData?.invitedCode || "");
-                // You can add toast notification here if you have one
-              }}
-              className="ml-4 "
+              onClick={handleCopyCode}
+              className="ml-4 transition-all duration-300"
               title="Copy code"
             >
-              <FaRegCopy className="w-4 h-4 text-[#00ffcc]" />
+              {isCopied ? (
+                <FaCheck className="w-4 h-4 text-green-500" /> // Show checkmark when copied
+              ) : (
+                <FaRegCopy className="w-4 h-4 text-[#00ffcc]" /> // Show copy icon by default
+              )}
             </button>
           </p>
           <p className="text-2xl font-bold text-emerald-400 mt-4">

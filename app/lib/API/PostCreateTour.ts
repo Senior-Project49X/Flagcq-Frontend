@@ -45,7 +45,7 @@ export const PostCreateTour = async (
     .then((resp) => {
       console.log(resp);
 
-      if (resp.status === 200) {
+      if (resp.status === 201) {
         setState.setIsSuccess(true);
         return resp.data;
       }

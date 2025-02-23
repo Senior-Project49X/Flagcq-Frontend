@@ -118,6 +118,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
       )}
       {showCongratPopup && (
         <Yay
+          point={showQuestion?.point}
           yayRef={yayRef}
           handleCorrectAnswer={handleCorrectAnswer}
           showPopup={showCongratPopup}
@@ -218,7 +219,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                 : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
             }
           `}
-                          placeholder="CTFCQ{...}"
+                          placeholder="Answer here"
                           required
                         />
                         {/* Error Message */}
