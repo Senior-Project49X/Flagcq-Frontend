@@ -41,9 +41,9 @@ const students = [
 
 export default function Profile() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-6 py-12 flex-grow">
         <h1 className="text-3xl font-bold text-center mb-8 text-green-500">
           About Us
         </h1>
@@ -105,6 +105,16 @@ export default function Profile() {
           ))}
         </div>
       </div>
+
+      {/* Footer with Copyright */}
+      <footer className="py-4 text-center w-full bg-gray-900">
+        <p className="text-white">
+          © {new Date().getFullYear()} FlagConquest | Follow us on{" "}
+          <a href="https://www.cpe.eng.cmu.ac.th/" className="text-green-400">
+            CPE CMU
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }

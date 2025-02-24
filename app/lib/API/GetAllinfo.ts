@@ -12,3 +12,15 @@ export const GetAllinfo = async (tournament_id: number) => {
     return "0"; // Return a fallback value in case of error
   }
 };
+
+export const GetmyTeamInfo = async (tournament_id: number) => {
+  try {
+    const resp = await axios.get(`${ip}/api/myTeamInfo/${tournament_id}`, {
+      withCredentials: true,
+    });
+    return resp.data; // Return the points
+  } catch (e) {
+    console.error("Error fetching ALlInfo data:", e);
+    return "0"; // Return a fallback value in case of error
+  }
+};

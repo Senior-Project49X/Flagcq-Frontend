@@ -27,37 +27,50 @@ export default function Profile() {
   }, []);
 
   return (
-    <div>
+    <div className="min-h-screen ">
       <Navbar />
       <div className="flex justify-center items-center mt-10">
-        <div className="bg-gray-800 rounded-lg p-8 w-full max-w-4xl shadow-lg">
-          <div className="flex mt-8">
-            <div className="w-48 h-48 rounded-lg bg-white">
+        <div className="bg-gray-800 rounded-lg p-8 w-full max-w-4xl shadow-2xl border-2 border-green-500 ">
+          <div className="flex mt-2">
+            {/* Profile Image */}
+            <div className="w-48 h-48 rounded-lg bg-white border-4 border-green-500 shadow-lg overflow-hidden">
               <Image
                 src="/logo_eng.svg"
                 alt="logo"
                 width={500}
                 height={500}
-                className="object-contain"
+                className="object-contain p-4"
               />
             </div>
-            <div className="ml-8 space-y-2 text-green-500">
-              <div className="text-2xl font-bold">
+
+            {/* Profile Details */}
+            <div className="ml-8 space-y-4">
+              {/* Name */}
+              <div className="text-4xl font-bold text-green-500">
                 {data?.first_name} {data?.last_name}
               </div>
-              <div className="text-lg">
-                <span className="font-bold text-white">Student code:</span>{" "}
+
+              {/* Student Code */}
+              <div className="text-lg text-gray-300">
+                <span className="font-bold text-green-400">Student Code:</span>{" "}
                 {data?.student_id}
               </div>
-              <div className="text-lg">
-                <span className="font-bold text-white">Faculty:</span>{" "}
+
+              {/* Faculty */}
+              <div className="text-lg text-gray-300">
+                <span className="font-bold text-green-400">Faculty:</span>{" "}
                 {data?.faculty}
               </div>
-              <div className="text-lg">
-                <span className="font-bold text-white">Role:</span> {userRole}
+
+              {/* Role */}
+              <div className="text-lg text-gray-300">
+                <span className="font-bold text-green-400">Role:</span>{" "}
+                {userRole}
               </div>
-              <div className="text-lg">
-                <span className="font-bold text-white">Point:</span>{" "}
+
+              {/* Points */}
+              <div className="text-lg text-gray-300">
+                <span className="font-bold text-green-400">Points:</span>{" "}
                 {data?.points}
               </div>
             </div>

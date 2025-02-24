@@ -40,8 +40,8 @@ export default function MyteamTourlist({
   const router = useRouter();
   const [isEventStarted, setIsEventStarted] = useState<boolean>(false);
   const truncatedTopic = topic.length > 30 ? `${topic.slice(0, 20)}...` : topic;
-  const isJoinedAndNotStart = hasJoined && Date() > eventtime;
-  const isView = hasJoined && Date() < event_endDate;
+  const isJoinedAndNotStart = hasJoined && eventtime !== "ongoing";
+  const isView = hasJoined && eventtime === "closed";
   useEffect(() => {
     // Check if event has started
     if (eventtime >= Date() && enrolltime <= eventtime) {
@@ -103,7 +103,9 @@ export default function MyteamTourlist({
               isEventStarted ? "text-blue-500" : "text-gray-400"
             }`}
           >
-            {isEventStarted
+            {isView
+              ? "View"
+              : isEventStarted
               ? "Play"
               : isJoinedAndNotStart
               ? "Waiting"
