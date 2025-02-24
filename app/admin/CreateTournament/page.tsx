@@ -62,10 +62,18 @@ export default function CreateTour() {
 
     const formattedData = {
       ...CreateTourData,
-      enroll_startDate: new Date(CreateTourData.enroll_startDate).toISOString(),
-      enroll_endDate: new Date(CreateTourData.enroll_endDate).toISOString(),
-      event_startDate: new Date(CreateTourData.event_startDate).toISOString(),
-      event_endDate: new Date(CreateTourData.event_endDate).toISOString(),
+      enroll_startDate: new Date(
+        new Date(CreateTourData.enroll_startDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
+      enroll_endDate: new Date(
+        new Date(CreateTourData.enroll_endDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
+      event_startDate: new Date(
+        new Date(CreateTourData.event_startDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
+      event_endDate: new Date(
+        new Date(CreateTourData.event_endDate).getTime() - 7 * 60 * 60 * 1000
+      ).toISOString(),
     };
 
     const errors: Record<string, boolean> = {};
@@ -104,14 +112,12 @@ export default function CreateTour() {
           setIsSuccess,
         });
       }
-      setLoading(true);
-      setIsSuccess(true);
     } catch (error: any) {
       console.error("Error creating tournament:", error);
       setIsFailed(true);
-      setLoading(true);
       setMessage(error.message || "An unexpected error occurred.");
     }
+    setLoading(true);
   };
 
   // Add this useEffect to handle state resets
@@ -123,31 +129,34 @@ export default function CreateTour() {
     }
   }, [loading]);
 
+  function formatToLocalDateTime(utcDateString: string): string {
+    // Create a date object from the UTC string
+    const date = new Date(utcDateString);
+
+    // Add 7 hours to convert to UTC+7
+    const utc7Date = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+
+    // Format to YYYY-MM-DDThh:mm (format required by datetime-local input)
+    return utc7Date.toISOString().slice(0, 16);
+  }
+
   useEffect(() => {
     if (!tournament_id) return;
     const fetchTournamentData = async () => {
       try {
         const getTournament = await GetTournamentByID(tournament_id);
         if (!getTournament) return;
-        console.log("getTournament", getTournament);
+
         setCreateTourData((prevData) => ({
           ...prevData,
           topic: getTournament.name,
           description: getTournament.description,
-          enroll_startDate: getTournament.enroll_startDate
-            ? new Date(getTournament.enroll_startDate)
-                .toISOString()
-                .slice(0, 16)
-            : "",
-          enroll_endDate: getTournament.enroll_endDate
-            ? new Date(getTournament.enroll_endDate).toISOString().slice(0, 16)
-            : "",
-          event_startDate: getTournament.event_startDate
-            ? new Date(getTournament.event_startDate).toISOString().slice(0, 16)
-            : "",
-          event_endDate: getTournament.event_endDate
-            ? new Date(getTournament.event_endDate).toISOString().slice(0, 16)
-            : "",
+          enroll_startDate: formatToLocalDateTime(
+            getTournament.enroll_startDate
+          ),
+          enroll_endDate: formatToLocalDateTime(getTournament.enroll_endDate),
+          event_startDate: formatToLocalDateTime(getTournament.event_startDate),
+          event_endDate: formatToLocalDateTime(getTournament.event_endDate),
           mode: getTournament.mode,
           teamSizeLimit: getTournament.teamSizeLimit,
           limit: getTournament.teamLimit,
@@ -328,31 +337,29 @@ export default function CreateTour() {
                   onChange={handleInputChange}
                   className={`${getInputClass(
                     "enroll_startDate"
-                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg mr-6 `}
                   required
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-2xl text-green-400 mx-4">→</span>
-                <div className="flex-1">
-                  <label
-                    htmlFor="enroll_endDate"
-                    className="block text-lg font-medium mb-2 text-green-400"
-                  >
-                    Enrollment End
-                  </label>
-                  <input
-                    type="datetime-local"
-                    id="enroll_endDate"
-                    name="enroll_endDate"
-                    value={CreateTourData.enroll_endDate}
-                    onChange={handleInputChange}
-                    className={`${getInputClass(
-                      "enroll_endDate"
-                    )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
-                    required
-                  />
-                </div>
+
+              <div className="flex-1">
+                <label
+                  htmlFor="enroll_endDate"
+                  className="block text-lg font-medium mb-2 text-green-400"
+                >
+                  Enrollment End
+                </label>
+                <input
+                  type="datetime-local"
+                  id="enroll_endDate"
+                  name="enroll_endDate"
+                  value={CreateTourData.enroll_endDate}
+                  onChange={handleInputChange}
+                  className={`${getInputClass(
+                    "enroll_endDate"
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  required
+                />
               </div>
             </div>
 
@@ -377,27 +384,25 @@ export default function CreateTour() {
                   required
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-2xl text-green-400 mx-4">→</span>
-                <div className="flex-1">
-                  <label
-                    htmlFor="event_endDate"
-                    className="block text-lg font-medium mb-2 text-green-400"
-                  >
-                    Event End
-                  </label>
-                  <input
-                    type="datetime-local"
-                    id="event_endDate"
-                    name="event_endDate"
-                    value={CreateTourData.event_endDate}
-                    onChange={handleInputChange}
-                    className={`${getInputClass(
-                      "event_endDate"
-                    )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
-                    required
-                  />
-                </div>
+
+              <div className="flex-1">
+                <label
+                  htmlFor="event_endDate"
+                  className="block text-lg font-medium mb-2 text-green-400"
+                >
+                  Event End
+                </label>
+                <input
+                  type="datetime-local"
+                  id="event_endDate"
+                  name="event_endDate"
+                  value={CreateTourData.event_endDate}
+                  onChange={handleInputChange}
+                  className={`${getInputClass(
+                    "event_endDate"
+                  )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                  required
+                />
               </div>
             </div>
           </div>

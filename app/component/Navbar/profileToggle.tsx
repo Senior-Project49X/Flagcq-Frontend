@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { isRoleAdmin } from "../../lib/role";
+import { FaUser, FaUsers, FaInfoCircle, FaSignOutAlt } from "react-icons/fa";
 
 export default function ProfileToggle() {
   const [open, setOpen] = useState(false);
@@ -34,7 +35,7 @@ export default function ProfileToggle() {
     <button
       ref={toggleRef}
       onClick={() => setOpen(!open)}
-      className="w-12 h-12 rounded-full object-cover bg-white"
+      className="w-12 h-12 rounded-full object-cover bg-white duration-200"
     >
       <Image
         src="/aw_eng_secondary&icon-03.svg"
@@ -44,36 +45,42 @@ export default function ProfileToggle() {
         className="object-contain"
       />
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-gray-600 rounded-md shadow-lg z-20 border-2 border-white">
-          <Link
-            href="/profile"
-            className="block px-4 py-2 text-blue-500 hover:bg-gray-500"
-          >
-            Profile
-          </Link>
-          <Link
-            href="/aboutus"
-            className="block px-4 py-2 text-white hover:bg-gray-500"
-          >
-            About Us
-          </Link>
-
-          {/* Hide "My Team" if admin */}
-          {!isAdmin && (
+        <div className="absolute right-0 mt-3 w-56 overflow-hidden rounded-xl bg-slate-800 shadow-lg ring-1 ring-black ring-opacity-5 transform opacity-100 scale-100 transition-all duration-200">
+          <div className="p-1">
             <Link
-              href="/myteam"
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-500"
+              href="/profile"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-blue-400 hover:text-blue-300 transition-colors duration-150 hover:bg-slate-700"
             >
-              My Team
+              <FaUser className="w-4 h-4" />
+              <span className="font-medium">Profile</span>
             </Link>
-          )}
 
-          <Link
-            href="/logout"
-            className="block px-4 py-2 text-red-500 hover:bg-gray-500"
-          >
-            Logout
-          </Link>
+            <Link
+              href="/aboutus"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:text-white transition-colors duration-150 hover:bg-slate-700"
+            >
+              <FaInfoCircle className="w-4 h-4" />
+              <span className="font-medium">About Us</span>
+            </Link>
+
+            {!isAdmin && (
+              <Link
+                href="/myteam"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:text-white transition-colors duration-150 hover:bg-slate-700"
+              >
+                <FaUsers className="w-4 h-4" />
+                <span className="font-medium">My Team</span>
+              </Link>
+            )}
+
+            <Link
+              href="/logout"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:text-red-300 transition-colors duration-150 hover:bg-slate-700 mt-1 border-t border-slate-600"
+            >
+              <FaSignOutAlt className="w-4 h-4" />
+              <span className="font-medium">Logout</span>
+            </Link>
+          </div>
         </div>
       )}
     </button>

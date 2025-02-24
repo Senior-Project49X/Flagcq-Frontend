@@ -116,25 +116,41 @@ export default function CreateQuestion() {
     // setFile(null); // Reset file state to avoid InvalidStateError
   };
 
+  const [selectedMode, setSelectedMode] = useState<string>("UnPublic");
+
   const handleToggle = (buttonKey: string): void => {
-    if (buttonKey === "UnPublic") {
-      setModeSelection((prevStates) => ({
-        Practice: false,
-        Tournament: false,
-        UnPublic: true,
-      }));
-    } else if (buttonKey === "Tournament") {
-      setModeSelection((prevStates) => ({
-        Practice: false,
-        Tournament: true,
-        UnPublic: false,
-      }));
-    } else if (buttonKey === "Practice") {
-      setModeSelection((prevStates) => ({
-        Practice: true,
-        Tournament: false,
-        UnPublic: false,
-      }));
+    setModeSelection((prevStates) => ({
+      Practice: buttonKey === "Practice",
+      Tournament: buttonKey === "Tournament",
+      UnPublic: buttonKey === "UnPublic",
+    }));
+    setSelectedMode(buttonKey);
+  };
+
+  const getModeMessage = (): JSX.Element => {
+    switch (selectedMode) {
+      case "Practice":
+        return (
+          <span>
+            This mode will go to{" "}
+            <span className="underline">practice pool</span>
+          </span>
+        );
+      case "Tournament":
+        return (
+          <span>
+            This mode will go to{" "}
+            <span className="underline">tournament pool</span>
+          </span>
+        );
+      case "UnPublic":
+        return (
+          <span>
+            This mode will <span className="underline">not go to any pool</span>
+          </span>
+        );
+      default:
+        return <span></span>;
     }
   };
 
@@ -376,6 +392,7 @@ export default function CreateQuestion() {
                 </button>
               ))}
             </div>
+            <div className="mt-4 text-sm text-red-500">{getModeMessage()}</div>
           </div>
 
           {/* Description */}

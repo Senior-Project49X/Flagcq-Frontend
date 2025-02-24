@@ -277,13 +277,13 @@ export default function TournamentPage() {
             </div>
             <div className="w-96">
               <h5 className="text-lg font-semibold text-green-600 text-center">
-                Join Private Tournament
+                Create Private Tournament
               </h5>
               <button
                 onClick={() => setShowPopup(true)}
                 className="w-full bg-blue-300 text-black py-2 rounded hover:bg-blue-400 transition duration-300"
               >
-                Join Private
+                Create Private
               </button>
             </div>
           </div>
@@ -294,7 +294,7 @@ export default function TournamentPage() {
             <div className="bg-gray-800 p-6 rounded-lg shadow-2xl w-96 max-w-full relative border border-gray-700">
               <div className=" px-6 py-4 border-b ">
                 <h2 className="text-xl font-semibold text-green-400">
-                  Join Team
+                  Create Team
                 </h2>
                 <button
                   className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200 text-2xl"

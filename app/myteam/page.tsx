@@ -51,6 +51,7 @@ export default function Myuserpage() {
 
   const router = useRouter();
 
+  // Calculate remaining time for the event
   const calculateRemainingTime = (
     startDate: string,
     endDate: string
@@ -85,6 +86,7 @@ export default function Myuserpage() {
           .toString()
           .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
         status: "open",
+        color: "#2ecc71",
       };
     }
 
@@ -92,9 +94,11 @@ export default function Myuserpage() {
     return {
       time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
       status: "open",
+      color: "#2ecc71",
     };
   };
 
+  // Calculate remaining time for enrollment
   const calculateEnrollRemainingTime = (endDate: string): RemainingTime => {
     const now = new Date();
     const enrollEnd = new Date(endDate);
@@ -147,7 +151,7 @@ export default function Myuserpage() {
                 tournament1.enroll_endDate
               ),
               eventRemaining: calculateRemainingTime(
-                tournament1.event_endDate,
+                tournament1.event_startDate,
                 tournament1.event_endDate
               ),
             })
@@ -176,7 +180,7 @@ export default function Myuserpage() {
             tournament.enroll_endDate
           ),
           eventRemaining: calculateRemainingTime(
-            tournament.event_endDate,
+            tournament.event_startDate,
             tournament.event_endDate
           ),
         }))
@@ -185,8 +189,6 @@ export default function Myuserpage() {
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
-
-  // Join a team
 
   return (
     <div>
@@ -217,7 +219,7 @@ export default function Myuserpage() {
                   event_endDate={formatDate(tournament1.event_endDate)}
                   hasJoined={tournament1.hasJoined}
                   teamId={tournament1.teamId}
-                  teamCount={tournament1.teamCount} // Add this line
+                  teamCount={tournament1.teamCount}
                   mode={tournament1.mode}
                   teamLimit={tournament1.teamLimit}
                 />

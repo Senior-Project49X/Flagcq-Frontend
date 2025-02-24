@@ -43,7 +43,7 @@ export default function CreateHint({
             type="number"
             min="0"
             max="10000000"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded bg-white text-black"
             value={penalty}
             required
             onChange={(e) => handleHintChange(index, "penalty", e.target.value)}

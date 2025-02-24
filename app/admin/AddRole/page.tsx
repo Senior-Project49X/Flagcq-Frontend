@@ -1,15 +1,21 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import Navbar from "@/app/component/Navbar/navbar";
 import { PostAddRole } from "@/app/lib/API/PostAddRole";
 import { FaUserShield, FaUser, FaExclamationTriangle } from "react-icons/fa";
+import LoadingPopup from "../../component/LoadingPopup";
 
 export default function Page() {
   const [showPopup, setShowPopup] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedRole, setSelectedRole] = useState<"Admin" | "User" | null>(
     null
   );
   const [studentCode, setStudentCode] = useState<string>("");
+
+  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const handleRoleToggle = (role: "Admin" | "User") => {
     setSelectedRole((prevRole) => (prevRole === role ? null : role));
@@ -30,11 +36,16 @@ export default function Page() {
         alert("Please fill in all required fields.");
         return;
       }
-      await PostAddRole(studentCode, selectedRole);
-      console.log(`Confirmed role: ${selectedRole}, for user: ${studentCode}`);
+      await PostAddRole(studentCode, selectedRole, {
+        setIsFailed,
+        setMessage,
+        setIsSuccess,
+      });
     } catch (error) {
+      setIsFailed(true);
       console.error("Error adding role:", error);
     }
+    setLoading(true);
     setShowPopup(false);
   };
 
@@ -141,6 +152,14 @@ export default function Page() {
             </div>
           </div>
         </div>
+      )}
+      {loading && (
+        <LoadingPopup
+          setLoading={setLoading}
+          isFailed={isFailed}
+          isSuccess={isSuccess}
+          Message={message}
+        />
       )}
     </div>
   );
