@@ -167,7 +167,9 @@ export default function QuestionPopup(Question: Readonly<State>) {
                   {showQuestion?.file_path ? (
                     <button
                       className="text-black p-2 bg-green-400 rounded-lg flex items-center space-x-2 hover:bg-green-500 transition-colors"
-                      onClick={() => DownloadQuestionsByID(Question.id)}
+                      onClick={() =>
+                        DownloadQuestionsByID(Question.id, tournamentId)
+                      }
                     >
                       <Image
                         src="/download.svg"

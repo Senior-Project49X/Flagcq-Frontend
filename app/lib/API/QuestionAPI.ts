@@ -131,7 +131,7 @@ export const GetQuestions = async (
   }
 };
 
-export const GetQuestionsByID = async (id: number,tournament_id?: number) => {
+export const GetQuestionsByID = async (id: number,tournament_id?: string|number| null) => {
   try {
     let url = `${ip}/api/question?id=${id}`;
     if(tournament_id){
@@ -194,9 +194,13 @@ export const CheckQuestionsTournamentByID = async (
   }
 };
 
-export const DownloadQuestionsByID = async (id: number) => {
+export const DownloadQuestionsByID = async (id: number ,tournament_id?: number|string | null) => {
   try {
-    const response = await axios.get(`${ip}/api/question/download/${id}`, {
+      let url = `${ip}/api/question/download?id=${id}`;
+      if(tournament_id){
+        url += `&tournament_id=${tournament_id}`;
+      }
+    const response = await axios.get(url, {
       responseType: "blob", // Important for file download
       withCredentials: true,
     });
