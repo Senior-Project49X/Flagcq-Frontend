@@ -84,7 +84,7 @@ export default function Question({
               key={question.id}
               id={question.id}
               Topic={question.title}
-              Level={question.difficultys_id}
+              Level={question.difficulty_id}
               Category={question.categories_name}
               submitCount={question.submitCount}
               Solved={question.solved}

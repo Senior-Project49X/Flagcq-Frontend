@@ -123,7 +123,7 @@ export default function QuestionTable({
             key={question.id}
             id={question.id}
             Topic={question.title}
-            Level={question.difficultys_id}
+            Level={question.difficulty_id}
             Category={question.categories_name}
             Solved={question.solved}
             point={question.point}
