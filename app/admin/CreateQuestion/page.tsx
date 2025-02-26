@@ -549,7 +549,10 @@ export default function CreateQuestion() {
             )}
             {/* File Size Limit Notice */}
             <p className="mt-2 text-sm text-gray-400">
-              Maximum file size: 200MB
+              * Maximum file size: 200MB
+            </p>
+            <p className="mt-2 text-sm text-gray-400">
+              * Only .zip files are allowed
             </p>
           </div>
 

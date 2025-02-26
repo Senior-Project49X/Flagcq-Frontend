@@ -49,6 +49,7 @@ export default function TournamentCard({
   const isFull = teamCount >= teamLimit;
   const isEnrollmentOpen = status === "open" && Date() > enrolltime;
   const isClickable = isAdmin || (isEnrollmentOpen && !isFull);
+  const isView = hasJoined && status === "closed";
 
   const handleClick = () => {
     if (isClickable) {
@@ -127,6 +128,8 @@ export default function TournamentCard({
                 ? "Full"
                 : isEnrollmentOpen
                 ? "Enroll"
+                : isView
+                ? "View"
                 : "Closed"}
             </div>
           </div>

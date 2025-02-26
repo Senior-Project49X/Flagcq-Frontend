@@ -63,7 +63,7 @@ export default function AdminTogglePage({
         onClick={() => {
           setOpen(!open);
         }}
-        className={`text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg px-4 py-3 items-center space-x-2 ${
+        className={`text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg px-4 py-3 items-center space-x-2  ${
           pathname.startsWith("/admin") && "text-green-400"
         }`}
       >
@@ -71,7 +71,7 @@ export default function AdminTogglePage({
         Admin Config ▾
         {open && (
           // <div className="absolute left-2 mt-3 w-80  rounded-xl bg-slate-800 shadow-lg ring-1 ring-black ring-opacity-5 opacity-100 scale-100 transition-all duration-200">
-          <div className="absolute mt-2 w-50 bg-slate-800  shadow-lg z-20 ">
+          <div className="absolute mt-2 w-50 bg-slate-800  shadow-lg z-20 rounded-xl">
             <div className="p-1">
               {navLinks.map((item) => (
                 <Link

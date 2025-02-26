@@ -213,6 +213,7 @@ export default function TournamentPage() {
 
   useEffect(() => {
     const fetchTournaments = async () => {
+      setUnjoinedTournaments([]);
       try {
         const response = await GetTourList(page);
         setTotalPages(response.totalPages);
@@ -262,7 +263,7 @@ export default function TournamentPage() {
       <Navbar />
       <div className="relative">
         <div className="flex-1 flex justify-center">
-          <h5 className="text-2xl font-semibold text-green-600 mt-10">
+          <h5 className="text-2xl font-semibold text-green-600 mt-6">
             Tournament List
           </h5>
         </div>
