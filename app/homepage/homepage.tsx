@@ -87,7 +87,6 @@ export default function Homepage() {
         page,
         isRoleAdmin() ? mode : "Practice"
       );
-      console.log("b", result.data);
       setTotalPages(result.totalPages);
       setHasNextPage(result.hasNextPage);
       setQuestions(result.data);
@@ -100,7 +99,6 @@ export default function Homepage() {
     const fetchUserData = async () => {
       const userData = await GetUserPoints();
       setPoint(userData);
-      console.log("a", userData);
     };
     fetchUserData();
   }, [point]);

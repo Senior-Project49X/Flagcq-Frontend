@@ -10,6 +10,7 @@ type Hint = {
   penalty: number;
   used: boolean;
   isLast: boolean;
+  tournamentId?: number;
 };
 
 export default function Hint({
@@ -19,6 +20,7 @@ export default function Hint({
   penalty,
   used,
   isLast,
+  tournamentId,
 }: Readonly<Hint>) {
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [showHint, setShowHint] = useState<boolean>(false);
@@ -48,6 +50,7 @@ export default function Hint({
           UserConfirm={handleShowHint}
           cost={penalty}
           isUsed={hintUsed}
+          tournamentId={tournamentId}
           Topic="SomeTopic"
         />
       )}

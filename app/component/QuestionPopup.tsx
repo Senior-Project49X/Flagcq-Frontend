@@ -63,7 +63,6 @@ export default function QuestionPopup(Question: Readonly<State>) {
         setIsError(true); // Set error when incorrect
       }
     } catch (error) {
-      console.error("Error checking answer:", error);
       setIsError(true);
     }
   };
@@ -167,7 +166,9 @@ export default function QuestionPopup(Question: Readonly<State>) {
                   {showQuestion?.file_path ? (
                     <button
                       className="text-black p-2 bg-green-400 rounded-lg flex items-center space-x-2 hover:bg-green-500 transition-colors"
-                      onClick={() => DownloadQuestionsByID(Question.id)}
+                      onClick={() =>
+                        DownloadQuestionsByID(Question.id, tournamentId)
+                      }
                     >
                       <Image
                         src="/download.svg"
@@ -194,6 +195,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                           description={hint.Description}
                           used={hint.used}
                           penalty={hint.point}
+                          tournamentId={Question.tournamentId}
                           isLast={i === showQuestion.hints.length - 1}
                         />
                       ))}
