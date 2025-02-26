@@ -63,7 +63,6 @@ export default function QuestionPopup(Question: Readonly<State>) {
         setIsError(true); // Set error when incorrect
       }
     } catch (error) {
-      console.error("Error checking answer:", error);
       setIsError(true);
     }
   };
@@ -196,6 +195,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                           description={hint.Description}
                           used={hint.used}
                           penalty={hint.point}
+                          tournamentId={Question.tournamentId}
                           isLast={i === showQuestion.hints.length - 1}
                         />
                       ))}

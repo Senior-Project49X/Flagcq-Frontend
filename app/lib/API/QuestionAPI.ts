@@ -20,7 +20,6 @@ export const CreateQuestionAPI = async (
       },
     })
     .then((resp) => {
-      console.log(resp);
       setState.setIsSuccess(true);
       if (resp.status === 200) {
         return resp.data;
@@ -28,7 +27,6 @@ export const CreateQuestionAPI = async (
     })
     .catch((e) => {
       setState.setIsFailed(true);
-      console.log("e", e.response.data.message);
       setState.setMessage(e.response.data.message);
 
       return e;
@@ -48,7 +46,6 @@ export const EditQuestionAPI = async (
       },
     })
     .then((resp) => {
-      console.log(resp);
       setState.setIsSuccess(true);
       if (resp.status === 200) {
         return resp.data;
@@ -56,7 +53,6 @@ export const EditQuestionAPI = async (
     })
     .catch((e) => {
       setState.setIsFailed(true);
-      console.log("e", e.response.data.message);
       setState.setMessage(e.response.data.message);
 
       return e;
@@ -82,7 +78,6 @@ export const CreateQuestionTournamentAPI = async (
       }
     );
   } catch (error: any) {
-    console.error("Error creating questions for the tournament:", error);
   }
 };
 
@@ -127,7 +122,6 @@ export const GetQuestions = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Error downloading file:", error);
   }
 };
 
@@ -141,10 +135,8 @@ export const GetQuestionsByID = async (id: number,tournament_id?: string|number|
     const resp = await axios.get(url, {
       withCredentials: true,
     });
-    console.log(resp.data);
     return resp.data;
   } catch (e) {
-    console.error("Error fetching questions:", e);
   }
 };
 
@@ -152,10 +144,8 @@ export const DeleteQuestionsByID = async (id: number) => {
   await axios
     .delete(`${ip}/api/question/${id}`, { withCredentials: true })
     .then((resp) => {
-      console.log(resp);
     })
     .catch((e) => {
-      console.log(e);
     });
 };
 
@@ -171,7 +161,6 @@ export const CheckQuestionsByID = async (
     );
     return resp.data.solve;
   } catch (e) {
-    console.log(e);
     return false;
   }
 };
@@ -189,7 +178,6 @@ export const CheckQuestionsTournamentByID = async (
     );
     return resp.data.solve;
   } catch (e) {
-    console.log(e);
     return false;
   }
 };
@@ -231,7 +219,6 @@ export const DownloadQuestionsByID = async (id: number ,tournament_id?: number|s
     // Revoke the object URL to free up memory
     window.URL.revokeObjectURL(downloadUrl);
   } catch (error) {
-    console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
 };
@@ -243,7 +230,6 @@ export const GetCategories = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
 };
@@ -254,22 +240,23 @@ export const CreateCategoriesAPI = async (name: string) => {
       { name },
       { withCredentials: true }
     );
-    console.log(response);
     return response.data.id;
   } catch (error) {
-    console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
 };
 
-export const UseHintAPI = async (id: number) => {
+export const UseHintAPI = async (id: number , tournament_id?:string | number | null) => {
   try {
-    const response = await axios.get(`${ip}/api/question/usehint/${id}`, {
+    let url = `${ip}/api/question/usehint?id=${id}`;
+    if(tournament_id){
+      url += `&tournament_id=${tournament_id}`;
+    }
+    const response = await axios.get(url, {
       withCredentials: true,
     });
     return response.data.data;
   } catch (error) {
-    console.error("Error downloading file:", error);
   }
 };
 
@@ -280,7 +267,6 @@ export const DeleteQuestionTournament  = async (questionIds: number,tournamentId
     });
     return response.data;
   } catch (error) {
-    console.error("Error downloading file:", error);
   }
 };
 
@@ -294,13 +280,11 @@ export const EditCategoryAPI = async (
       
     })
     .then((resp) => {
-      console.log(resp);
       if (resp.status === 200) {
         return resp.data.id;
       }
     })
     .catch((e) => {
-      console.log("e", e.response.data.message);
 
       return e;
     });
@@ -314,13 +298,11 @@ export const DeleteCategoryAPI = async (
       
     })
     .then((resp) => {
-      console.log(resp);
       if (resp.status === 200) {
         return resp.data;
       }
     })
     .catch((e) => {
-      console.log("e", e.response.data.message);
 
       return e;
     });

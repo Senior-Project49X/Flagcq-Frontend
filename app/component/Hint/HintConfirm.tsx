@@ -9,6 +9,7 @@ interface HintConfirmProps {
   UserConfirm: () => void;
   isUsed: boolean;
   cost: number;
+  tournamentId?: number;
 }
 
 export default function HintConfirm({
@@ -17,6 +18,7 @@ export default function HintConfirm({
   UserConfirm,
   cost,
   isUsed,
+  tournamentId,
 }: Readonly<HintConfirmProps>) {
   const [description, setDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +28,7 @@ export default function HintConfirm({
       const fetchHint = async () => {
         setIsLoading(true);
         try {
-          const hint = await UseHintAPI(id);
+          const hint = await UseHintAPI(id, tournamentId);
           setDescription(hint);
         } catch (error) {
           console.error("Error fetching hint:", error);
@@ -36,7 +38,7 @@ export default function HintConfirm({
       };
       fetchHint();
     }
-  }, [isUsed, cost, id]);
+  }, [isUsed, cost, id, tournamentId]);
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
