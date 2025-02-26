@@ -39,7 +39,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-8">
           <Link
             href="/"
-            className="flex items-center space-x-3 group transition-transform duration-200 hover:scale-105"
+            className="flex items-center space-x-3 group transition-transform duration-200 hover:scale-105 "
           >
             <div className="relative w-10 h-10">
               <Image
@@ -61,7 +61,7 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center space-x-2 px-4 rounded-lg transition-all duration-200
+                  flex items-center space-x-2 px-4 rounded-lg transition-all duration-200 py-3
                   ${
                     pathname === item.href
                       ? "text-emerald-400 bg-emerald-500/10"

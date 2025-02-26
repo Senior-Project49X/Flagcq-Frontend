@@ -3,11 +3,11 @@
 import Navbar from "../../component/Navbar/navbar";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { GetAllinfo } from "@/app/lib/API/GetAllinfo";
+import { GetmyTeamInfo, GetAllinfo } from "@/app/lib/API/GetAllinfo";
 import { FaTrophy, FaUsers, FaArrowLeft, FaMedal } from "react-icons/fa";
 
 type Member = {
-  userId: string; // Changed to string based on API response
+  userId: string;
   isLeader: boolean;
   firstName: string;
   lastName: string;
@@ -22,41 +22,86 @@ type TeamLeaderboardData = {
   members: Member[];
 };
 
-export default function TeamLeaderboardAdmin() {
+export default function TeamLeaderboardUser() {
   const searchParams = useSearchParams();
   const tournamentId = searchParams.get("tournamentId");
-  const [teamLeaderboardData, setTeamLeaderboardData] = useState<
-    TeamLeaderboardData[]
-  >([]);
-  const [currentTeamId, setCurrentTeamId] = useState<number | null>(null);
+  const [teamData, setTeamData] = useState<TeamLeaderboardData | null>(null);
+  const [allTeams, setAllTeams] = useState<TeamLeaderboardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchTeamLeaderboardData = async () => {
       try {
-        if (!tournamentId) return;
-        const response = await GetAllinfo(Number(tournamentId));
-        setTeamLeaderboardData(response);
+        if (!tournamentId) {
+          setIsLoading(false);
+          return;
+        }
+        const response = await GetmyTeamInfo(Number(tournamentId));
+        console.log("My Team API Response:", response);
 
-        // Get the user's team ID from your authentication context or API
-        // For now, I'll use the first team's ID as an example
-        // You should replace this with actual logic to get the current user's team
-        if (response && response.length > 0) {
-          setCurrentTeamId(response[0].teamID);
+        if (response && response.teamID) {
+          const formattedData: TeamLeaderboardData = {
+            teamID: response.teamID,
+            teamName: response.teamName,
+            totalPoints: response.totalPoints || 0,
+            rank: response.rank || 0,
+            members: Array.isArray(response.members)
+              ? response.members.map((member: any) => ({
+                  userId: member.userId || "",
+                  isLeader: member.isLeader || false,
+                  firstName: member.firstName || "",
+                  lastName: member.lastName || "",
+                  individualScore: member.individualScore || 0,
+                }))
+              : [],
+          };
+          setTeamData(formattedData);
         }
       } catch (error) {
-        console.error("Error fetching leaderboard data:", error);
+        console.error("Error fetching team data:", error);
+      }
+    };
+
+    const fetchAllTeams = async () => {
+      try {
+        if (!tournamentId) {
+          setIsLoading(false);
+          return;
+        }
+        const response = await GetAllinfo(Number(tournamentId));
+        console.log("All Teams API Response:", response);
+
+        if (Array.isArray(response)) {
+          const formattedTeams = response.map((team: any) => ({
+            teamID: team.teamID,
+            teamName: team.teamName,
+            totalPoints: team.totalPoints || 0,
+            rank: team.rank || 0,
+            members: Array.isArray(team.members)
+              ? team.members.map((member: any) => ({
+                  userId: member.userId || "",
+                  isLeader: member.isLeader || false,
+                  firstName: member.firstName || "",
+                  lastName: member.lastName || "",
+                  individualScore: member.individualScore || 0,
+                }))
+              : [],
+          }));
+
+          // Sort teams by total points in descending order
+          formattedTeams.sort((a, b) => b.totalPoints - a.totalPoints);
+          setAllTeams(formattedTeams);
+        }
+      } catch (error) {
+        console.error("Error fetching all teams data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchTeamLeaderboardData();
+    fetchAllTeams();
   }, [tournamentId]);
-
-  const getCurrentTeam = () => {
-    return teamLeaderboardData.find((team) => team.teamID === currentTeamId);
-  };
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <FaTrophy className="text-yellow-400 w-5 h-5" />;
@@ -65,12 +110,9 @@ export default function TeamLeaderboardAdmin() {
     return null;
   };
 
-  const currentTeam = getCurrentTeam();
-
   return (
     <div className="min-h-screen">
       <Navbar />
-
       <div className="max-w-6xl mx-auto px-4 py-6">
         <button
           onClick={() => window.history.back()}
@@ -79,7 +121,6 @@ export default function TeamLeaderboardAdmin() {
           <FaArrowLeft /> Back
         </button>
 
-        {/* Tournament Leaderboard */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-8 text-center text-[#00ffcc]">
             Tournament Leaderboard
@@ -92,12 +133,16 @@ export default function TeamLeaderboardAdmin() {
               <span>Total Points</span>
             </div>
 
-            {!isLoading && teamLeaderboardData.length > 0 ? (
+            {!isLoading && allTeams.length > 0 ? (
               <div className="space-y-4">
-                {teamLeaderboardData.map((team, index) => (
+                {allTeams.map((team, index) => (
                   <div
                     key={team.teamID}
-                    className="flex justify-between items-center p-3 rounded-lg transition-all hover:bg-[#1c2252]"
+                    className={`flex justify-between items-center p-3 rounded-lg transition-all hover:bg-[#1c2252] ${
+                      teamData && team.teamID === teamData.teamID
+                        ? "bg-[#1c2252] border border-[#00ffcc]/30"
+                        : ""
+                    }`}
                   >
                     <div className="flex items-center gap-2">
                       {getRankIcon(index + 1)}
@@ -116,38 +161,36 @@ export default function TeamLeaderboardAdmin() {
               </div>
             ) : (
               <div className="text-center py-8 text-gray-400">
-                {isLoading
-                  ? "Loading leaderboard..."
-                  : "No team data available."}
+                {isLoading ? "Loading leaderboard..." : "No teams available."}
               </div>
             )}
           </div>
         </div>
 
-        {/* Our Team Section */}
         <div className="space-y-8">
           <h2 className="text-3xl font-bold text-center text-white">
             Your Team Stats
           </h2>
 
-          {/* Team Overview */}
           <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
-            {currentTeam ? (
+            {teamData ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-2xl font-bold text-[#00ffcc] mb-2">
-                      {currentTeam.teamName}
+                      {teamData.teamName}
                     </h3>
-                    <div className="flex items-center gap-2 text-gray-400">
+                    <span className="flex items-center gap-2 text-gray-400">
                       <FaUsers />
-                      <span>{currentTeam.members.length} Members</span>
-                    </div>
+                      <span>{teamData.members.length} Members</span>
+                    </span>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-400">Total Points</div>
-                    <div className="font-mono text-[#00ffcc]">
-                      {currentTeam.totalPoints.toLocaleString()}
+                    <div className="font-mono text-md text-gray-400 mb-5">
+                      TOTAL POINTS
+                    </div>
+                    <div className="font-mono text-[#00ffcc] mr-3">
+                      {teamData.totalPoints.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -159,15 +202,14 @@ export default function TeamLeaderboardAdmin() {
             )}
           </div>
 
-          {/* Members List */}
           <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
             <h3 className="text-xl font-semibold mb-6 text-white">
               Team Members
             </h3>
 
             <div className="space-y-4">
-              {currentTeam && currentTeam.members.length > 0 ? (
-                currentTeam.members.map((member, index) => (
+              {teamData && teamData.members.length > 0 ? (
+                teamData.members.map((member, index) => (
                   <div
                     key={member.userId}
                     className="flex justify-between items-center p-3 rounded-lg transition-all hover:bg-[#1c2252]"

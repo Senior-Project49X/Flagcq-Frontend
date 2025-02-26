@@ -287,7 +287,7 @@ export default function Login() {
         {/* Footer */}
         <footer className="py-4 text-center w-full bg-gray-900">
           <p className="text-white">
-            © 2025 FlagConquest | Follow us on{" "}
+            © {new Date().getFullYear()} FlagConquest | Follow us on{" "}
             <a href="https://www.cpe.eng.cmu.ac.th/" className="text-green-400">
               CPE CMU
             </a>
