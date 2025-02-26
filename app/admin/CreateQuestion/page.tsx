@@ -359,7 +359,7 @@ export default function CreateQuestion() {
             </label>
             <select
               value={difficultysID}
-              name="difficultys_id"
+              name="difficulty_id"
               className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
               onChange={(e) => setDifficultysID(e.target.value)}
               required
