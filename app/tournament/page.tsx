@@ -278,13 +278,13 @@ export default function TournamentPage() {
             </div>
             <div className="w-96">
               <h5 className="text-lg font-semibold text-green-600 text-center">
-                Create Private Tournament
+                Join Private Tournament
               </h5>
               <button
                 onClick={() => setShowPopup(true)}
                 className="w-full bg-blue-300 text-black py-2 rounded hover:bg-blue-400 transition duration-300"
               >
-                Create Private
+                Join Private
               </button>
             </div>
           </div>
