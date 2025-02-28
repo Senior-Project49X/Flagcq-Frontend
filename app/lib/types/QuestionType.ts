@@ -9,6 +9,7 @@ export interface questions {
   is_selected: boolean;
   tournament_id: number;
   submitCount: number;
+  canEdit: boolean;
 }
 
 export interface Question {

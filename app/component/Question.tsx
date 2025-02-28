@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { isRoleAdmin } from "../lib/role";
 import { usePathname } from "next/navigation";
 import { getCookie, isHasCookie, setCookie } from "../lib/cookies";
+import { FaTable, FaThLarge } from "react-icons/fa";
+import { FaList } from "react-icons/fa6";
 
 interface CryptographyProps {
   selectedDifficulty: string | null;
@@ -58,22 +60,26 @@ export default function Question({
   }, [pathname]);
   return (
     <div>
-      <div className="flex justify-end mt-4">
+      <div className="flex justify-end mt-4 mb-4 mr-16">
+        <div className="text-2xl font-bold text-green-500 mr-auto ml-16">
+          Question
+        </div>
+
         <button
           onClick={() => handleVIew(false)}
-          className={`rounded-l-md px-4 py-2 ${
+          className={`rounded-l-md px-4 py-2 flex items-center gap-2 ${
             !isTable ? "bg-gray-300" : "bg-white"
           } transition`}
         >
-          Card view
+          <FaThLarge />
         </button>
         <button
           onClick={() => handleVIew(true)}
-          className={`px-4 py-2 rounded-r-md ${
+          className={`px-4 py-2 rounded-r-md flex items-center gap-2 ${
             isTable ? "bg-gray-300" : "bg-white"
           } transition`}
         >
-          List view
+          <FaList />
         </button>
       </div>
       {!isTable ? (
@@ -92,6 +98,7 @@ export default function Question({
               question_id={question_id} // Pass the prop
               is_selected={question.is_selected}
               tournament_id={tournament_id}
+              canEdit={question.canEdit}
             />
           ))}
         </div>

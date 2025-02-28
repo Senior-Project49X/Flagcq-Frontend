@@ -7,6 +7,9 @@ interface LoadingPopupProps {
   isFailed: boolean;
   isSuccess: boolean;
   Message: string;
+  setFailedforhint?: Dispatch<SetStateAction<boolean>>;
+  setSuccessforhint?: Dispatch<SetStateAction<boolean>>;
+  ClosePopup?: () => void;
 }
 
 export default function LoadingPopup({
@@ -14,10 +17,20 @@ export default function LoadingPopup({
   isFailed,
   isSuccess,
   Message,
+  setFailedforhint,
+  setSuccessforhint,
+  ClosePopup,
 }: LoadingPopupProps) {
   const onClickButton = () => {
     if (isSuccess) window.location.href = "/";
-    else setLoading(false);
+    else onClickReset();
+  };
+
+  const onClickReset = () => {
+    setLoading(false);
+    if (setFailedforhint !== undefined) setFailedforhint(false);
+    if (setSuccessforhint !== undefined) setSuccessforhint(false);
+    if (ClosePopup !== undefined) ClosePopup();
   };
 
   return (

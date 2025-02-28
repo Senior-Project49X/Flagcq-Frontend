@@ -141,7 +141,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                   </h3>
                   {role && (
                     <AdminEditDelQuestion
-                      isCanEdit={Question.isCanEdit}
+                      CanEdit={Question.isCanEdit}
                       AdminEditref={popupRef}
                       id={Question.id}
                       setShowPopup={setShowDeletePopup}

@@ -183,7 +183,7 @@ const JoinTeamForm = ({
         className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
         disabled={isLoading}
       >
-        {isLoading ? "Joining..." : "Join"}
+        {isLoading ? "Joining..." : "Create"}
       </button>
       {errorMessage && (
         <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
@@ -278,13 +278,13 @@ export default function TournamentPage() {
             </div>
             <div className="w-96">
               <h5 className="text-lg font-semibold text-green-600 text-center">
-                Join Private Tournament
+                Create private team
               </h5>
               <button
                 onClick={() => setShowPopup(true)}
                 className="w-full bg-blue-300 text-black py-2 rounded hover:bg-blue-400 transition duration-300"
               >
-                Join Private
+                Create
               </button>
             </div>
           </div>
