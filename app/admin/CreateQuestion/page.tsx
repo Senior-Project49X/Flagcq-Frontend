@@ -54,7 +54,7 @@ export default function CreateQuestion() {
     { id: string | number | null; detail: string; penalty: number }[]
   >([]);
   const category = "";
-  const [difficultysID, setDifficultysID] = useState<string>("");
+  const [difficultyID, setDifficultyID] = useState<string>("");
   const [isCreateCategory, setIsCreateCategory] = useState<boolean>(false);
   const [isEditCategory, setIsEditCategory] = useState<boolean>(false);
   const [isDeleteCategory, setIsDeleteCategory] = useState<boolean>(false);
@@ -70,7 +70,7 @@ export default function CreateQuestion() {
         setTopic(getQuestion.title);
         setPoint(getQuestion.point);
         setSelectedCategory(getQuestion.categories_id);
-        setDifficultysID(getQuestion.difficultys_id);
+        setDifficultyID(getQuestion.difficulty_id);
         setHints(
           getQuestion.hints.map((hint: any) => ({
             id: hint.id,
@@ -358,10 +358,10 @@ export default function CreateQuestion() {
               Difficulty
             </label>
             <select
-              value={difficultysID}
+              value={difficultyID}
               name="difficulty_id"
               className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
-              onChange={(e) => setDifficultysID(e.target.value)}
+              onChange={(e) => setDifficultyID(e.target.value)}
               required
             >
               <option value={""}>---please select Difficulty---</option>

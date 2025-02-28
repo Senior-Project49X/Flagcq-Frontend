@@ -10,7 +10,7 @@ export const KickPlayerTour = async ({
   member_id: string;
 }) => {
   await axios
-    .delete(`${ip}/teams/member_page/${team_id}/${member_id}`, {
+    .delete(`${ip}/api/teams/member_page/${team_id}/${member_id}`, {
       withCredentials: true,
     })
     .then((resp) => {

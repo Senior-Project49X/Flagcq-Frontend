@@ -10,7 +10,7 @@ export interface TeamData {
 export const PostCreateTeam = async (data: TeamData) => {
   try {
     const resp = await axios.post(
-      `${ip}/teams/create`,
+      `${ip}/api/teams/create`,
       {
         name: data.name, // Map topic to name
         tournament_id: data.tournament_id,

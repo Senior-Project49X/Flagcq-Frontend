@@ -4,7 +4,7 @@ const ip = process.env.NEXT_PUBLIC_IP_URL;
 
 export const DelTeamTour = async (tournament_id: number) => {
   await axios
-    .delete(`${ip}/teams/${tournament_id}`, {
+    .delete(`${ip}/api/teams/${tournament_id}`, {
       withCredentials: true,
     })
     .then((resp) => {
