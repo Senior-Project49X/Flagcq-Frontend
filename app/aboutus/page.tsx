@@ -14,7 +14,7 @@ const students = [
     linkedin: "https://www.linkedin.com/in/sirawich-pintana-3733a1294/",
   },
   {
-    name: "Praschaya Kornnittisarat ",
+    name: "Praschaya Kornnittisarat",
     studentCode: "640610649",
     faculty: "Faculty of Engineering",
     image: "/ryuta.png",
