@@ -40,7 +40,7 @@ export default function CreateQuestion() {
   const [modeSelection, setModeSelection] = useState<ButtonStates>({
     Practice: false,
     Tournament: false,
-    UnPublic: true,
+    Unpublished: true,
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
@@ -116,13 +116,13 @@ export default function CreateQuestion() {
     // setFile(null); // Reset file state to avoid InvalidStateError
   };
 
-  const [selectedMode, setSelectedMode] = useState<string>("UnPublic");
+  const [selectedMode, setSelectedMode] = useState<string>("Unpublished");
 
   const handleToggle = (buttonKey: string): void => {
     setModeSelection((prevStates) => ({
       Practice: buttonKey === "Practice",
       Tournament: buttonKey === "Tournament",
-      UnPublic: buttonKey === "UnPublic",
+      Unpublished: buttonKey === "Unpublished",
     }));
     setSelectedMode(buttonKey);
   };
@@ -143,7 +143,7 @@ export default function CreateQuestion() {
             <span className="underline">tournament pool</span>
           </span>
         );
-      case "UnPublic":
+      case "Unpublic":
         return (
           <span>
             This mode will <span className="underline">not go to any pool</span>
