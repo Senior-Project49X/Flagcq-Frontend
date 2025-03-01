@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { FaExclamationTriangle, FaTimes } from "react-icons/fa";
 import { UseHintAPI } from "@/app/lib/API/QuestionAPI";
+import LoadingPopup from "../LoadingPopup";
 
 interface HintConfirmProps {
   id: number;
@@ -22,13 +23,23 @@ export default function HintConfirm({
 }: Readonly<HintConfirmProps>) {
   const [description, setDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   useEffect(() => {
     if (isUsed || cost === 0) {
       const fetchHint = async () => {
         setIsLoading(true);
         try {
-          const hint = await UseHintAPI(id, tournamentId);
+          const hint = await UseHintAPI(
+            id,
+            {
+              setIsFailed,
+              setMessage,
+              setIsSuccess,
+            },
+            tournamentId
+          );
           setDescription(hint);
         } catch (error) {
           console.error("Error fetching hint:", error);
@@ -39,7 +50,6 @@ export default function HintConfirm({
       fetchHint();
     }
   }, [isUsed, cost, id, tournamentId]);
-
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="relative bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 border border-gray-700">
@@ -52,15 +62,27 @@ export default function HintConfirm({
 
         {isUsed ? (
           <div className="space-y-4">
-            {isLoading ? (
+            {isFailed && (
               <div className="flex items-center justify-center py-8">
                 <div className="h-8 w-8 border-4 border-t-yellow-500 border-gray-700 rounded-full animate-spin" />
+                <LoadingPopup
+                  setLoading={setIsLoading}
+                  setFailedforhint={setIsFailed}
+                  setSuccessforhint={setIsSuccess}
+                  isFailed={isFailed}
+                  isSuccess={isSuccess}
+                  Message={message}
+                  ClosePopup={ClosePopup}
+                />
               </div>
-            ) : (
-              <div
-                className="text-red-500 font-bold text-2xl mb-4 leading-relaxed break-words rich-text overflow-y-auto"
-                dangerouslySetInnerHTML={{ __html: description }}
-              />
+            )}
+            {isSuccess && (
+              <>
+                <div
+                  className="text-red-500 font-bold text-2xl mb-4 leading-relaxed break-words rich-text overflow-y-auto"
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+              </>
             )}
           </div>
         ) : (

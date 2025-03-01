@@ -5,18 +5,18 @@ interface Question {
   setShowPopup: (arg0: boolean) => void;
   id: number;
   AdminEditref: React.RefObject<HTMLDivElement>;
-  isCanEdit: boolean;
+  CanEdit: boolean;
 }
 
 export default function AdminEditDelQuestion({
   id,
   setShowPopup,
   AdminEditref,
-  isCanEdit,
+  CanEdit,
 }: Readonly<Question>) {
   return (
     <div ref={AdminEditref}>
-      {isCanEdit ? (
+      {CanEdit ? (
         <Link
           className="text-yellow-500 font-bold mx-5"
           href={`/admin/EditQuestion?QuestionID=${id}`}
