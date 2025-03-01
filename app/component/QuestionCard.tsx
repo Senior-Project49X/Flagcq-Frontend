@@ -16,6 +16,7 @@ type detail = {
   question_id?: number[]; // Add this prop
   is_selected: boolean;
   tournament_id?: number;
+  canEdit?: boolean;
 };
 
 export default function QuestionCard({
@@ -30,6 +31,7 @@ export default function QuestionCard({
   is_selected,
   tournament_id,
   submitCount,
+  canEdit,
 }: Readonly<detail>) {
   const pathname = usePathname();
   const isPathTournament = pathname === "/admin/CreateQuestionTournament";
@@ -37,7 +39,7 @@ export default function QuestionCard({
   const [select, setSelect] = useState(false);
   const [showPopupDelTournamentQuestion, setShowPopupDelTournamentQuestion] =
     useState(false);
-  const isCanEdit = !is_selected && submitCount === 0;
+  const isCanEdit = canEdit === true;
   // Add useEffect to update selected state when question_id changes
   useEffect(() => {
     if (question_id && !is_selected) {

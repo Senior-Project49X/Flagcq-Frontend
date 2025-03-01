@@ -56,7 +56,7 @@ export default function Login() {
       description: "Tournament List Information",
     },
     {
-      src: "/Tour_joined.png",
+      src: "/tour_joined.png",
       alt: "Tournament Joined Preview",
       title: "Tournament Details",
       label: "Part 5",

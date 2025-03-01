@@ -29,7 +29,7 @@ export default function QuestionTable({
   isCreateQuestionTournament,
 }: Readonly<detail>) {
   return (
-    <table className="table-auto w-full">
+    <table className="table-auto w-full mr-16 ">
       <thead className="bg-gray-900 text-green">
         <tr>
           {isAdmin && isCreateQuestionTournament && (
@@ -133,6 +133,7 @@ export default function QuestionTable({
             isRoleAdmin={isAdmin}
             isCreateQuestionTournament={isCreateQuestionTournament}
             submitCount={question.submitCount}
+            canEdit={question.canEdit}
           />
         ))}
       </tbody>

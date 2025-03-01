@@ -23,6 +23,7 @@ type detail = {
   isRoleAdmin: boolean;
   submitCount: number;
   isCreateQuestionTournament?: boolean;
+  canEdit?: boolean;
 };
 export default function QuestionListDetail({
   id,
@@ -38,8 +39,9 @@ export default function QuestionListDetail({
   submitCount,
   isRoleAdmin,
   isCreateQuestionTournament,
+  canEdit,
 }: Readonly<detail>) {
-  const isCanEdit = !is_selected && submitCount === 0;
+  const isCanEdit = canEdit === true;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [select, setSelect] = useState(false);

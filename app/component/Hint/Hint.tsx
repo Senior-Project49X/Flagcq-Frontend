@@ -26,8 +26,19 @@ export default function Hint({
   const [showHint, setShowHint] = useState<boolean>(false);
   const [hintUsed, setHintUsed] = useState<boolean>(used);
   const [hintDescription, setHintDescription] = useState<string>(description);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const handleShowHint = () => {
-    console.log("id", UseHintAPI(id));
+    console.log(
+      "id",
+      UseHintAPI(id, {
+        setIsFailed,
+        setMessage,
+        setIsSuccess,
+      })
+    );
 
     setHintUsed(true);
     setShowHint(true);
