@@ -200,10 +200,11 @@ export const DownloadQuestionsByID = async (
 
     // Parse the filename from the header
     const filename = contentDisposition
-      ? contentDisposition
+      ? decodeURIComponent(contentDisposition
           .split("filename=")[1]
           ?.split(";")[0]
-          ?.replace(/"/g, "") // Extract the filename and handle quotes
+          ?.replace(/"/g, "")
+          ?.trim()) // Extract the filename and handle quotes
       : `download-${id}`; // Fallback filename
 
     // Create a Blob and a download URL
