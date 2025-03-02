@@ -49,6 +49,8 @@ export default function CreateTour() {
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+  const [isEnrollmentStarted, setIsEnrollmentStarted] =
+    useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -132,6 +134,15 @@ export default function CreateTour() {
     return utc7Date.toISOString().slice(0, 16);
   }
 
+  // Check if enrollment has started for editing mode
+  useEffect(() => {
+    if (tournament_id && CreateTourData.enroll_startDate) {
+      const now = new Date();
+      const enrollStart = new Date(CreateTourData.enroll_startDate);
+      setIsEnrollmentStarted(now >= enrollStart);
+    }
+  }, [tournament_id, CreateTourData.enroll_startDate]);
+
   useEffect(() => {
     if (!tournament_id) return;
     const fetchTournamentData = async () => {
@@ -139,13 +150,22 @@ export default function CreateTour() {
         const getTournament = await GetTournamentByID(tournament_id);
         if (!getTournament) return;
 
+        const formattedEnrollStartDate = formatToLocalDateTime(
+          getTournament.enroll_startDate
+        );
+
+        // Check if enrollment has already started
+        const now = new Date();
+        const enrollStart = new Date(getTournament.enroll_startDate);
+        const hasEnrollmentStarted = now >= enrollStart;
+
+        setIsEnrollmentStarted(hasEnrollmentStarted);
+
         setCreateTourData((prevData) => ({
           ...prevData,
           topic: getTournament.name,
           description: getTournament.description,
-          enroll_startDate: formatToLocalDateTime(
-            getTournament.enroll_startDate
-          ),
+          enroll_startDate: formattedEnrollStartDate,
           enroll_endDate: formatToLocalDateTime(getTournament.enroll_endDate),
           event_startDate: formatToLocalDateTime(getTournament.event_startDate),
           event_endDate: formatToLocalDateTime(getTournament.event_endDate),
@@ -187,7 +207,7 @@ export default function CreateTour() {
       <Navbar />
       <div className="max-w-4xl mx-auto p-8">
         <h1 className="text-4xl font-bold mb-8 text-center text-green-400 drop-shadow-lg">
-          Create Tournament
+          {tournament_id ? "Edit Tournament" : "Create Tournament"}
         </h1>
         <form
           onSubmit={handleSubmit}
@@ -260,9 +280,18 @@ export default function CreateTour() {
             <div>
               <label
                 htmlFor="teamSizeLimit"
-                className="block text-lg font-medium mb-2 text-green-400"
+                className={`block text-lg font-medium mb-2 ${
+                  isEnrollmentStarted && tournament_id
+                    ? "text-gray-500"
+                    : "text-green-400"
+                }`}
               >
                 Participants per team
+                {isEnrollmentStarted && tournament_id && (
+                  <span className=" text-yellow-400 text-sm flex">
+                    (Locked: Enrollment has started)
+                  </span>
+                )}
               </label>
               <select
                 id="teamSizeLimit"
@@ -271,7 +300,12 @@ export default function CreateTour() {
                 onChange={handleNumberChange}
                 className={`${getInputClass(
                   "teamSizeLimit"
-                )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg ${
+                  isEnrollmentStarted && tournament_id
+                    ? "opacity-70 cursor-not-allowed"
+                    : ""
+                }`}
+                disabled={isEnrollmentStarted && tournament_id !== null}
                 required
               >
                 <option value="" disabled>
@@ -289,9 +323,18 @@ export default function CreateTour() {
             <div>
               <label
                 htmlFor="limit"
-                className="block text-lg font-medium mb-2 text-green-400"
+                className={`block text-lg font-medium mb-2 ${
+                  isEnrollmentStarted && tournament_id
+                    ? "text-gray-500"
+                    : "text-green-400"
+                }`}
               >
                 Total teams limit
+                {isEnrollmentStarted && tournament_id && (
+                  <span className=" text-yellow-400 text-sm flex">
+                    (Locked: Enrollment has started)
+                  </span>
+                )}
               </label>
               <input
                 type="number"
@@ -301,10 +344,15 @@ export default function CreateTour() {
                 onChange={handleInputChange}
                 className={`${getInputClass(
                   "limit"
-                )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg`}
+                )} bg-gray-700 text-white border-gray-600 focus:border-green-400 focus:ring-green-400 rounded-lg ${
+                  isEnrollmentStarted && tournament_id
+                    ? "opacity-70 cursor-not-allowed"
+                    : ""
+                }`}
                 min="1"
                 max="120"
                 placeholder="Enter number (1-120)"
+                disabled={isEnrollmentStarted && tournament_id !== null}
                 required
               />
             </div>
@@ -408,7 +456,11 @@ export default function CreateTour() {
                 : "bg-green-500 hover:bg-green-600 text-white shadow-lg"
             }`}
           >
-            {loading ? "Creating Tournament..." : "Create Tournament"}
+            {loading
+              ? "Processing..."
+              : tournament_id
+              ? "Update Tournament"
+              : "Create Tournament"}
           </button>
         </form>
         {loading && (

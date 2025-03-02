@@ -13,7 +13,7 @@ import {
 } from "../../lib/API/QuestionAPI";
 import { questions } from "../../lib/types/QuestionType";
 import { GetAllTourList } from "@/app/lib/API/GetTourListAPI";
-import { isRoleAdmin } from "@/app/lib/role";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -138,7 +138,7 @@ export default function Homepage() {
   return (
     <div>
       <Navbar />
-      <div className="pt-6 text-black mb-4 rounded-lg flex  justify-center">
+      <div className="pt-6 text-black mb-4 rounded-lg flex justify-center">
         <form onSubmit={handleCreateQT} className="flex items-center">
           <label
             htmlFor="tournament-dropdown"
@@ -175,6 +175,14 @@ export default function Homepage() {
           </button>
         </form>
       </div>
+
+      {tournament_id == 0 && (
+        <div className=" ml-5 text-yellow-500 font-bold flex justify-center">
+          <FaExclamationTriangle className="mr-3 text-yellow-500 mt-1" />
+          Please select the tournament first
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         <Category
           selectedCategory={selectedCategory}
