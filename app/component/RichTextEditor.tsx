@@ -179,11 +179,19 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       Link,
       Underline,
     ],
-    content: value,
+    content: "", // Initialize with empty content
+    immediatelyRender: false, // Add this line
     onUpdate({ editor }) {
       onChange(editor.getHTML());
     },
   });
+
+  // Add this useEffect for content initialization
+  useEffect(() => {
+    if (editor && value) {
+      editor.commands.setContent(value);
+    }
+  }, [editor, value]);
 
   // Handle manual resize
   useEffect(() => {

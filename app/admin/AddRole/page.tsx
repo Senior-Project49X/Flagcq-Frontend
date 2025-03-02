@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState, useEffect } from "react";
+import React, { FormEvent, useState } from "react";
 import Navbar from "@/app/component/Navbar/navbar";
 import { PostAddRole } from "@/app/lib/API/PostAddRole";
 import { FaUserShield, FaUser, FaExclamationTriangle } from "react-icons/fa";
@@ -126,7 +126,7 @@ export default function Page() {
               <p className="text-gray-300 text-center">
                 You are about to change the role to:{" "}
                 <span className="font-bold text-green-400">
-                  {selectedRole || "No Role Selected"}
+                  {selectedRole ?? "No Role Selected"}
                 </span>
                 <br />
                 For user:{" "}

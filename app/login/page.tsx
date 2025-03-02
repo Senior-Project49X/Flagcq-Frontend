@@ -117,13 +117,6 @@ export default function Login() {
             : "opacity-0 -translate-y-10 pointer-events-none"
         }`}
       >
-        {/* <Image
-          src="/logo-login.svg"
-          alt="FlagConquest logo"
-          width={50}
-          height={50}
-          className=" object-cover"
-        /> */}
         <LoginButton />
       </div>
 
@@ -206,7 +199,7 @@ export default function Login() {
             <div className="w-64 flex flex-col gap-2 mt-20">
               {tabs.map((tab, index) => (
                 <button
-                  key={index}
+                  key={tab.label}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`p-4 text-left rounded-lg transition-all duration-300 ${
                     currentImageIndex === index
@@ -266,7 +259,7 @@ export default function Login() {
             <div className="w-64 flex flex-col gap-2 mt-20">
               {tabs_admin.map((tab_admin, index) => (
                 <button
-                  key={index}
+                  key={tab_admin.label}
                   onClick={() => setCurrentImageIndex_admin(index)}
                   className={`p-4 text-left rounded-lg transition-all duration-300 ${
                     currentImageIndex_admin === index

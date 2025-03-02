@@ -300,9 +300,9 @@ export default function CreateQuestion() {
 
           {/* Category */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-1 text-green-400">
+            <div className="block text-base font-medium mb-1 text-green-400">
               Category
-            </label>
+            </div>
             <div className="flex gap-1">
               <select
                 name="categories_id"
@@ -354,9 +354,9 @@ export default function CreateQuestion() {
 
           {/* Difficulty */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-1 text-green-400">
+            <div className="block text-base font-medium mb-1 text-green-400">
               Difficulty
-            </label>
+            </div>
             <select
               value={difficultyID}
               name="difficulty_id"
@@ -373,9 +373,9 @@ export default function CreateQuestion() {
 
           {/* Mode */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-2 text-green-400">
+            <div className="block text-base font-medium mb-2 text-green-400">
               Mode
-            </label>
+            </div>
             <div className="flex flex-wrap gap-2">
               {Object.keys(modeSelection).map((buttonKey) => (
                 <button
@@ -397,9 +397,9 @@ export default function CreateQuestion() {
 
           {/* Description */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-1 text-green-400">
+            <div className="block text-base font-medium mb-1 text-green-400">
               Description
-            </label>
+            </div>
             <div className="bg-gray-700 rounded-md overflow-hidden">
               <RichTextEditor value={description} onChange={setDescription} />
             </div>
@@ -407,9 +407,9 @@ export default function CreateQuestion() {
 
           {/* Hints */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-2 text-green-400">
+            <div className="block text-base font-medium mb-2 text-green-400">
               Hints
-            </label>
+            </div>
             {hints.length < 3 && (
               <button
                 type="button"
@@ -423,7 +423,7 @@ export default function CreateQuestion() {
               {hints.length > 0 &&
                 hints.map((hint, index) => (
                   <CreateHint
-                    key={hint.id}
+                    key={index}
                     index={index}
                     detail={hint.detail}
                     penalty={hint.penalty}
@@ -436,9 +436,9 @@ export default function CreateQuestion() {
 
           {/* Answer */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-1 text-green-400">
+            <div className="block text-base font-medium mb-1 text-green-400">
               Answer
-            </label>
+            </div>
             <div className="flex items-center gap-1">
               {modeSelection["Practice"] && (
                 <span className="text-white">CTFCQ{" {"}</span>
@@ -465,9 +465,9 @@ export default function CreateQuestion() {
 
           {/* Points */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-1 text-green-400">
+            <div className="block text-base font-medium mb-1 text-green-400">
               Points
-            </label>
+            </div>
             <input
               name="point"
               type="number"
@@ -491,9 +491,9 @@ export default function CreateQuestion() {
 
           {/* File Upload */}
           <div className="mb-4">
-            <label className="block text-base font-medium mb-2 text-green-400">
+            <div className="block text-base font-medium mb-2 text-green-400">
               Upload File
-            </label>
+            </div>
             <div className="flex gap-2 items-center">
               {/* Hidden file input */}
               <input
