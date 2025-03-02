@@ -49,7 +49,7 @@ export default function Login() {
       description: "Leaderboard Information",
     },
     {
-      src: "/tour.png",
+      src: "/tour_list.png",
       alt: "Tournament List Preview",
       title: "Tournament List",
       label: "Part 4",
@@ -123,8 +123,6 @@ export default function Login() {
       <Script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" />
       <style jsx global>{`
         body {
-          cursor: url("https://cdn.custom-cursor.com/db/5301/32/cyberpunk-2077-logo-pointer.png"),
-            auto;
         }
         #particles-js {
           position: absolute;
