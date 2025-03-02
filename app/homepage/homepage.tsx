@@ -12,6 +12,7 @@ import { GetUserPoints } from "../lib/API/GetUserAPI";
 import { questions } from "../lib/types/QuestionType";
 import ModeFilter from "../component/ModeFilter";
 import { isRoleAdmin } from "../lib/role";
+import LoadingComponent from "../component/LoadingComponent";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -34,6 +35,7 @@ export default function Homepage() {
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [mode, setMode] = useState<string>("");
+  const [isLodingComponent, setIsLodingComponent] = useState<boolean>(true);
 
   const handleCategoryChange = (categories: string[]) => {
     setSelectedCategories(categories);
@@ -81,6 +83,8 @@ export default function Homepage() {
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
+      setIsLodingComponent(true);
+      setQuestions([]);
       const result = await GetQuestions(
         selectedCategories.join(","),
         selectedDifficulty,
@@ -90,6 +94,7 @@ export default function Homepage() {
       setTotalPages(result.totalPages);
       setHasNextPage(result.hasNextPage);
       setQuestions(result.data);
+      setIsLodingComponent(false);
     };
 
     fetchUserQuestions();
@@ -102,6 +107,7 @@ export default function Homepage() {
     };
     fetchUserData();
   }, [point]);
+
   const handleModeChange = () => {
     router.push("?page=1");
   };
@@ -149,9 +155,15 @@ export default function Homepage() {
               />
             </>
           ) : (
-            <div className="text-center text-2xl font-bold text-red-400">
-              No Question Found
-            </div>
+            <>
+              {isLodingComponent ? (
+                <LoadingComponent />
+              ) : (
+                <div className="text-center text-2xl font-bold text-red-400">
+                  No Question Found
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

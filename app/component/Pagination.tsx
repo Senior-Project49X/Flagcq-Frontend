@@ -70,48 +70,49 @@ export default function Pagination({
           </Link>
         )}
 
-        {visiblePages.map((page, index) => (
-          <React.Fragment key={page}>
-            {index === 0 && page > 1 && (
-              <React.Fragment>
-                <Link
-                  href={`${pagePath}1`}
-                  scroll={false}
-                  className="flex bg-gray-800 "
-                >
-                  1
-                </Link>
+        {totalPages > 1 &&
+          visiblePages.map((page, index) => (
+            <React.Fragment key={page}>
+              {index === 0 && page > 1 && (
+                <React.Fragment>
+                  <Link
+                    href={`${pagePath}1`}
+                    scroll={false}
+                    className="flex bg-gray-800 "
+                  >
+                    1
+                  </Link>
 
-                {page > 3 && <span>...</span>}
-              </React.Fragment>
-            )}
+                  {page > 3 && <span>...</span>}
+                </React.Fragment>
+              )}
 
-            <Link
-              href={`${pagePath}${page}`}
-              scroll={false}
-              className={`px-4 py-2 text-green-400 hover:bg-gray-800 transition-colors ${
-                page === currentPage
-                  ? "bg-gray-800  rounded-md text-xl"
-                  : " bg-[#0D1B2A] rounded-md"
-              }`}
-            >
-              {page}
-            </Link>
+              <Link
+                href={`${pagePath}${page}`}
+                scroll={false}
+                className={`px-4 py-2 text-green-400 hover:bg-gray-800 transition-colors ${
+                  page === currentPage
+                    ? "bg-gray-800  rounded-md text-xl"
+                    : " bg-[#0D1B2A] rounded-md"
+                }`}
+              >
+                {page}
+              </Link>
 
-            {index === visiblePages.length - 1 && page < totalPages && (
-              <React.Fragment>
-                {page < totalPages - 1 && <span>...</span>}
-                <Link
-                  href={`${pagePath}${totalPages}`}
-                  scroll={false}
-                  className="w-8 h-8 p-0 text-gray-600 "
-                >
-                  {totalPages}
-                </Link>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        ))}
+              {index === visiblePages.length - 1 && page < totalPages && (
+                <React.Fragment>
+                  {page < totalPages - 1 && <span>...</span>}
+                  <Link
+                    href={`${pagePath}${totalPages}`}
+                    scroll={false}
+                    className="w-8 h-8 p-0 text-gray-600 "
+                  >
+                    {totalPages}
+                  </Link>
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          ))}
 
         {hasNextPage && currentPage < totalPages && (
           <Link

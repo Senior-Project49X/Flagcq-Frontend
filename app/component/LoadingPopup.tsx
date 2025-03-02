@@ -20,7 +20,7 @@ export default function LoadingPopup({
   setFailedforhint,
   setSuccessforhint,
   ClosePopup,
-}: LoadingPopupProps) {
+}: Readonly<LoadingPopupProps>) {
   const onClickButton = () => {
     if (isSuccess) window.location.href = "/";
     else onClickReset();

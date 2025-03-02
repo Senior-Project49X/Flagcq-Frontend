@@ -1,5 +1,4 @@
 import axios from "axios";
-import { setCookie, removeCookie } from "../cookies";
 const ip = process.env.NEXT_PUBLIC_IP_URL;
 export const LoginUser=(code:string)=>{
     

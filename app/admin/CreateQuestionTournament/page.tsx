@@ -52,7 +52,7 @@ export default function Homepage() {
   const handleGetAllTourList = async () => {
     try {
       const data = await GetAllTourList();
-      setTournamentList(data || []);
+      setTournamentList(data);
     } catch (error) {
       console.error("Error fetching tournament list:", error);
     }
