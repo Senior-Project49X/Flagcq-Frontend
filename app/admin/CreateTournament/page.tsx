@@ -62,18 +62,10 @@ export default function CreateTour() {
 
     const formattedData = {
       ...CreateTourData,
-      enroll_startDate: new Date(
-        new Date(CreateTourData.enroll_startDate).getTime() - 7 * 60 * 60 * 1000
-      ).toISOString(),
-      enroll_endDate: new Date(
-        new Date(CreateTourData.enroll_endDate).getTime() - 7 * 60 * 60 * 1000
-      ).toISOString(),
-      event_startDate: new Date(
-        new Date(CreateTourData.event_startDate).getTime() - 7 * 60 * 60 * 1000
-      ).toISOString(),
-      event_endDate: new Date(
-        new Date(CreateTourData.event_endDate).getTime() - 7 * 60 * 60 * 1000
-      ).toISOString(),
+      enroll_startDate: new Date(CreateTourData.enroll_startDate).toISOString(),
+      enroll_endDate: new Date(CreateTourData.enroll_endDate).toISOString(),
+      event_startDate: new Date(CreateTourData.event_startDate).toISOString(),
+      event_endDate: new Date(CreateTourData.event_endDate).toISOString(),
     };
 
     const errors: Record<string, boolean> = {};
