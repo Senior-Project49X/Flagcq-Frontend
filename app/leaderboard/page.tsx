@@ -88,9 +88,42 @@ export default function Leaderboard() {
       <Navbar />
 
       <div className="max-w-4xl mx-auto p-4 md:p-8">
+        {/* My Rank */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-center mb-6 text-white">
+            Your Ranking
+          </h2>
+
+          <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
+            {!isLoadingUser && data ? (
+              <div className="flex justify-between items-center p-3">
+                <div className="flex items-center gap-2">
+                  {getRankIcon(data.rank)}
+                  <span className="font-semibold text-white">
+                    {data.rank
+                      ? `${data.rank}${getOrdinalSuffix(data.rank)}`
+                      : "N/A"}
+                  </span>
+                </div>
+
+                <span className="font-medium text-gray-200">
+                  {data.first_name || "Unknown"} {data.last_name || ""}
+                </span>
+
+                <span className="font-mono text-emerald-400">
+                  {(data.points || 0).toLocaleString()}
+                </span>
+              </div>
+            ) : (
+              <div className="text-center py-4 text-gray-400">
+                {isLoadingUser ? <LoadingSpinner /> : "No data available."}
+              </div>
+            )}
+          </div>
+        </div>
         {/* Main Leaderboard */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
+          <h1 className="text-4xl font-bold mt-6 mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
             Global Leaderboard
           </h1>
 
@@ -134,40 +167,6 @@ export default function Leaderboard() {
                 ) : (
                   "No data available."
                 )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* My Rank */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-center mb-6 text-white">
-            Your Ranking
-          </h2>
-
-          <div className="bg-[#151a3d]/90 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-[#2a2f62]">
-            {!isLoadingUser && data ? (
-              <div className="flex justify-between items-center p-3">
-                <div className="flex items-center gap-2">
-                  {getRankIcon(data.rank)}
-                  <span className="font-semibold text-white">
-                    {data.rank
-                      ? `${data.rank}${getOrdinalSuffix(data.rank)}`
-                      : "N/A"}
-                  </span>
-                </div>
-
-                <span className="font-medium text-gray-200">
-                  {data.first_name || "Unknown"} {data.last_name || ""}
-                </span>
-
-                <span className="font-mono text-emerald-400">
-                  {(data.points || 0).toLocaleString()}
-                </span>
-              </div>
-            ) : (
-              <div className="text-center py-4 text-gray-400">
-                {isLoadingUser ? <LoadingSpinner /> : "No data available."}
               </div>
             )}
           </div>
