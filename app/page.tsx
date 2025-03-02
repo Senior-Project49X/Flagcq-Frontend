@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Homepage from "./homepage/homepage";
 import { loginChecker } from "./lib/login";
+import LoadingComponent from "./component/LoadingComponent";
 export default function Home() {
   const [loading, setLoading] = useState(true); // Add loading state
   useEffect(() => {
@@ -10,12 +11,7 @@ export default function Home() {
   }, [loading]);
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Loading, please wait...</p>
-      </div>
-    );
+    return <LoadingComponent />;
   }
 
   return (
