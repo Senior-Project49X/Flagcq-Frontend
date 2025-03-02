@@ -10,7 +10,12 @@ export default function Home() {
   }, [loading]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading, please wait...</p>
+      </div>
+    );
   }
 
   return (
