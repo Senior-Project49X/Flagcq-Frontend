@@ -325,3 +325,23 @@ export const DeleteCategoryAPI = async (id: number): Promise<any> => {
       return e;
     });
 };
+
+export const GetQuestionUserList = async (
+  page:number,
+  question_id: number,
+  tournament_id: number | undefined
+) => {
+  try {
+    let url = `${ip}/api/question/user-list?page=${page}&id=${question_id}`;
+    if (tournament_id) {
+      url += `&tournament_id=${tournament_id}`;
+    }
+    const response = await axios.get(
+      url,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {}
+};

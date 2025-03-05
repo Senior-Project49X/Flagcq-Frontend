@@ -30,12 +30,14 @@ export default function QuestionPopup(Question: Readonly<State>) {
   const [showQuestion, setShowQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [name, setName] = useState("");
   const [role, setRole] = useState<boolean | null>(null);
   const [showCongratPopup, setShowCongratPopup] = useState(false);
+  const [userListPopup, setUserListPopup] = useState<boolean>(false);
+
   const popupRef = useRef<HTMLDivElement>(null);
   const delRef = useRef<HTMLDivElement>(null);
   const yayRef = useRef<HTMLDivElement>(null);
+  const userListRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setRole(isRoleAdmin() || isRoleTa());
   }, []);
@@ -75,11 +77,19 @@ export default function QuestionPopup(Question: Readonly<State>) {
         delRef.current && !delRef.current.contains(event.target as Node);
       const isOutsideYay =
         yayRef.current && !yayRef.current.contains(event.target as Node);
-      if (isOutsideDelete === null && isOutsideYay === null) {
+      const isOutsideUserList =
+        userListRef.current &&
+        !userListRef.current.contains(event.target as Node);
+      if (
+        isOutsideDelete === null &&
+        isOutsideYay === null &&
+        isOutsideUserList === null
+      ) {
         if (isOutsideQuestion) Question.ClosePopup(false);
       } else {
         if (isOutsideDelete) setShowDeletePopup(false);
         if (isOutsideYay) location.reload();
+        if (isOutsideUserList) setUserListPopup(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -141,10 +151,14 @@ export default function QuestionPopup(Question: Readonly<State>) {
                   </h3>
                   {role && (
                     <AdminEditDelQuestion
+                      userListPopup={userListPopup}
+                      userListRef={userListRef}
+                      setUserListPopup={setUserListPopup}
                       CanEdit={Question.isCanEdit}
                       AdminEditref={popupRef}
                       id={Question.id}
                       setShowPopup={setShowDeletePopup}
+                      tournament_id={Question.tournamentId}
                     />
                   )}
                 </div>
@@ -214,7 +228,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                         <input
                           name="Answer"
                           type="search"
-                          className={`w-full p-4 text-sm border-4 rounded-lg 
+                          className={`w-full p-4 text-sm border-4 rounded-lg  text-black
             ${
               isError
                 ? "border-red-500 focus:ring-red-500 focus:border-red-500"

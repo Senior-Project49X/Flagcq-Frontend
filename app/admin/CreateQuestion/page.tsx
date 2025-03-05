@@ -63,6 +63,9 @@ export default function CreateQuestion() {
   const [description, setDescription] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
+  const [isDescriptionLoaded, setIsDescriptionLoaded] =
+    useState<boolean>(false);
+
   useEffect(() => {
     if (id !== null && id !== undefined) {
       const fetchQuestion = async () => {
@@ -81,9 +84,12 @@ export default function CreateQuestion() {
         setAnswer(getQuestion.answer);
         handleToggle(getQuestion.mode);
         setDescription(getQuestion.description); // Ensure a valid description
+        setIsDescriptionLoaded(true); // Mark description as loaded
         setFile(getQuestion.file_path);
       };
       fetchQuestion();
+    } else {
+      setIsDescriptionLoaded(true); // Mark as loaded for new questions
     }
   }, [id]);
 
@@ -225,6 +231,13 @@ export default function CreateQuestion() {
       router.push("/unauthorized");
     }
   }, [router]);
+
+  const renderRichTextEditor = () => {
+    if (!isDescriptionLoaded) {
+      return <div className="text-white">Loading editor...</div>;
+    }
+    return <RichTextEditor value={description} onChange={setDescription} />;
+  };
 
   return (
     <div className="min-h-screen  text-white">
@@ -401,7 +414,7 @@ export default function CreateQuestion() {
               Description
             </div>
             <div className="bg-gray-700 rounded-md overflow-hidden">
-              <RichTextEditor value={description} onChange={setDescription} />
+              {renderRichTextEditor()}
             </div>
           </div>
 
