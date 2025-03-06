@@ -1,18 +1,19 @@
 "use client";
-
-import React, { FormEvent, useState, useEffect } from "react";
-import Navbar from "../component/navbar";
+import React, { useState, useEffect, FormEvent } from "react";
+import Navbar from "../component/Navbar/navbar";
 import { GetTourList } from "../lib/API/GetTourListAPI";
-import TournamentCard from "../component/TournamentCard";
-import Pagination from "../component/Pagination";
-import { useSearchParams } from "next/navigation";
 import { PostJoinTeam } from "../lib/API/PostJoinTeam";
-import { useRouter } from "next/navigation";
+import TournamentCard from "../component/TournamentCard";
+import MyteamTourlist from "../component/MyteamTourlist";
+import Pagination from "../component/Pagination";
+import { useSearchParams, useRouter } from "next/navigation";
+import { isRoleAdmin } from "../lib/role";
 
-// Define the type for tournament data
+// Types
 interface RemainingTime {
   time: string;
   status: string;
+  color?: string;
 }
 
 interface Tournament {
@@ -25,182 +26,344 @@ interface Tournament {
   event_endDate: string;
   enrollRemaining?: RemainingTime;
   eventRemaining?: RemainingTime;
-  teamId: number;
   teamCount: number;
+  mode: string;
+  teamLimit: number;
+  joinCode: string;
+  hasJoined: boolean;
+  teamId: number;
 }
 
-// Utility function to format date
+// Utility Functions
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // January is 0!
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  return date.toLocaleDateString("en-GB");
 };
 
-export default function Page() {
-  const [tourData, setTourData] = useState<Tournament[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-  const [isLoadingJoin, setIsLoadingJoin] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [inviteCode, setInviteCode] = useState("");
-  const router = useRouter();
+const calculateRemainingTime = (
+  startDate: string,
+  endDate: string
+): RemainingTime => {
+  const now = new Date();
+  const eventStart = new Date(startDate);
+  const eventEnd = new Date(endDate);
+  const remaining = eventStart.getTime() - now.getTime();
 
-  const calculateRemainingTime = (endDate: string): RemainingTime => {
-    const now = new Date();
-    const targetDate = new Date(endDate);
-    const remaining = targetDate.getTime() - now.getTime();
+  // If current time is between start and end (event is ongoing)
+  if (now >= eventStart && now <= eventEnd) {
+    return { time: "ongoing", status: "open", color: "#2ecc71" };
+  }
 
-    if (remaining <= 0) {
-      return { time: "Time Ended", status: "closed" };
-    }
+  // If current time is after event end (event is finished)
+  if (now > eventEnd) {
+    return { time: "closed", status: "closed", color: "#ff4757" };
+  }
 
-    const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+  // If event hasn't started, show countdown
+  const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
+  // Format for hours:minutes:seconds
+  if (days === 0) {
     return {
-      time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+      time: `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
       status: "open",
+      color: "#2ecc71",
     };
+  }
+
+  // Format for days, hours, minutes, seconds
+  return {
+    time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+    status: "open",
+    color: "#2ecc71",
+  };
+};
+
+const calculateEnrollRemainingTime = (endDate: string): RemainingTime => {
+  const now = new Date();
+  const enrollEnd = new Date(endDate);
+  const remaining = enrollEnd.getTime() - now.getTime();
+
+  // If enrollment end date is before now
+  if (enrollEnd < now) {
+    return { time: "closed", status: "closed", color: "#ff4757" };
+  }
+
+  // If enrollment is still open, show countdown
+  const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+  if (days === 0) {
+    return {
+      time: `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+      status: "open",
+      color: "#2ecc71",
+    };
+  }
+
+  return {
+    time: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+    status: "open",
+    color: "#2ecc71",
+  };
+};
+
+// Component for Join Team Form
+const JoinTeamForm = ({
+  isPrivate = false,
+  onClose,
+}: {
+  isPrivate?: boolean;
+  onClose?: () => void;
+}) => {
+  const router = useRouter();
+  const [teamName, setTeamName] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const teamData = await PostJoinTeam({
+        invite_code: inviteCode,
+        teamName: isPrivate ? teamName : "",
+      });
+
+      if (!teamData?.team) throw new Error("Invalid response from server.");
+
+      router.push(
+        `/tournament/Tourteam_member?tournamentId=${teamData.team.tournament_id}&teamId=${teamData.team.id}`
+      );
+      if (onClose) onClose();
+    } catch (error) {
+      setErrorMessage("Code is invalid or Team is full. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  return (
+    <form onSubmit={handleSubmit} className="w-full">
+      {isPrivate && (
+        <input
+          type="text"
+          placeholder="Team Name"
+          className="w-full px-3 py-2 border rounded mb-4 text-center"
+          maxLength={50}
+          value={teamName}
+          onChange={(e) => setTeamName(e.target.value)}
+        />
+      )}
+      <input
+        type="text"
+        placeholder="Invite Code"
+        className="w-full px-3 py-2 border rounded mb-4 text-center"
+        value={inviteCode}
+        onChange={(e) => setInviteCode(e.target.value)}
+      />
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+        disabled={isLoading}
+      >
+        {isLoading ? "Joining..." : "Create"}
+      </button>
+      {errorMessage && (
+        <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+      )}
+    </form>
+  );
+};
+
+// Main Component
+export default function TournamentPage() {
+  const [unjoinedTournaments, setUnjoinedTournaments] = useState<Tournament[]>(
+    []
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
+
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || "1";
+
+  // Check admin status
   useEffect(() => {
-    const fetchTourListData = async () => {
+    setIsAdmin(isRoleAdmin());
+  }, []);
+
+  useEffect(() => {
+    const fetchTournaments = async () => {
+      setUnjoinedTournaments([]);
       try {
         const response = await GetTourList(page);
-        const Tournaments = response.data;
         setTotalPages(response.totalPages);
         setHasNextPage(response.hasNextPage);
-        console.log("Tour list data:", Tournaments);
-
-        if (Array.isArray(Tournaments)) {
-          const initializedData = Tournaments.map((tournament: Tournament) => ({
+        if (Array.isArray(response.data)) {
+          const formattedData = response.data.map((tournament: Tournament) => ({
             ...tournament,
-            enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
-            eventRemaining: calculateRemainingTime(tournament.event_endDate),
+            enrollRemaining: calculateEnrollRemainingTime(
+              tournament.enroll_endDate
+            ),
+            eventRemaining: calculateRemainingTime(
+              tournament.event_startDate,
+              tournament.event_endDate
+            ),
           }));
-          setTourData(initializedData);
-        } else {
-          console.error("Unexpected API response format:", Tournaments);
+          setUnjoinedTournaments(formattedData);
         }
       } catch (error) {
-        console.error("Error fetching tour list data:", error);
+        console.error("Error fetching tournaments:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchTourListData();
+    fetchTournaments();
   }, [page]);
 
-  // This effect sets up the countdown timer, updating every second
   useEffect(() => {
     const interval = setInterval(() => {
-      setTourData((prevData) =>
+      setUnjoinedTournaments((prevData) =>
         prevData.map((tournament) => ({
           ...tournament,
-          enrollRemaining: calculateRemainingTime(tournament.enroll_endDate),
-          eventRemaining: calculateRemainingTime(tournament.event_endDate),
+          enrollRemaining: calculateEnrollRemainingTime(
+            tournament.enroll_endDate
+          ),
+          eventRemaining: calculateRemainingTime(
+            tournament.event_startDate,
+            tournament.event_endDate
+          ),
         }))
       );
     }, 1000);
-
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
-
-  // Join a team
-  const handleJoinTeam = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      setIsLoadingJoin(true);
-      setSuccessMessage(null);
-      const teamData = await PostJoinTeam({ invite_code: inviteCode }); // Joining a team
-      setSuccessMessage("Successfully joined the team!");
-      router.push(
-        `/tournament/Tourteam_member?tournamentId=${teamData.team.tournament_id}&teamId=${teamData.team.id}`
-      );
-    } catch (error) {
-      console.error("Error joining team:", error);
-    } finally {
-      setIsLoadingJoin(false);
-    }
-  };
 
   return (
     <div>
       <Navbar />
       <div className="relative">
-        {/* Join Team Heading */}
-        <h5 className="text-lg font-semibold text-green-600 mb-4 ml-[1470px]">
-          Join Team
-        </h5>
+        <div className="flex-1 flex justify-center">
+          <h5 className="text-2xl font-semibold text-green-600 mt-6">
+            Tournament List
+          </h5>
+        </div>
 
-        {/* Invite Code Form */}
-        <form
-          onSubmit={handleJoinTeam}
-          className="absolute top-10 right-4 w-80 flex items-center space-x-2"
-        >
-          <input
-            type="text"
-            placeholder="Invite Code"
-            className="flex-1 px-3 py-2 border rounded"
-            maxLength={50}
-            value={inviteCode}
-            onChange={(e) => setInviteCode(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-            disabled={isLoadingJoin}
-          >
-            {isLoadingJoin ? "Joining..." : "Join"}
-          </button>
-        </form>
+        {!isAdmin && (
+          <div className="max-w-5xl mx-auto flex justify-center items-center space-x-8 mt-4">
+            <div className="w-96">
+              <h5 className="text-lg font-semibold text-green-600 text-center">
+                Join Team
+              </h5>
+              <JoinTeamForm />
+            </div>
+            <div className="w-96">
+              <h5 className="text-lg font-semibold text-green-600 text-center">
+                Create private team
+              </h5>
+              <button
+                onClick={() => setShowPopup(true)}
+                className="w-full bg-blue-300 text-black py-2 rounded hover:bg-blue-400 transition duration-300"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        )}
 
-        {/* Tournament List */}
-        <h5 className="text-center text-2xl font-semibold text-green-600">
-          Tournament List
-        </h5>
-        <div className="space-y-4 max-w-3xl mx-auto mt-8">
+        {showPopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-2xl w-96 max-w-full relative border border-gray-700">
+              <div className=" px-6 py-4 border-b ">
+                <h2 className="text-xl font-semibold text-green-400">
+                  Create Team
+                </h2>
+                <button
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200 text-2xl"
+                  onClick={() => setShowPopup(false)}
+                >
+                  &times;
+                </button>
+              </div>
+              <br />
+              <JoinTeamForm isPrivate onClose={() => setShowPopup(false)} />
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-4 max-w-3xl mx-auto mt-4">
           {isLoading ? (
             <div className="text-center text-gray-600">Loading...</div>
-          ) : tourData.length > 0 ? (
-            tourData.map((tournament, i) => (
-              <TournamentCard
-                key={i}
-                id={tournament.id}
-                topic={tournament.name}
-                detail={tournament.description}
-                eventStart={formatDate(tournament.event_startDate)}
-                enrollEnd={formatDate(tournament.enroll_endDate)}
-                status={tournament.eventRemaining?.status || "closed"}
-                enrolltime={tournament.enrollRemaining?.time || "Time Ended"}
-                eventtime={tournament.eventRemaining?.time || "Time Ended"}
-                event_endDate={formatDate(tournament.event_endDate)}
-                hasJoined={true}
-                teamId={tournament.teamId}
-                teamCount={0}
-              />
-            ))
+          ) : unjoinedTournaments.length > 0 ? (
+            unjoinedTournaments.map((tournament, i) =>
+              tournament.hasJoined ? (
+                <MyteamTourlist
+                  key={i}
+                  id={tournament.id}
+                  topic={tournament.name}
+                  detail={tournament.description}
+                  eventStart={formatDate(tournament.event_startDate)}
+                  enrollEnd={formatDate(tournament.enroll_endDate)}
+                  status={tournament.eventRemaining?.status || "closed"}
+                  enrolltime={tournament.enrollRemaining?.time || "Time Ended"}
+                  eventtime={tournament.eventRemaining?.time || "Time Ended"}
+                  event_endDate={formatDate(tournament.event_endDate)}
+                  hasJoined={tournament.hasJoined}
+                  teamCount={tournament.teamCount}
+                  mode={tournament.mode}
+                  teamLimit={tournament.teamLimit}
+                  joinCode={tournament.joinCode}
+                  teamId={tournament.teamId}
+                />
+              ) : (
+                <TournamentCard
+                  key={i}
+                  id={tournament.id}
+                  topic={tournament.name}
+                  detail={tournament.description}
+                  eventStart={formatDate(tournament.event_startDate)}
+                  enrollEnd={formatDate(tournament.enroll_endDate)}
+                  status={tournament.eventRemaining?.status || "closed"}
+                  enrolltime={tournament.enrollRemaining?.time || "Time Ended"}
+                  eventtime={tournament.eventRemaining?.time || "Time Ended"}
+                  event_endDate={formatDate(tournament.event_endDate)}
+                  hasJoined={tournament.hasJoined}
+                  teamCount={tournament.teamCount}
+                  mode={tournament.mode}
+                  teamLimit={tournament.teamLimit}
+                  joinCode={tournament.joinCode}
+                />
+              )
+            )
           ) : (
             <div className="text-center text-gray-600">
-              No tournaments found.
+              No tournaments available.
             </div>
           )}
         </div>
       </div>
 
-      {/* Pagination */}
       <Pagination
-        pagePath={"/tournament?page="}
+        pagePath="/tournament?page="
         pageNumber={page}
         totalPages={totalPages}
         hasNextPage={hasNextPage}

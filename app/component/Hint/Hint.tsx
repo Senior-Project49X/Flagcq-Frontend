@@ -10,6 +10,7 @@ type Hint = {
   penalty: number;
   used: boolean;
   isLast: boolean;
+  tournamentId?: number;
 };
 
 export default function Hint({
@@ -19,16 +20,18 @@ export default function Hint({
   penalty,
   used,
   isLast,
+  tournamentId,
 }: Readonly<Hint>) {
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [showHint, setShowHint] = useState<boolean>(false);
+  const [showGreen, setShowGreen] = useState<boolean>(used);
   const [hintUsed, setHintUsed] = useState<boolean>(used);
   const [hintDescription, setHintDescription] = useState<string>(description);
-  const handleShowHint = () => {
-    console.log("id", UseHintAPI(id));
-
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const handleShowHint = async () => {
     setHintUsed(true);
-    setShowHint(true);
   };
 
   const handleShowConfirm = () => {
@@ -43,11 +46,13 @@ export default function Hint({
     <div>
       {showConfirm && (
         <HintConfirm
+          setShowGreen={setShowGreen}
           id={id}
           ClosePopup={CloseModal}
           UserConfirm={handleShowHint}
           cost={penalty}
           isUsed={hintUsed}
+          tournamentId={tournamentId}
           Topic="SomeTopic"
         />
       )}
@@ -57,7 +62,7 @@ export default function Hint({
         type="button"
         onClick={handleShowConfirm}
         className={`px-4 py-2 text-white ${
-          hintUsed || penalty === 0
+          showGreen || penalty === 0
             ? "bg-green-500 hover:bg-green-600"
             : "bg-blue-500 hover:bg-blue-600"
         }   ${index === 0 ? "rounded-l-md" : ""} ${

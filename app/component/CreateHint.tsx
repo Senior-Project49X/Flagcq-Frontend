@@ -1,4 +1,9 @@
 import React from "react";
+import dynamic from "next/dynamic";
+const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 
 type Hint = {
   index: number;
@@ -20,12 +25,17 @@ export default function CreateHint({
       <div className="mb-2  border border-gray-300 rounded p-4">
         <label>
           Detail:
-          <textarea
+          {/* <textarea
             className="w-full p-2 border border-gray-300 rounded"
             value={detail}
             onChange={(e) => handleHintChange(index, "detail", e.target.value)}
-          />
+            required
+          /> */}
         </label>
+        <RichTextEditor
+          value={detail}
+          onChange={(value) => handleHintChange(index, "detail", value)}
+        />
         <br />
         <label>
           Penalty:
@@ -33,8 +43,9 @@ export default function CreateHint({
             type="number"
             min="0"
             max="10000000"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded bg-white text-black"
             value={penalty}
+            required
             onChange={(e) => handleHintChange(index, "penalty", e.target.value)}
             onKeyDown={(e) => {
               if (

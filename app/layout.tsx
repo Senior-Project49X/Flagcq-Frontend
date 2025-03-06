@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "FlagConquest",
   description:
     "แอปพลิเคชันฝึกการ capture the flag เพื่อให้นักศึกษาภาควิชาวิศวกรรมคอมพิวเตอร์ได้ทำการฝึกซ้อม เป็นส่วนหนึ่งของวิชา Project (261492) ภาควิชาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์",
+  icons: {
+    icon: "/logo-login.svg",
+  },
 };
 
 export default function RootLayout({

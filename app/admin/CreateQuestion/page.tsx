@@ -1,7 +1,6 @@
 "use client";
 import React, { FormEvent, useEffect, useState } from "react";
-import Image from "next/image";
-import Navbar from "../../component/navbar";
+import Navbar from "../../component/Navbar/navbar";
 import {
   CreateQuestionAPI,
   DownloadQuestionsByID,
@@ -13,70 +12,68 @@ import CreateCategories from "../component/CreateCategories";
 import LoadingPopup from "../../component/LoadingPopup";
 import CreateHint from "../../component/CreateHint";
 import { isRoleUser } from "../../lib/role";
-import { useRouter } from "next/navigation";
-import { get } from "http";
-interface CreateNewQuestion {
-  CategoriesId: string | null;
-  Title: string;
-  Description: string;
-  Answer: string;
-  Point: number;
-  DifficultyId: string;
-  FilePath: File | null;
-  Mode: string[];
-}
+import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import ModeEditOutlineRoundedIcon from "@mui/icons-material/ModeEditOutlineRounded";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import EditCategories from "../component/EditCategories";
+import DeleteCategories from "../component/DeleteCategories";
+const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
 interface ButtonStates {
   [key: string]: boolean; // Define a dynamic object where keys are strings and values are boolean
 }
 interface Category {
-  [x: string]: any;
   id: string;
   name: string;
 }
-interface EditQuestionProps {
-  id: string | null | undefined;
-}
-export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
+
+export default function CreateQuestion() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("QuestionID")
+    ? Number(searchParams.get("QuestionID"))
+    : null;
   const router = useRouter();
   const [modeSelection, setModeSelection] = useState<ButtonStates>({
     Practice: false,
     Tournament: false,
-    UnPublic: true,
+    Unpublished: true,
   });
-  const [role, setRole] = useState<boolean | undefined | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [selectedTournament, setSelectedTournament] = useState<string[]>([]);
-  const [categories, setCategories] = useState<Category[]>(
-    [] as unknown as Category[]
-  );
-  const [newCategory, setNewCategory] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Category[]>([] as Category[]);
+  const newCategory = false;
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [hints, setHints] = useState<
-    { id: string | number; detail: string; penalty: number }[]
+    { id: string | number | null; detail: string; penalty: number }[]
   >([]);
-  const [category, setCategory] = useState<string>("");
-  const [difficultysID, setDifficultysID] = useState<string>("");
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const category = "";
+  const [difficultyID, setDifficultyID] = useState<string>("");
+  const [isCreateCategory, setIsCreateCategory] = useState<boolean>(false);
+  const [isEditCategory, setIsEditCategory] = useState<boolean>(false);
+  const [isDeleteCategory, setIsDeleteCategory] = useState<boolean>(false);
   const [point, setPoint] = useState("");
   const [answer, setAnswer] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
+  const [isDescriptionLoaded, setIsDescriptionLoaded] =
+    useState<boolean>(false);
+
   useEffect(() => {
     if (id !== null && id !== undefined) {
-      console.log("Edit question with ID:", id);
       const fetchQuestion = async () => {
         const getQuestion = await GetQuestionsByID(id);
-
         setTopic(getQuestion.title);
         setPoint(getQuestion.point);
         setSelectedCategory(getQuestion.categories_id);
-
-        setDifficultysID(getQuestion.difficultys_id);
+        setDifficultyID(getQuestion.difficulty_id);
         setHints(
           getQuestion.hints.map((hint: any) => ({
             id: hint.id,
@@ -86,10 +83,13 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
         );
         setAnswer(getQuestion.answer);
         handleToggle(getQuestion.mode);
-        setDescription(getQuestion.description);
-        setFile(getQuestion.file_path); // Update to handle file path string
+        setDescription(getQuestion.description); // Ensure a valid description
+        setIsDescriptionLoaded(true); // Mark description as loaded
+        setFile(getQuestion.file_path);
       };
       fetchQuestion();
+    } else {
+      setIsDescriptionLoaded(true); // Mark as loaded for new questions
     }
   }, [id]);
 
@@ -107,16 +107,14 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
 
     formData.append("Practice", modeSelection.Practice.toString());
     formData.append("Tournament", modeSelection.Tournament.toString());
-    console.log(id);
+    formData.append("Description", description);
+    formData.append(
+      "isFileEdited",
+      typeof file === "string" ? "false" : "true"
+    );
 
     if (id !== null && id !== undefined) {
-      if (id) {
-        EditQuestionAPI(
-          formData,
-          { setIsFailed, setMessage, setIsSuccess },
-          id
-        );
-      }
+      EditQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess }, id);
     } else {
       CreateQuestionAPI(formData, { setIsFailed, setMessage, setIsSuccess });
     }
@@ -124,25 +122,41 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     // setFile(null); // Reset file state to avoid InvalidStateError
   };
 
+  const [selectedMode, setSelectedMode] = useState<string>("Unpublished");
+
   const handleToggle = (buttonKey: string): void => {
-    if (buttonKey === "UnPublic") {
-      setModeSelection((prevStates) => ({
-        Practice: false,
-        Tournament: false,
-        UnPublic: true,
-      }));
-    } else if (buttonKey === "Tournament") {
-      setModeSelection((prevStates) => ({
-        Practice: false,
-        Tournament: true,
-        UnPublic: false,
-      }));
-    } else if (buttonKey === "Practice") {
-      setModeSelection((prevStates) => ({
-        Practice: true,
-        Tournament: false,
-        UnPublic: false,
-      }));
+    setModeSelection((prevStates) => ({
+      Practice: buttonKey === "Practice",
+      Tournament: buttonKey === "Tournament",
+      Unpublished: buttonKey === "Unpublished",
+    }));
+    setSelectedMode(buttonKey);
+  };
+
+  const getModeMessage = (): JSX.Element => {
+    switch (selectedMode) {
+      case "Practice":
+        return (
+          <span>
+            This mode will go to{" "}
+            <span className="underline">practice pool</span>
+          </span>
+        );
+      case "Tournament":
+        return (
+          <span>
+            This mode will go to{" "}
+            <span className="underline">tournament pool</span>
+          </span>
+        );
+      case "Unpublic":
+        return (
+          <span>
+            This mode will <span className="underline">not go to any pool</span>
+          </span>
+        );
+      default:
+        return <span></span>;
     }
   };
 
@@ -159,7 +173,7 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     if (hints.length >= 3) return;
     console.log("Before addition:", hints);
 
-    setHints([...hints, { id: crypto.randomUUID(), detail: "", penalty: 0 }]);
+    setHints([...hints, { id: null, detail: "", penalty: 0 }]);
     console.log("After addition:", hints);
   };
 
@@ -194,9 +208,9 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     const value = event.target.value;
     setSelectedCategory(value);
     if (value === "New Category") {
-      setIsModalVisible(true);
+      setIsCreateCategory(true);
     } else {
-      setIsModalVisible(false);
+      setIsCreateCategory(false);
     }
   };
 
@@ -216,10 +230,17 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
     if (isRoleUser()) {
       router.push("/unauthorized");
     }
-  }, []);
+  }, [router]);
+
+  const renderRichTextEditor = () => {
+    if (!isDescriptionLoaded) {
+      return <div className="text-white">Loading editor...</div>;
+    }
+    return <RichTextEditor value={description} onChange={setDescription} />;
+  };
 
   return (
-    <>
+    <div className="min-h-screen  text-white">
       {loading && (
         <LoadingPopup
           setLoading={setLoading}
@@ -228,145 +249,245 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
           Message={message}
         />
       )}
-      {isModalVisible && (
+      {isCreateCategory && (
         <CreateCategories
           onClose={async (Category: string) => {
-            setIsModalVisible(false);
+            setIsCreateCategory(false);
             setCategories(await GetCategories());
             setSelectedCategory(Category);
-            console.log("CIDC,", Category);
           }}
-        >
-          {/* Modal content goes here */}
-          <h2>Create New Category</h2>
-          {/* Add form or other content for creating a new category */}
-        </CreateCategories>
+        />
+      )}
+      {isEditCategory && (
+        <EditCategories
+          id={selectedCategory}
+          name={
+            categories.find((c: Category) => c.id === selectedCategory)?.name
+          }
+          onClose={async (CategoryID: string) => {
+            setIsEditCategory(false);
+            setCategories(await GetCategories());
+            setSelectedCategory(CategoryID);
+          }}
+        />
+      )}
+      {isDeleteCategory && (
+        <DeleteCategories
+          id={selectedCategory}
+          onClose={async (CategoryID: string) => {
+            setIsDeleteCategory(false);
+            setCategories(await GetCategories());
+            setSelectedCategory(CategoryID);
+          }}
+        />
       )}
       <Navbar />
-      <div className="max-w-3xl mx-auto p-8 bg-gray-100 p-6 rounded-lg shadow-md text-black">
-        <form onSubmit={onCreateQuestion}>
-          <label className="mr-2">
-            Topic{" "}
+      <div className="max-w-3xl mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-4 text-center text-green-400 drop-shadow-lg">
+          Create Question
+        </h1>
+
+        <form
+          onSubmit={onCreateQuestion}
+          className="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700"
+        >
+          {/* Topic */}
+          <div className="mb-4">
+            <label
+              htmlFor="topic"
+              className="block text-base font-medium mb-1 text-green-400"
+            >
+              Topic
+            </label>
             <input
+              id="topic"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               type="text"
               name="title"
-              className="w-full p-2 border-2 border-gray-300 rounded"
+              className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+              required
+              maxLength={50}
             />
-          </label>
-          <br />
-          <label>
-            Category{" "}
-            <select
-              name="categories_id"
-              className="w-full p-2 border-2 border-gray-300 rounded"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-            >
-              <option value={category}>---please select category---</option>
-              {categories.map((category: Category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-              <option value={"New Category"}>[New Category]</option>
-            </select>
+          </div>
+
+          {/* Category */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-1 text-green-400">
+              Category
+            </div>
+            <div className="flex gap-1">
+              <select
+                name="categories_id"
+                className="flex-1 p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                required
+              >
+                <option value={category}>---please select category---</option>
+                {categories.map((category: Category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+                <option value={"New Category"}>[New Category]</option>
+              </select>
+              {selectedCategory !== "" && (
+                <>
+                  <button
+                    className="p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsEditCategory(true);
+                    }}
+                  >
+                    <ModeEditOutlineRoundedIcon />
+                  </button>
+                  <button
+                    className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsDeleteCategory(true);
+                    }}
+                  >
+                    <DeleteRoundedIcon />
+                  </button>
+                </>
+              )}
+            </div>
             {newCategory && (
               <input
                 type="text"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
+                className="mt-1 w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
               />
             )}
-          </label>
-          <br />
-          <label>
-            Difficulty{" "}
+          </div>
+
+          {/* Difficulty */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-1 text-green-400">
+              Difficulty
+            </div>
             <select
-              value={difficultysID}
-              name="difficultys_id"
-              className="w-full p-2 border-2 border-gray-300 rounded"
-              onChange={(e) => setDifficultysID(e.target.value)}
+              value={difficultyID}
+              name="difficulty_id"
+              className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+              onChange={(e) => setDifficultyID(e.target.value)}
+              required
             >
               <option value={""}>---please select Difficulty---</option>
               <option value={"Easy"}>Easy</option>
               <option value={"Medium"}>Medium</option>
               <option value={"Hard"}>Hard</option>
             </select>
-          </label>
-          <br />
-          <div>
-            <p>Mode</p>
-            {Object.keys(modeSelection).map((buttonKey) => (
-              <button
-                key={buttonKey}
-                type="button"
-                className={`px-4 py-2 font-bold rounded transition ${
-                  modeSelection[buttonKey]
-                    ? "bg-green-500 text-white"
-                    : "bg-red-500 text-white"
-                }`}
-                onClick={() => handleToggle(buttonKey)}
-              >
-                {buttonKey}
-              </button>
-            ))}
           </div>
-          <label>
-            Description{" "}
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              name="Description"
-              className="w-full p-2 border-2 border-gray-300 rounded"
-            />
-          </label>
-          <br />
-          <p>Hint</p>
-          <div>
+
+          {/* Mode */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-2 text-green-400">
+              Mode
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(modeSelection).map((buttonKey) => (
+                <button
+                  key={buttonKey}
+                  type="button"
+                  className={`px-4 py-2 rounded-md text-white font-medium transition-all duration-300 ${
+                    modeSelection[buttonKey]
+                      ? "bg-green-500 shadow-md"
+                      : "bg-gray-600 hover:bg-gray-500"
+                  }`}
+                  onClick={() => handleToggle(buttonKey)}
+                >
+                  {buttonKey}
+                </button>
+              ))}
+            </div>
+            <div className="mt-4 text-sm text-red-500">{getModeMessage()}</div>
+          </div>
+
+          {/* Description */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-1 text-green-400">
+              Description
+            </div>
+            <div className="bg-gray-700 rounded-md overflow-hidden">
+              {renderRichTextEditor()}
+            </div>
+          </div>
+
+          {/* Hints */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-2 text-green-400">
+              Hints
+            </div>
             {hints.length < 3 && (
               <button
                 type="button"
                 onClick={addHint}
-                className="p-2 border rounded border-gray-300 mb-2 bg-green-500 text-white hover:bg-green-600 transition-colors duration-100 "
+                className="px-4 py-2 bg-green-500 text-white rounded-md font-medium transition-all duration-300 hover:bg-green-600 mb-2"
               >
                 Add Hint
               </button>
             )}
+            <div className="space-y-2">
+              {hints.length > 0 &&
+                hints.map((hint, index) => (
+                  <CreateHint
+                    key={index}
+                    index={index}
+                    detail={hint.detail}
+                    penalty={hint.penalty}
+                    handleHintChange={handleHintChange}
+                    removeHint={removeHint}
+                  />
+                ))}
+            </div>
           </div>
-          {hints.length > 0 &&
-            hints.map((hint, index) => (
-              <CreateHint
-                key={hint.id}
-                index={index}
-                detail={hint.detail}
-                penalty={hint.penalty}
-                handleHintChange={handleHintChange}
-                removeHint={removeHint}
-              />
-            ))}
 
-          <br />
-          <label>{`Answer: CTFCQ{ `}</label>
-          <input
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            name="Answer"
-            type="text"
-            className=" p-2 border-2 border-gray-300 rounded"
-          />
-          <span>{` }`}</span>
-          <br />
-          <label>
-            Point{}
+          {/* Answer */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-1 text-green-400">
+              Answer
+            </div>
+            <div className="flex items-center gap-1">
+              {modeSelection["Practice"] && (
+                <span className="text-white">CTFCQ{" {"}</span>
+              )}
+              <input
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                name="Answer"
+                type="text"
+                className="flex-1 p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+                required
+              />
+              {modeSelection["Practice"] && (
+                <span className="text-white">{"}"}</span>
+              )}
+            </div>
+            {modeSelection["Practice"] && (
+              <p className="mt-1 text-red-400 text-sm">
+                Warning: In practice mode your answer will be wrapped by CTFCQ
+                {"{YourAnswer}"}
+              </p>
+            )}
+          </div>
+
+          {/* Points */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-1 text-green-400">
+              Points
+            </div>
             <input
               name="point"
               type="number"
               min="0"
               max="10000000"
-              className="p-2 border-2 border-gray-300 rounded"
+              className="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:border-green-400 focus:ring-green-400"
+              required
               onKeyDown={(e) => {
                 if (
                   e.key === "e" ||
@@ -379,46 +500,88 @@ export default function CreateQuestion({ id }: Readonly<EditQuestionProps>) {
               value={point}
               onChange={handleNumberChange}
             />
-          </label>
-          <br />
-          <label>
-            File{}
-            <input
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              name="file"
-              type="file"
-              className="p-2 border border-gray-300 rounded"
-            />
+          </div>
+
+          {/* File Upload */}
+          <div className="mb-4">
+            <div className="block text-base font-medium mb-2 text-green-400">
+              Upload File
+            </div>
+            <div className="flex gap-2 items-center">
+              {/* Hidden file input */}
+              <input
+                id="file-upload"
+                type="file"
+                name="file"
+                className="hidden"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                ref={(input) => {
+                  if (input && file === null) input.value = "";
+                }}
+              />
+              {/* Custom file upload button */}
+              <label
+                htmlFor="file-upload"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md font-medium cursor-pointer hover:bg-blue-600 transition-all duration-300"
+              >
+                Choose File
+              </label>
+              {/* File Name Display */}
+              {file && typeof file !== "string" && (
+                <span className="text-white">{file.name}</span>
+              )}
+              {/* Delete Button */}
+              <button
+                type="button"
+                className="px-3 py-2 bg-red-500 text-white rounded-md font-medium hover:bg-red-600 transition-all duration-300"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setFile(null);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+            {/* File Download (if applicable) */}
             {file && typeof file === "string" && (
-              <p>
+              <div className="mt-1 text-white text-sm">
                 Current file:
                 {id && (
                   <button
-                    type="button" // Ensure the button does not submit the form
+                    type="button"
                     onClick={(e) => {
-                      e.preventDefault(); // Prevent form submission
+                      e.preventDefault();
                       DownloadQuestionsByID(id);
                     }}
+                    className="ml-1 text-green-400 hover:text-green-300"
                   >
                     {file}
                   </button>
                 )}
-              </p>
+              </div>
             )}
-          </label>
-          <br />
+            {/* File Size Limit Notice */}
+            <p className="mt-2 text-sm text-gray-400">
+              * Maximum file size: 200MB
+            </p>
+            <p className="mt-2 text-sm text-gray-400">
+              * Only .zip files are allowed
+            </p>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full p-2 rounded font-bold ${
+            className={`w-full py-3 rounded-md font-bold text-base transition-all duration-300 ${
               loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-500 hover:bg-red-600 text-white"
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600 text-white shadow-md"
             }`}
           >
-            Confirm
+            {loading ? "Creating Question..." : "Create Question"}
           </button>
         </form>
       </div>
-    </>
+    </div>
   );
 }

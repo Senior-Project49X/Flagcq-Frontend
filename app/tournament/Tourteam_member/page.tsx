@@ -24,6 +24,7 @@ export default function Tourteam_member() {
     teamName: string;
     invitedCode: string;
     memberCount: number;
+    memberLimit: number;
     members: {
       userId: number;
       isLeader: boolean;
@@ -54,7 +55,7 @@ export default function Tourteam_member() {
     };
 
     fetchTourMemData();
-  }, []);
+  }, [tournamentId, teamId]);
 
   useEffect(() => {
     if (TourMemData && TourMemData.members && TourMemData.members.length > 0) {
@@ -68,28 +69,16 @@ export default function Tourteam_member() {
         setRole("member");
       }
     }
-  }, [TourMemData]);
+  }, [TourMemData, data]);
 
   if (role === null) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-[#090147] text-white">
+    <div className="min-h-screen text-white">
       {role === "leader" && <Leader />}
       {role === "member" && <Member />}
-      <div className=" flex justify-center">
-        <button
-          onClick={() =>
-            router.push(
-              `/tournament/TournamentPage?tournamentId=${tournamentId}`
-            )
-          }
-          className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-lg font-medium"
-        >
-          Go to Tournament Page
-        </button>
-      </div>
     </div>
   );
 }

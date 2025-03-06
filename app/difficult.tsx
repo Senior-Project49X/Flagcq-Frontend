@@ -1,69 +1,78 @@
 "use client";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 
 interface DifficultProps {
-  selectedDifficulty: string | null;
+  selectedDifficulty: string;
   onDifficultyClick: (difficulty: string) => void;
 }
+
+const DIFFICULTY_OPTIONS = ["All Difficulty", "Easy", "Medium", "Hard"];
 
 export default function Difficult({
   selectedDifficulty,
   onDifficultyClick,
 }: DifficultProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleDifficultySelect = (difficulty: string) => {
+    onDifficultyClick(difficulty);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="bg-[#090147] py-4 flex justify-center relative h3/6">
-      {/* Main container: Category on the left */}
-      <div className="flex space-x-8 w-full max-w-7xl">
-        {/* Category Box */}
-        <div className=" rounded-lg p-6 w-64  relative h-full">
-          {/* Difficulty Header */}
-          <div className="flex items-center space-x-4 mb-4 mx-4">
-            <Image
-              src="/category.svg"
-              alt="Category logo"
-              width={50}
-              height={50}
-              className="object-contain"
-            />
+    <div className=" px-10">
+      <div className="w-full">
+        <div className="rounded-lg p-6 h-full">
+          <div className="items-center mb-2">
             <h1 className="text-red-400 text-xl font-bold">Difficulty</h1>
           </div>
 
-          {/* Difficulty List */}
-          <div className="flex flex-col space-y-4">
+          <div className="relative" ref={dropdownRef}>
             <button
-              onClick={() => onDifficultyClick("All Difficulty")}
-              className={`${
-                selectedDifficulty === "All Difficulty"
-                  ? "bg-red-500"
-                  : "bg-[#0c0332]"
-              } text-white py-2 px-4 rounded-lg hover:bg-red-500`}
+              onClick={toggleDropdown}
+              className="bg-gray-900 text-white py-2 px-4 rounded-lg w-full text-left h-12 border-green-300 border-2 hover:bg-gray-800"
             >
-              All Difficulty
+              {selectedDifficulty || "Select Difficulty"}
             </button>
-            <button
-              onClick={() => onDifficultyClick("Easy")}
-              className={`${
-                selectedDifficulty === "Easy" ? "bg-red-500" : "bg-[#0c0332]"
-              } text-white py-2 px-4 rounded-lg hover:bg-red-500`}
-            >
-              Easy
-            </button>
-            <button
-              onClick={() => onDifficultyClick("Medium")}
-              className={`${
-                selectedDifficulty === "Medium" ? "bg-red-500" : "bg-[#0c0332]"
-              } text-white py-2 px-4 rounded-lg hover:bg-red-500`}
-            >
-              Medium
-            </button>
-            <button
-              onClick={() => onDifficultyClick("Hard")}
-              className={`${
-                selectedDifficulty === "Hard" ? "bg-red-500" : "bg-[#0c0332]"
-              } text-white py-2 px-4 rounded-lg hover:bg-red-500`}
-            >
-              Hard
-            </button>
+
+            {isOpen && (
+              <ul className="absolute mt-2 bg-gray-700 border rounded-lg shadow-lg w-full z-10">
+                {DIFFICULTY_OPTIONS.map((difficulty) => (
+                  <li key={difficulty} className="px-4 py-2 hover:bg-gray-500">
+                    <label className="flex items-center space-x-2 cursor-pointer text-white">
+                      <input
+                        type="radio"
+                        value={difficulty}
+                        checked={selectedDifficulty === difficulty}
+                        onChange={() => handleDifficultySelect(difficulty)}
+                        className="form-radio w-4 h-4 text-green-500 bg-green-500 border-green-500 rounded-full accent-green-400/25"
+                      />
+                      <span>{difficulty}</span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>

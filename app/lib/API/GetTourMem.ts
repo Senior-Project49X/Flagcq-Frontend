@@ -4,7 +4,7 @@ const ip = process.env.NEXT_PUBLIC_IP_URL;
 export const GetTourMem = async (tournament_id: number, team_id: number) => {
   try {
     const resp = await axios.get(
-      `${ip}/teams/member_page/${tournament_id}/${team_id}`,
+      `${ip}/api/teams/member_page/${tournament_id}/${team_id}`,
       {
         withCredentials: true,
       }

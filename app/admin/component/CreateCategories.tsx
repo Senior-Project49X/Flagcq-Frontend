@@ -1,13 +1,13 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useEffect, useRef } from "react";
 import { CreateCategoriesAPI } from "../../lib/API/QuestionAPI";
+
 type ModalProps = {
-  onClose: (Category: string) => void;
-  children: React.ReactNode;
+  onClose: (category: string) => void;
 };
-export default function CreateCategories({
-  onClose,
-  children,
-}: Readonly<ModalProps>) {
+
+export default function CreateCategories({ onClose }: Readonly<ModalProps>) {
+  const categoryRef = useRef<HTMLDivElement>(null);
+
   const onCreateCategories = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -16,39 +16,63 @@ export default function CreateCategories({
     if (category && typeof category === "string") {
       const categoryId = await CreateCategoriesAPI(category);
       onClose(categoryId);
-      console.log("categoryId", categoryId);
     } else {
       onClose("");
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        categoryRef.current &&
+        !categoryRef.current.contains(event.target as Node)
+      ) {
+        onClose("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
   return (
-    <>
-      <button
-        className=" justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-        onMouseDown={() => onClose("")}
+    <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
+      <div
+        className="bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 border border-gray-700 text-center"
+        ref={categoryRef}
       >
-        <button
-          className="select-text cursor-auto relative w-auto my-6 mx-auto max-w-3xl"
-          onMouseDown={(e) => e.stopPropagation()}
+        <h2 className="text-green-400 font-bold text-2xl mb-4">
+          Create New Category
+        </h2>
+        <form
+          onSubmit={onCreateCategories}
+          className="flex flex-col items-center gap-4"
         >
-          <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-            <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-              <form onSubmit={onCreateCategories}>
-                <input
-                  type="text"
-                  name="Category"
-                  className="ml-2 text-red-400 border-2 border-stone-950 rounded-md p-1  "
-                />
-                <button type="submit">Submit</button>
-              </form>
-            </div>
+          <input
+            type="text"
+            name="Category"
+            className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Enter category name"
+          />
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => onClose("")}
+              type="button"
+              className="px-6 py-3 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-3 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-all duration-300 disabled:opacity-50"
+            >
+              Create
+            </button>
           </div>
-        </button>
-      </button>
-      <button
-        className="opacity-40 fixed inset-0 z-40 bg-black cursor-auto"
-        onMouseDown={() => onClose("")}
-      ></button>
-    </>
+        </form>
+      </div>
+    </div>
   );
 }

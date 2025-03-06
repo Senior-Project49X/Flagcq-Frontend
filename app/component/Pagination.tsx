@@ -10,7 +10,7 @@ type PageNumberProps = {
 
 export default function Pagination({
   pageNumber,
-  pagePath: pageName,
+  pagePath,
   totalPages,
   hasNextPage,
 }: Readonly<PageNumberProps>) {
@@ -59,50 +59,69 @@ export default function Pagination({
 
   return (
     <div className="flex justify-center mt-6">
-      <div className="flex gap-2 bg-white rounded-lg px-4 py-2 text-center">
+      <div className="flex gap-2 rounded-lg text-center">
         {currentPage > 1 && (
-          <Link href={`${pageName}${currentPage - 1}`}>{"<<"}</Link>
+          <Link
+            href={`${pagePath}${currentPage - 1}`}
+            scroll={false}
+            className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
+          >
+            {"<<"}
+          </Link>
         )}
 
-        {visiblePages.map((page, index) => (
-          <React.Fragment key={page}>
-            {index === 0 && page > 1 && (
-              <React.Fragment>
-                <Link href={`${pageName}1`} className="flex  text-gray-600 ">
-                  1
-                </Link>
+        {totalPages > 1 &&
+          visiblePages.map((page, index) => (
+            <React.Fragment key={page}>
+              {index === 0 && page > 1 && (
+                <React.Fragment>
+                  <Link
+                    href={`${pagePath}1`}
+                    scroll={false}
+                    className="flex bg-gray-800 "
+                  >
+                    1
+                  </Link>
 
-                {page > 3 && <span>...</span>}
-              </React.Fragment>
-            )}
+                  {page > 3 && <span>...</span>}
+                </React.Fragment>
+              )}
 
-            <Link
-              href={`${pageName}${page}`}
-              className={` px-4 py-2 ${
-                page === currentPage
-                  ? "bg-blue-600 text-white rounded-full border border-blue-600"
-                  : "text-gray-600 border border-sky-500 rounded-full"
-              }`}
-            >
-              {page}
-            </Link>
+              <Link
+                href={`${pagePath}${page}`}
+                scroll={false}
+                className={`px-4 py-2 text-green-400 hover:bg-gray-800 transition-colors ${
+                  page === currentPage
+                    ? "bg-gray-800  rounded-md text-xl"
+                    : " bg-[#0D1B2A] rounded-md"
+                }`}
+              >
+                {page}
+              </Link>
 
-            {index === visiblePages.length - 1 && page < totalPages && (
-              <React.Fragment>
-                {page < totalPages - 1 && <span>...</span>}
-                <Link
-                  href={`${pageName}${totalPages}`}
-                  className="w-8 h-8 p-0 text-gray-600"
-                >
-                  {totalPages}
-                </Link>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        ))}
+              {index === visiblePages.length - 1 && page < totalPages && (
+                <React.Fragment>
+                  {page < totalPages - 1 && <span>...</span>}
+                  <Link
+                    href={`${pagePath}${totalPages}`}
+                    scroll={false}
+                    className="w-8 h-8 p-0 text-gray-600 "
+                  >
+                    {totalPages}
+                  </Link>
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          ))}
 
         {hasNextPage && currentPage < totalPages && (
-          <Link href={`${pageName}${currentPage + 1}`}>{">>"}</Link>
+          <Link
+            href={`${pagePath}${currentPage + 1}`}
+            scroll={false}
+            className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
+          >
+            {">>"}
+          </Link>
         )}
       </div>
     </div>

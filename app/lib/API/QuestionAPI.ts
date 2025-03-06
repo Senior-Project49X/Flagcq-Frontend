@@ -20,7 +20,6 @@ export const CreateQuestionAPI = async (
       },
     })
     .then((resp) => {
-      console.log(resp);
       setState.setIsSuccess(true);
       if (resp.status === 200) {
         return resp.data;
@@ -28,7 +27,6 @@ export const CreateQuestionAPI = async (
     })
     .catch((e) => {
       setState.setIsFailed(true);
-      console.log("e", e.response.data.message);
       setState.setMessage(e.response.data.message);
 
       return e;
@@ -38,7 +36,7 @@ export const CreateQuestionAPI = async (
 export const EditQuestionAPI = async (
   CreateData: FormData,
   setState: SetState,
-  id: string 
+  id: number
 ): Promise<any> => {
   axios
     .put(`${ip}/api/questions/${id}`, CreateData, {
@@ -48,7 +46,6 @@ export const EditQuestionAPI = async (
       },
     })
     .then((resp) => {
-      console.log(resp);
       setState.setIsSuccess(true);
       if (resp.status === 200) {
         return resp.data;
@@ -56,50 +53,47 @@ export const EditQuestionAPI = async (
     })
     .catch((e) => {
       setState.setIsFailed(true);
-      console.log("e", e.response.data.message);
       setState.setMessage(e.response.data.message);
 
       return e;
     });
 };
 
-// export const GetQuestions = async (
-//   selectedCategory: string,
-//   selectedDifficulty: string,
-//   page: string | null
-// ) => {
-//   const NewPage = page ?? 1;
-  
-//   try {
-    
-//     const resp = await axios.get(
-//       `${ip}/api/questions/practice?mode=Practice${
-//         selectedCategory === "All Categories"
-//           ? ""
-//           : `&category=${selectedCategory}`
-//       }${
-//         selectedDifficulty === "All Difficulty"
-//           ? ""
-//           : `&Difficulty=${selectedDifficulty}`
-//       }&page=${NewPage}`,
-//       { withCredentials: true }
-//     );
-//     return resp.data;
-//   } catch (e) {
-//     console.error("Error fetching questions:", e);
-//   }
-//   // console.log(`${ip}/api/questions/practice?${selectedCategory==="All Categories" ? "":`category=${selectedCategory}`}${selectedDifficulty==="All Difficulty" ? "":`&Difficulty=${selectedDifficulty}&`}page=${NewPage}`)
-// };
+export const CreateQuestionTournamentAPI = async (
+  question_id: number[],
+  tournament_id: number
+): Promise<any> => {
+  try {
+    const response = await axios.post(
+      `${ip}/api/questions/tournament`,
+      {
+        question_id: question_id,
+        tournament_id: tournament_id,
+      },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json", // Use application/json if the data is not a form
+        },
+      }
+    );
+  } catch (error: any) {}
+};
 
 export const GetQuestions = async (
   selectedCategory: string,
   selectedDifficulty: string,
   page: string | null,
-  mode: string
+  mode: string,
+  tournament_id?: number,
+  isTornamentSelected?: boolean,
+  sort?: { name: string; order: string }
 ) => {
   const NewPage = page ?? 1;
-
-  let url = isRoleAdmin() ? `${ip}/api/questions/admin?page=${NewPage}` : `${ip}/api/questions/user?&page=${NewPage}`;
+  const useSelected = isTornamentSelected ?? false;
+  let url = isRoleAdmin()
+    ? `${ip}/api/questions/admin?page=${NewPage}`
+    : `${ip}/api/questions/user?&page=${NewPage}`;
 
   if (mode !== "") {
     url += `&mode=${mode}`;
@@ -112,42 +106,50 @@ export const GetQuestions = async (
   if (selectedDifficulty !== "All Difficulty") {
     url += `&difficulty=${selectedDifficulty}`;
   }
+  if (sort?.name !== "" && sort?.name !== undefined)
+    url += `&sort=${sort?.name}`;
+  if (sort?.order !== "" && sort?.order !== undefined)
+    url += `&sort_order=${sort?.order}`;
+  if (tournament_id && !useSelected) {
+    url += `&tournament_id=${tournament_id}`;
+  } else if (tournament_id && useSelected) {
+    url += `&tournament_selected=${tournament_id}`;
+  }
 
   try {
     const response = await axios.get(url, {
       withCredentials: true,
     });
     return response.data;
-  } catch (error) {
-    console.error("Error downloading file:", error);
-  }
+  } catch (error) {}
 };
 
-export const GetQuestionsByID = async (id: string) => {
+export const GetQuestionsByID = async (
+  id: number,
+  tournament_id?: string | number | null
+) => {
   try {
-    const resp = await axios.get(`${ip}/api/question/${id}`, {
+    let url = `${ip}/api/question?id=${id}`;
+    if (tournament_id) {
+      url += `&tournament_id=${tournament_id}`;
+    }
+
+    const resp = await axios.get(url, {
       withCredentials: true,
     });
-    console.log(resp.data);
     return resp.data;
-  } catch (e) {
-    console.error("Error fetching questions:", e);
-  }
+  } catch (e) {}
 };
 
-export const DeleteQuestionsByID = async (id: string) => {
+export const DeleteQuestionsByID = async (id: number) => {
   await axios
     .delete(`${ip}/api/question/${id}`, { withCredentials: true })
-    .then((resp) => {
-      console.log(resp);
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+    .then((resp) => {})
+    .catch((e) => {});
 };
 
 export const CheckQuestionsByID = async (
-  id: string,
+  id: number,
   Answer: string
 ): Promise<boolean> => {
   try {
@@ -158,14 +160,37 @@ export const CheckQuestionsByID = async (
     );
     return resp.data.solve;
   } catch (e) {
-    console.log(e);
     return false;
   }
 };
 
-export const DownloadQuestionsByID = async (id: string) => {
+export const CheckQuestionsTournamentByID = async (
+  id: number,
+  Answer: string,
+  tournament_id: number
+): Promise<boolean> => {
   try {
-    const response = await axios.get(`${ip}/api/question/download/${id}`, {
+    const resp = await axios.post(
+      `${ip}/api/question/tournament/check-answer`,
+      { question_id: id, Answer: Answer, tournament_id: tournament_id },
+      { withCredentials: true }
+    );
+    return resp.data.solve;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const DownloadQuestionsByID = async (
+  id: number,
+  tournament_id?: number | string | null
+) => {
+  try {
+    let url = `${ip}/api/question/download?id=${id}`;
+    if (tournament_id) {
+      url += `&tournament_id=${tournament_id}`;
+    }
+    const response = await axios.get(url, {
       responseType: "blob", // Important for file download
       withCredentials: true,
     });
@@ -175,10 +200,11 @@ export const DownloadQuestionsByID = async (id: string) => {
 
     // Parse the filename from the header
     const filename = contentDisposition
-      ? contentDisposition
+      ? decodeURIComponent(contentDisposition
           .split("filename=")[1]
           ?.split(";")[0]
-          ?.replace(/"/g, "") // Extract the filename and handle quotes
+          ?.replace(/"/g, "")
+          ?.trim()) // Extract the filename and handle quotes
       : `download-${id}`; // Fallback filename
 
     // Create a Blob and a download URL
@@ -196,17 +222,17 @@ export const DownloadQuestionsByID = async (id: string) => {
     // Revoke the object URL to free up memory
     window.URL.revokeObjectURL(downloadUrl);
   } catch (error) {
-    console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
 };
 
 export const GetCategories = async () => {
   try {
-    const response = await axios.get(`${ip}/api/categories`, {withCredentials: true} );
+    const response = await axios.get(`${ip}/api/categories`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
-    console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
 };
@@ -217,23 +243,108 @@ export const CreateCategoriesAPI = async (name: string) => {
       { name },
       { withCredentials: true }
     );
-    console.log(response);
     return response.data.id;
   } catch (error) {
-    console.error("Error downloading file:", error);
     alert("Failed to download the file. Please try again.");
   }
 };
 
-export const UseHintAPI = async (id: number) => {
+export const UseHintAPI = async (
+  id: number,
+  setState: SetState,
+  tournament_id?: string | number | null,
+  setShowGreen?: (arg0: boolean) => void
+) => {
   try {
-    const response = await axios.get(`${ip}/api/question/usehint/${id}`, {
-      withCredentials: true,
-    });
+    let url = `${ip}/api/question/usehint?id=${id}`;
+
+    if (tournament_id) {
+      url += `&tournament_id=${tournament_id}`;
+    }
+
+    const response = await axios.get(url, { withCredentials: true });
+
+    setState.setIsSuccess(true);
+    if(setShowGreen) setShowGreen(true);
     return response.data.data;
-  } catch (error) {
-    console.error("Error downloading file:", error);
+  } catch (e: any) {
+    if(setShowGreen) setShowGreen(false);
+    setState.setIsFailed(true);
+    console.error(
+      "API Error:",
+      e.response?.data?.message || "An error occurred"
+    );
+    setState.setMessage(e.response?.data?.message || "An error occurred.");
   }
 };
 
+export const DeleteQuestionTournament = async (
+  questionIds: number,
+  tournamentId: number
+) => {
+  try {
+    const response = await axios.delete(
+      `${ip}/api/questions/tournament/${tournamentId}/question/${questionIds}`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {}
+};
 
+export const EditCategoryAPI = async (
+  name: string,
+  id: number
+): Promise<any> => {
+  return axios
+    .put(
+      `${ip}/api/categories/${id}`,
+      { name },
+      {
+        withCredentials: true,
+      }
+    )
+    .then((resp) => {
+      if (resp.status === 200) {
+        return resp.data.id;
+      }
+    })
+    .catch((e) => {
+      return e;
+    });
+};
+export const DeleteCategoryAPI = async (id: number): Promise<any> => {
+  return axios
+    .delete(`${ip}/api/categories/${id}`, {
+      withCredentials: true,
+    })
+    .then((resp) => {
+      if (resp.status === 200) {
+        return resp.data;
+      }
+    })
+    .catch((e) => {
+      return e;
+    });
+};
+
+export const GetQuestionUserList = async (
+  page:number,
+  question_id: number,
+  tournament_id: number | undefined
+) => {
+  try {
+    let url = `${ip}/api/question/user-list?page=${page}&id=${question_id}`;
+    if (tournament_id) {
+      url += `&tournament_id=${tournament_id}`;
+    }
+    const response = await axios.get(
+      url,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {}
+};
