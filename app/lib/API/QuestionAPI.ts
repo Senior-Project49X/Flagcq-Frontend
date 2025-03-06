@@ -252,7 +252,8 @@ export const CreateCategoriesAPI = async (name: string) => {
 export const UseHintAPI = async (
   id: number,
   setState: SetState,
-  tournament_id?: string | number | null
+  tournament_id?: string | number | null,
+  setShowGreen?: (arg0: boolean) => void
 ) => {
   try {
     let url = `${ip}/api/question/usehint?id=${id}`;
@@ -264,8 +265,10 @@ export const UseHintAPI = async (
     const response = await axios.get(url, { withCredentials: true });
 
     setState.setIsSuccess(true);
+    if(setShowGreen) setShowGreen(true);
     return response.data.data;
   } catch (e: any) {
+    if(setShowGreen) setShowGreen(false);
     setState.setIsFailed(true);
     console.error(
       "API Error:",

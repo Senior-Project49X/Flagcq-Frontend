@@ -23,25 +23,15 @@ export default function Hint({
   tournamentId,
 }: Readonly<Hint>) {
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [showHint, setShowHint] = useState<boolean>(false);
+  const [showGreen, setShowGreen] = useState<boolean>(used);
   const [hintUsed, setHintUsed] = useState<boolean>(used);
   const [hintDescription, setHintDescription] = useState<string>(description);
   const [loading, setLoading] = useState<boolean>(false);
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const handleShowHint = () => {
-    console.log(
-      "id",
-      UseHintAPI(id, {
-        setIsFailed,
-        setMessage,
-        setIsSuccess,
-      })
-    );
-
+  const handleShowHint = async () => {
     setHintUsed(true);
-    setShowHint(true);
   };
 
   const handleShowConfirm = () => {
@@ -56,6 +46,7 @@ export default function Hint({
     <div>
       {showConfirm && (
         <HintConfirm
+          setShowGreen={setShowGreen}
           id={id}
           ClosePopup={CloseModal}
           UserConfirm={handleShowHint}
@@ -71,7 +62,7 @@ export default function Hint({
         type="button"
         onClick={handleShowConfirm}
         className={`px-4 py-2 text-white ${
-          hintUsed || penalty === 0
+          showGreen || penalty === 0
             ? "bg-green-500 hover:bg-green-600"
             : "bg-blue-500 hover:bg-blue-600"
         }   ${index === 0 ? "rounded-l-md" : ""} ${
