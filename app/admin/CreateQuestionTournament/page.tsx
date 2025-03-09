@@ -11,9 +11,15 @@ import {
   GetQuestions,
   CreateQuestionTournamentAPI,
 } from "../../lib/API/QuestionAPI";
-import { questions } from "../../lib/types/QuestionType";
+import {
+  CategoryReroute,
+  PageReroute,
+  questions,
+  UsePage,
+} from "../../lib/types/QuestionType";
 import { GetAllTourList } from "@/app/lib/API/GetTourListAPI";
 import { FaExclamationTriangle } from "react-icons/fa";
+import QuestionRefactor from "@/app/component/QuestionRefactor";
 
 export default function Homepage() {
   const searchParams = useSearchParams();
@@ -183,45 +189,17 @@ export default function Homepage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-        <Category
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryClick}
-        />
-
-        <Difficult
-          selectedDifficulty={selectedDifficulty}
-          onDifficultyClick={handleDifficultyClick}
-        />
-      </div>
       {/* Question Box */}
-      <div className="flex-1 p-6 rounded-lg">
-        {questions.length !== 0 ? (
-          <>
-            <Question
-              addQuestionTournament={handlePushQuestionID}
-              selectedDifficulty={selectedDifficulty}
-              selectedCategory={selectedCategory.join(",")} // Join the array into a single string
-              questions={questions}
-              question_id={question_id} // Add this prop
-              tournament_id={tournament_id}
-              setSort={handleOnSort}
-              sort={sort}
-              isTable={false}
-            />
-
-            <Pagination
-              pagePath={"?page="}
-              pageNumber={page}
-              totalPages={totalPages}
-              hasNextPage={hasNextPage}
-            />
-          </>
-        ) : (
-          <div className="text-center text-2xl font-bold text-red-400">
-            No Question Found
-          </div>
-        )}
+      <div className="flex-1 rounded-lg">
+        <QuestionRefactor
+          addQuestionTournament={handlePushQuestionID}
+          tournament_id={Number(tournament_id)}
+          useMode={UsePage.Tournament}
+          categoryReroute={CategoryReroute.Tournament}
+          PageReroute={PageReroute.Tournament}
+          pageNumber={page}
+          questionList={question_id}
+        />
       </div>
     </div>
   );
