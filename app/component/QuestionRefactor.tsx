@@ -72,8 +72,6 @@ export default function QuestionRefactor({
     } else {
       setSort({ name: sortName, order: "asc" });
     }
-
-    fetchQuestions();
   };
 
   const fetchQuestions = useCallback(async () => {

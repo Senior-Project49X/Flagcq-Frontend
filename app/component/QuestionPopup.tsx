@@ -15,7 +15,10 @@ import Yay from "./QuestionComponent/yay";
 import DeleteQPuestionPopup from "./QuestionComponent/DeleteQuestionPopup";
 import AdminEditDelQuestion from "./QuestionComponent/admin/AdminEditDelQuestion";
 import { useSearchParams } from "next/navigation";
-
+import dynamic from "next/dynamic";
+const TiptapViewer = dynamic(() => import("./QuestionComponent/TiptapViewer"), {
+  ssr: false, // Ensure it runs only on the client
+});
 type State = {
   tournamentId?: number;
   id: number;
@@ -167,12 +170,7 @@ export default function QuestionPopup(Question: Readonly<State>) {
                 <div className="flex-1 overflow-y-auto">
                   {/* Description */}
                   <div className="p-5">
-                    <div
-                      className="text-white text-lg leading-relaxed break-words rich-text"
-                      dangerouslySetInnerHTML={{
-                        __html: showQuestion?.description ?? "",
-                      }}
-                    />
+                    <TiptapViewer content={showQuestion?.description} />
                   </div>
                 </div>
                 {/* Download and Hints */}

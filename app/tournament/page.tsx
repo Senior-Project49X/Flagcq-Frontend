@@ -361,9 +361,7 @@ export default function TournamentPage() {
           )}
         </div>
       </div>
-
       <Pagination
-        pagePath="/tournament?page="
         pageNumber={page}
         totalPages={totalPages}
         hasNextPage={hasNextPage}

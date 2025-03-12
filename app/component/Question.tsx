@@ -32,7 +32,7 @@ export default function Question({
   const pathname = usePathname();
   const [isCreateQuestionTournament, setIsCreateQuestionTournament] =
     useState<boolean>(false);
-  const [isTable, setIsTable] = useState(isTableProp);
+  const [isTable, setIsTable] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   useEffect(() => {
     const fetchRole = async () => {
