@@ -1,11 +1,15 @@
 import React from "react";
 
-export default function LoadingComponent() {
+interface login {
+  text?: string;
+}
+
+export default function LoadingComponent({ text }: Readonly<login>) {
   return (
     <div>
       <div className="loading-container">
         <div className="spinner"></div>
-        <p>Loading, please wait...</p>
+        {text ? <p>{text}</p> : <p>Loading, please wait...</p>}
       </div>
     </div>
   );

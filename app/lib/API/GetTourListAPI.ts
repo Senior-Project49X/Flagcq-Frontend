@@ -40,3 +40,43 @@ export const JoinTeam = async (page: string | null) => {
     return {};
   }
 };
+
+export const DownloadTeamCSV = async (tournament_id: number) => {
+  try {
+    const response = await axios.get(
+      `${ip}/api/info/${tournament_id}?download=true`,
+      {
+        responseType: "blob",
+        withCredentials: true,
+      }
+    );
+    const contentDisposition = response.headers["content-disposition"];
+    const filename = contentDisposition
+      ? decodeURIComponent(
+          contentDisposition
+            .split("filename=")[1]
+            ?.split(";")[0]
+            ?.replace(/"/g, "")
+            ?.trim()
+        ) // Extract the filename and handle quotes
+      : `download`; // Fallback filename
+
+    // Create a Blob and a download URL
+    const blob = new Blob([response.data]);
+    const downloadUrl = window.URL.createObjectURL(blob);
+
+    // Create a temporary anchor element for the download
+    const anchor = document.createElement("a");
+    anchor.href = downloadUrl;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click(); // Trigger the download
+    anchor.remove(); // Clean up the DOM
+
+    // Revoke the object URL to free up memory
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (e) {
+    console.error("Error fetching ALlInfo data:", e);
+    return "0"; // Return a fallback value in case of error
+  }
+};

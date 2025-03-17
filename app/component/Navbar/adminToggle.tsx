@@ -31,7 +31,7 @@ export default function AdminTogglePage({
     },
     {
       href: "/admin/AddRole",
-      label: "Add Role",
+      label: "Change Role",
       icon: FaAddressBook,
       className: "text-blue-400 hover:text-blue-300",
     },
