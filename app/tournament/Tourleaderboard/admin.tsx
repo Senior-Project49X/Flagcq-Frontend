@@ -4,6 +4,8 @@ import Navbar from "../../component/Navbar/navbar";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { GetAllinfo } from "@/app/lib/API/GetAllinfo";
+import { DownloadTeamCSV } from "@/app/lib/API/GetTourListAPI";
+import { FaDownload } from "react-icons/fa6";
 
 type Member = {
   userId: number;
@@ -29,6 +31,10 @@ export default function TeamLeaderboardAdmin() {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [openedIndexes, setOpenedIndexes] = useState<number[]>([]); // Track open cards
+
+  const handleDownloadCSV = async () => {
+    DownloadTeamCSV(Number(tournamentId));
+  };
 
   useEffect(() => {
     const fetchTeamLeaderboardData = async () => {
@@ -57,6 +63,14 @@ export default function TeamLeaderboardAdmin() {
       <Navbar />
 
       <div className="flex justify-between items-center p-6">
+        <button
+          className="p-3 text-md text-black border-2 border-green-500 bg-green-500 rounded-md ml-[85%] hover:bg-green-600 transition-all duration-200"
+          onClick={handleDownloadCSV}
+        >
+          <div className="flex items-center text-md space-x-2">
+            <FaDownload /> <div>Export to CSV</div>
+          </div>
+        </button>
         <button
           onClick={() => window.history.back()}
           className="text-xl text-green-300 hover:underline ml-auto"
