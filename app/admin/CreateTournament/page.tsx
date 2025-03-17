@@ -252,9 +252,9 @@ export default function CreateTour() {
 
           {/* Mode */}
           <div className="mb-6">
-            <label className="block text-lg font-medium mb-3 text-green-400">
+            <div className="block text-lg font-medium mb-3 text-green-400">
               Mode
-            </label>
+            </div>
             <div className="flex space-x-4">
               {["Public", "Private"].map((option) => (
                 <button

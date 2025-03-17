@@ -50,9 +50,9 @@ export default function Profile() {
 
         {/* Students Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {students.map((student, index) => (
+          {students.map((student) => (
             <div
-              key={index}
+              key={student.studentCode}
               className="bg-gray-800 border-2 border-green-500 rounded-lg p-8 shadow-lg flex items-center space-x-8"
             >
               <div className="w-32 h-32 flex-shrink-0">

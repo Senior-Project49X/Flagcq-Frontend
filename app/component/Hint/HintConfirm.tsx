@@ -11,6 +11,7 @@ interface HintConfirmProps {
   isUsed: boolean;
   cost: number;
   tournamentId?: number;
+  setShowGreen: (arg0: boolean) => void;
 }
 
 export default function HintConfirm({
@@ -18,6 +19,7 @@ export default function HintConfirm({
   ClosePopup,
   UserConfirm,
   cost,
+  setShowGreen,
   isUsed,
   tournamentId,
 }: Readonly<HintConfirmProps>) {
@@ -38,7 +40,8 @@ export default function HintConfirm({
               setMessage,
               setIsSuccess,
             },
-            tournamentId
+            tournamentId,
+            setShowGreen
           );
           setDescription(hint);
         } catch (error) {

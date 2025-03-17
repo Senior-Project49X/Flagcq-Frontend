@@ -1,16 +1,18 @@
 import React from "react";
-import { handleUpdateParameter } from "../lib/setParameter";
 
 type PageNumberProps = {
+  pagePath: string;
   pageNumber: string | null;
   totalPages: number;
   hasNextPage: boolean;
+  setPage: (arg0: number) => void;
 };
 
-export default function Pagination({
+export default function PaginationSolver({
   pageNumber,
   totalPages,
   hasNextPage,
+  setPage,
 }: Readonly<PageNumberProps>) {
   const currentPage = pageNumber ? parseInt(pageNumber) : 1;
   const maxVisiblePages = 5;
@@ -60,7 +62,7 @@ export default function Pagination({
       <div className="flex gap-2 rounded-lg text-center">
         {currentPage > 1 && (
           <button
-            onClick={() => handleUpdateParameter("page", currentPage - 1)}
+            onClick={() => setPage(currentPage - 1)}
             className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
           >
             {"<<"}
@@ -73,7 +75,7 @@ export default function Pagination({
               {index === 0 && page > 1 && (
                 <React.Fragment>
                   <button
-                    onClick={() => handleUpdateParameter("page", "1")}
+                    onClick={() => setPage(1)}
                     className="flex bg-gray-800 "
                   >
                     1
@@ -84,7 +86,7 @@ export default function Pagination({
               )}
 
               <button
-                onClick={() => handleUpdateParameter("page", page)}
+                onClick={() => setPage(page)}
                 className={`px-4 py-2 text-green-400 hover:bg-gray-800 transition-colors ${
                   page === currentPage
                     ? "bg-gray-800  rounded-md text-xl"
@@ -98,7 +100,7 @@ export default function Pagination({
                 <React.Fragment>
                   {page < totalPages - 1 && <span>...</span>}
                   <button
-                    onClick={() => handleUpdateParameter("page", totalPages)}
+                    onClick={() => setPage(totalPages)}
                     className="w-8 h-8 p-0 text-gray-600 "
                   >
                     {totalPages}
@@ -110,7 +112,7 @@ export default function Pagination({
 
         {hasNextPage && currentPage < totalPages && (
           <button
-            onClick={() => handleUpdateParameter("page", currentPage + 1)}
+            onClick={() => setPage(currentPage + 1)}
             className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
           >
             {">>"}

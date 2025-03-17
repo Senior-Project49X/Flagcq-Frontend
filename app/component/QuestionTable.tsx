@@ -29,7 +29,7 @@ export default function QuestionTable({
   isCreateQuestionTournament,
 }: Readonly<detail>) {
   return (
-    <table className="table-auto w-full mr-16 ">
+    <table className="table-auto w-full ">
       <thead className="bg-gray-900 text-green">
         <tr>
           {isAdmin && isCreateQuestionTournament && (
@@ -37,7 +37,7 @@ export default function QuestionTable({
           )}
 
           <th
-            className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700 text-start"
             onClick={() => {
               setSort("QuestionName");
             }}
@@ -51,7 +51,7 @@ export default function QuestionTable({
             )}
           </th>
           <th
-            className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            className="px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700 text-start"
             onClick={() => {
               setSort("Category");
             }}
@@ -65,7 +65,7 @@ export default function QuestionTable({
             )}
           </th>
           <th
-            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700 text-start"
             onClick={() => {
               setSort("Difficulty");
             }}
@@ -79,7 +79,7 @@ export default function QuestionTable({
             )}
           </th>
           <th
-            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700
+            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700 text-start
               
               "
             onClick={() => {
@@ -95,7 +95,7 @@ export default function QuestionTable({
             )}
           </th>
           <th
-            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700"
+            className=" px-4 py-2 text-green-400 cursor-pointer hover:bg-gray-700 text-start"
             onClick={() => {
               setSort("Solved");
             }}

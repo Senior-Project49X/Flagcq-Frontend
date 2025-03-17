@@ -24,9 +24,43 @@ export interface Question {
   hints: Hint[];
 }
 
+export interface QuestionProps {
+  useMode: string;
+  categoryReroute: string;
+  pageNumber: string;
+  PageReroute: string;
+  tournament_id?: number;
+  addQuestionTournament?: (id: number) => void;
+  questionList?: number[];
+}
+
+export interface SortQeuestions {
+  name: string;
+  order: string;
+}
+
 interface Hint {
   id: number;
   Description: string;
   point: number;
   used: boolean;
 }
+
+export interface PaginationProp {
+  totalPages: number;
+  hasNextPage: boolean;
+}
+
+export const UsePage = {
+  AllMode: "",
+  Tournament: "Tournament",
+  Practice: "Practice",
+};
+export const CategoryReroute = {
+  HomePage: "/?page=1",
+  Tournament: "?tournamentId=:tournamentId&page=",
+};
+export const PageReroute = {
+  HomePage: "/?page=",
+  Tournament: "?page=",
+};

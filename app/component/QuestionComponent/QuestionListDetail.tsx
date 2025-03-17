@@ -86,7 +86,11 @@ export default function QuestionListDetail({
     location.reload();
   };
   return (
-    <tr className="even:bg-[#0D1B2A] odd:bg-gray-800 text-white">
+    <tr
+      className={`even:bg-[#0D1B2A] odd:bg-gray-800  ${
+        Solved ? "text-gray-500" : "text-white"
+      }`}
+    >
       {isCreateQuestionTournament && (
         <td className=" px-4 py-2">
           {showPopupDelTournamentQuestion && (
@@ -151,7 +155,7 @@ export default function QuestionListDetail({
         )}
         <button
           onClick={() => setShowModal(true)}
-          className="hover:text-blue-500 underline"
+          className={`hover:text-blue-500 underline `}
         >
           {Topic}
         </button>
@@ -165,23 +169,21 @@ export default function QuestionListDetail({
         <>
           <td className=" px-4 py-2 ">
             <div className="justify-center flex">
-              <button
-                disabled={!isCanEdit}
-                className={`p-2 transition rounded-md flex items-center justify-center ${
-                  isCanEdit
-                    ? "bg-yellow-200 hover:bg-yellow-300"
-                    : "cursor-not-allowed bg-gray-200"
-                }`}
-              >
+              {isCanEdit ? (
                 <Link
                   href={`/admin/EditQuestion?QuestionID=${id}`}
+                  className={`p-2 transition rounded-md flex items-center justify-center ${"bg-yellow-200 hover:bg-yellow-300"}`}
                   title={
                     isCanEdit ? "Click to Submit" : "Someone already submitted"
                   }
                 >
                   <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
                 </Link>
-              </button>
+              ) : (
+                <div className="p-2 transition rounded-md flex items-center justify-center bg-gray-200 cursor-not-allowed">
+                  <Image src="/edit.svg" width={15} height={15} alt={"Edit"} />
+                </div>
+              )}
             </div>
           </td>
           <td className=" px-4 py-2">

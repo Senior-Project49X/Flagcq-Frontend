@@ -4,7 +4,7 @@ import Link from "@tiptap/extension-link";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { Editor } from "@tiptap/core";
 import Underline from "@tiptap/extension-underline";
-import { FormEvent, useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
 import StarterKit from "@tiptap/starter-kit";
@@ -180,10 +180,18 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       Underline,
     ],
     content: value,
+    immediatelyRender: false,
     onUpdate({ editor }) {
       onChange(editor.getHTML());
     },
   });
+
+  // Add this useEffect to update content when value changes
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
   // Handle manual resize
   useEffect(() => {
