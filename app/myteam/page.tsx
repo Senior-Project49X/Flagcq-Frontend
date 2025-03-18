@@ -231,14 +231,12 @@ export default function Myuserpage() {
           )}
         </div>
       </div>
-
-      {/* Pagination */}
       <Pagination
-        pagePath={"/myteam?page="}
         pageNumber={page}
         totalPages={totalPages}
         hasNextPage={hasNextPage}
       />
+      {/* Pagination */}
     </div>
   );
 }

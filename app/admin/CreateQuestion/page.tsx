@@ -18,6 +18,7 @@ import ModeEditOutlineRoundedIcon from "@mui/icons-material/ModeEditOutlineRound
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import EditCategories from "../component/EditCategories";
 import DeleteCategories from "../component/DeleteCategories";
+import { FaExclamationTriangle } from "react-icons/fa";
 const RichTextEditor = dynamic(() => import("@/app/component/RichTextEditor"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
@@ -63,6 +64,8 @@ export default function CreateQuestion() {
   const [description, setDescription] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
+  const isEditPage = id !== null;
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [isDescriptionLoaded, setIsDescriptionLoaded] =
     useState<boolean>(false);
 
@@ -241,6 +244,35 @@ export default function CreateQuestion() {
 
   return (
     <div className="min-h-screen  text-white">
+      {showConfirmDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 border border-gray-700 text-center">
+            <FaExclamationTriangle className="text-5xl text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-red-500 font-bold text-2xl mb-4">
+              Confirm To Cancel
+            </h2>
+            <p className="mb-6 text-gray-300">
+              Are you sure you want to cancel edit this question?
+              <br />
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowConfirmDelete(false)}
+                className="px-6 py-3 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300"
+              >
+                No
+              </button>
+              <button
+                onClick={() => (window.location.href = "/")}
+                className="px-6 py-3 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all duration-300 disabled:opacity-50"
+              >
+                Yes, I Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading && (
         <LoadingPopup
           setLoading={setLoading}
@@ -284,7 +316,7 @@ export default function CreateQuestion() {
       <Navbar />
       <div className="max-w-3xl mx-auto p-4">
         <h1 className="text-3xl font-bold mb-4 text-center text-green-400 drop-shadow-lg">
-          Create Question
+          {isEditPage ? "Edit Question" : "Create Question"}
         </h1>
 
         <form
@@ -578,8 +610,24 @@ export default function CreateQuestion() {
                 : "bg-green-500 hover:bg-green-600 text-white shadow-md"
             }`}
           >
-            {loading ? "Creating Question..." : "Create Question"}
+            {(() => {
+              if (loading) return "Creating Question...";
+              if (isEditPage) return "Update Question";
+              return "Create Question";
+            })()}
           </button>
+          {isEditPage && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowConfirmDelete(true);
+              }}
+              className="w-full py-3 rounded-md font-bold text-base transition-all duration-300 bg-red-500 hover:bg-gray-700 text-white shadow-md mt-3"
+            >
+              Cancel
+            </button>
+          )}
         </form>
       </div>
     </div>

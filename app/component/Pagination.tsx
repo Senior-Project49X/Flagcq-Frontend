@@ -1,8 +1,7 @@
 import React from "react";
-import Link from "next/link";
+import { handleUpdateParameter } from "../lib/setParameter";
 
 type PageNumberProps = {
-  pagePath: string;
   pageNumber: string | null;
   totalPages: number;
   hasNextPage: boolean;
@@ -10,7 +9,6 @@ type PageNumberProps = {
 
 export default function Pagination({
   pageNumber,
-  pagePath,
   totalPages,
   hasNextPage,
 }: Readonly<PageNumberProps>) {
@@ -61,13 +59,12 @@ export default function Pagination({
     <div className="flex justify-center mt-6">
       <div className="flex gap-2 rounded-lg text-center">
         {currentPage > 1 && (
-          <Link
-            href={`${pagePath}${currentPage - 1}`}
-            scroll={false}
+          <button
+            onClick={() => handleUpdateParameter("page", currentPage - 1)}
             className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
           >
             {"<<"}
-          </Link>
+          </button>
         )}
 
         {totalPages > 1 &&
@@ -75,21 +72,19 @@ export default function Pagination({
             <React.Fragment key={page}>
               {index === 0 && page > 1 && (
                 <React.Fragment>
-                  <Link
-                    href={`${pagePath}1`}
-                    scroll={false}
+                  <button
+                    onClick={() => handleUpdateParameter("page", "1")}
                     className="flex bg-gray-800 "
                   >
                     1
-                  </Link>
+                  </button>
 
                   {page > 3 && <span>...</span>}
                 </React.Fragment>
               )}
 
-              <Link
-                href={`${pagePath}${page}`}
-                scroll={false}
+              <button
+                onClick={() => handleUpdateParameter("page", page)}
                 className={`px-4 py-2 text-green-400 hover:bg-gray-800 transition-colors ${
                   page === currentPage
                     ? "bg-gray-800  rounded-md text-xl"
@@ -97,31 +92,29 @@ export default function Pagination({
                 }`}
               >
                 {page}
-              </Link>
+              </button>
 
               {index === visiblePages.length - 1 && page < totalPages && (
                 <React.Fragment>
                   {page < totalPages - 1 && <span>...</span>}
-                  <Link
-                    href={`${pagePath}${totalPages}`}
-                    scroll={false}
+                  <button
+                    onClick={() => handleUpdateParameter("page", totalPages)}
                     className="w-8 h-8 p-0 text-gray-600 "
                   >
                     {totalPages}
-                  </Link>
+                  </button>
                 </React.Fragment>
               )}
             </React.Fragment>
           ))}
 
         {hasNextPage && currentPage < totalPages && (
-          <Link
-            href={`${pagePath}${currentPage + 1}`}
-            scroll={false}
+          <button
+            onClick={() => handleUpdateParameter("page", currentPage + 1)}
             className="bg-[#0D1B2A] rounded-md bottom-2 px-3 py-2 hover:bg-gray-800 transition-colors text-green-400"
           >
             {">>"}
-          </Link>
+          </button>
         )}
       </div>
     </div>
