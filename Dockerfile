@@ -1,8 +1,7 @@
 FROM node:20-alpine
-
 WORKDIR /app
-COPY . .
-
-RUN npm install
-
-CMD ["npm", "run", "production"]
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . . 
+EXPOSE 3000
+CMD ["npm", "run","production"]
